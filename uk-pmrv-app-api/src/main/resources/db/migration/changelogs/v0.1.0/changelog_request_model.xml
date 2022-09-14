@@ -1,0 +1,1197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        logicalFilePath="v0.1.0/changelog_request_model.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_CREATE_TABLE_REQUEST" author="pafilisa@unisystems.gr" context="migrate">
+
+        <comment>Initial creation of REQUEST Table</comment>
+        <sql>
+            -------------------------------------------------------
+            --  Table REQUEST
+            --------------------------------------------------------
+
+            CREATE SEQUENCE request_seq MINVALUE 0 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 1 NO CYCLE;
+
+            CREATE TABLE request (
+                                     id bigint,
+                                     type VARCHAR(255) NOT NULL,
+                                     status VARCHAR(255) NOT NULL,
+                                     submitted_by VARCHAR(255) NOT NULL,
+                                     submission_date TIMESTAMP NOT NULL,
+                                     process_instance_id VARCHAR(255));
+
+            ALTER TABLE request ADD CONSTRAINT request_pk PRIMARY KEY (id);
+            CREATE UNIQUE index idx_request_process_instance_id on request(process_instance_id);
+
+            COMMENT ON COLUMN request.type IS 'The request type';
+            COMMENT ON COLUMN request.status IS 'The request status';
+            COMMENT ON COLUMN request.submitted_by IS 'The id of the user that submitted the request';
+            COMMENT ON COLUMN request.submission_date IS 'The date-time that the request was submitted';
+            COMMENT ON COLUMN request.process_instance_id IS 'The id of the process instance that was started for this request';
+
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request CASCADE;
+                DROP SEQUENCE IF EXISTS request_seq;
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="0_1_0_CREATE_TABLE_REQUEST_ACTION" author="pafilisa@unisystems.gr" context="migrate">
+
+        <comment>Initial creation of REQUEST_ACTION Table</comment>
+        <sql>
+            -------------------------------------------------------
+            --  Table REQUEST_ACTION
+            --------------------------------------------------------
+
+            CREATE SEQUENCE request_action_seq MINVALUE 0 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 1 NO CYCLE;
+
+            CREATE TABLE request_action (
+                                            id bigint,
+                                            type VARCHAR(255) NOT NULL,
+                                            payload TEXT,
+                                            payload_type VARCHAR(255),
+                                            last_submitted_by VARCHAR(255) NOT NULL,
+                                            last_submission_date TIMESTAMP NOT NULL,
+                                            request_id bigint NOT NULL
+            );
+
+            ALTER TABLE request_action ADD CONSTRAINT request_action_pk PRIMARY KEY (id);
+            ALTER TABLE request_action ADD CONSTRAINT request_action_request_fk FOREIGN KEY (request_id) REFERENCES request (id);
+
+            COMMENT ON COLUMN request_action.type IS 'The request action type';
+            COMMENT ON COLUMN request_action.payload IS 'he data that were submitted with this action';
+            COMMENT ON COLUMN request_action.payload_type IS 'The payload type';
+            COMMENT ON COLUMN request_action.last_submitted_by IS 'The user id that last modified the request action';
+            COMMENT ON COLUMN request_action.last_submission_date IS 'he date-time that was last modified the request action';
+            COMMENT ON COLUMN request_action.request_id IS 'Foreign key to REQUEST table';
+
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_action CASCADE;
+                DROP SEQUENCE IF EXISTS request_action_seq;
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="0_1_0_CREATE_TABLE_REQUEST_OBJECT" author="pafilisa@unisystems.gr" context="migrate">
+
+        <comment>Initial creation of REQUEST_OBJECT Table</comment>
+        <sql>
+            -------------------------------------------------------
+            --  Table REQUEST_OBJECT
+            --------------------------------------------------------
+
+            CREATE SEQUENCE request_object_seq MINVALUE 0 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 1 NO CYCLE;
+
+            CREATE TABLE request_object (
+                                            id bigint,
+                                            reference_object_id bigint NOT NULL,
+                                            reference_object_type VARCHAR(255) NOT NULL,
+                                            request_id bigint NOT NULL
+            );
+
+            ALTER TABLE request_object ADD CONSTRAINT request_object_pk PRIMARY KEY (id);
+            ALTER TABLE request_object ADD CONSTRAINT request_object_request_fk FOREIGN KEY (request_id) REFERENCES request (id);
+
+            COMMENT ON COLUMN request_object.reference_object_id IS 'The id of the actual business object that is affected from the linked request';
+            COMMENT ON COLUMN request_object.reference_object_type IS 'The actual business object to which the reference_object_id column points to';
+            COMMENT ON COLUMN request_object.request_id IS 'Foreign key to REQUEST table';
+
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_object CASCADE;
+                DROP SEQUENCE IF EXISTS request_object_seq;
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="0_1_0_UPDATE_TABLE_REQUEST" author="P70366@trasys.gr" context="migrate">
+
+        <comment>Update REQUEST Table</comment>
+        <sql>
+            -------------------------------------------------------
+            --  Table REQUEST
+            --------------------------------------------------------
+
+            ALTER TABLE request ADD COLUMN competent_authority VARCHAR(255) NOT NULL DEFAULT '';
+
+            COMMENT ON COLUMN request.competent_authority IS 'The competent authority issuing the request';
+
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE request
+                DROP COLUMN IF EXISTS competent_authority;
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_TASK_SEQUENCE" author="kliropog">
+        <createSequence sequenceName="request_task_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS request_task_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_TASK" author="kliropog">
+        <createTable tableName="request_task" remarks="Represents a request task">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="request_task_pk" nullable="false"/>
+            </column>
+            <column name="request_id" type="bigint" remarks="The request the task is related to (foreign key to request table)">
+                <constraints foreignKeyName="request_task_request_fk" references="request(id)" nullable="false"/>
+            </column>
+            <column name="process_task_id" type="varchar(64)" remarks="The bpmn process task id">
+                <constraints nullable="false" />
+            </column>
+            <column name="type" type="varchar(255)" remarks="The type of the task">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="varchar(255)" remarks="The status of the task">
+                <constraints nullable="false" />
+            </column>
+            <column name="assignee" type="varchar(255)" remarks="The assignee user of the task" />
+            <column name="candidate_group" type="varchar(255)" remarks="The candidate group of the task" />
+            <column name="due_date" type="date" remarks="The due date of the task" />
+            <column name="start_date" type="timestamp" remarks="The start date time of the task">
+                <constraints nullable="false" />
+            </column>
+            <column name="end_date" type="timestamp" remarks="The start date time of the task" />
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_task;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CREATE_TABLE_REQUEST_PARAMETER" author="P70383">
+        <createTable tableName="request_parameter" remarks="Represents a request parameter that contains parameter values of request">
+            <column name="request_id" type="bigint" remarks="The request id">
+                <constraints foreignKeyName="request_parameter_request_fk" references="request(id)"
+                             primaryKey="true" primaryKeyName="request_parameter_pk" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)" remarks="The parameter name">
+                <constraints primaryKey="true" primaryKeyName="request_parameter_pk" nullable="false"/>
+            </column>
+            <column name="value" type="varchar(255)" remarks="The parameter value">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_parameter CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ADD_UNIQUE_CONSTRAINT_REQUEST_TASK" author="P70366">
+        <addUniqueConstraint tableName="request_task" columnNames="process_task_id" constraintName="request_task_uc"/>
+        <rollback>
+            <dropUniqueConstraint tableName="request_task" constraintName="request_task_uc"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ADD_UNIQUE_CONSTRAINT_REQUEST_OBJECT" author="P70366">
+        <addUniqueConstraint tableName="request_object" columnNames="reference_object_id,reference_object_type,request_id" constraintName="request_object_uc"/>
+        <rollback>
+            <dropUniqueConstraint tableName="request_object" constraintName="request_object_uc"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_ADD_ACCOUNT_ID_COLUMN" author="kliropog">
+        <addColumn tableName="request">
+            <column name="account_id" type="bigint" remarks="The account id the request is related to">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE request
+                DROP COLUMN IF EXISTS account_id;
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_ADD_ASSIGNEE_COLUMN" author="pafilisa@unisystems.gr">
+        <comment>Add ASSIGNEE column to REQUEST Table</comment>
+        <sql>
+            ALTER TABLE request ADD COLUMN assignee VARCHAR(255);
+
+            COMMENT ON COLUMN request.assignee IS 'The id of the user to whom the request is assigned to';
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE request
+                DROP COLUMN IF EXISTS assignee;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_TASK_RENAME_COLUMN_CANDIDATE_GROUP" author="P70366">
+        <renameColumn tableName="request_task" oldColumnName="candidate_group" newColumnName="view_permission"/>
+        <rollback>
+            <sql>
+                ALTER TABLE request_task
+                RENAME COLUMN view_permission TO candidate_group;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_TASK_MIGRATE_VIEW_PERMISSION" author="P70366">
+        <comment>Update null values on view_permission column</comment>
+        <sql>
+            with t as (
+                select * from (
+                                  values
+                                      ('INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW', 'PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_VIEW'),
+                                      ('ACCOUNT_USERS_SETUP'                            , 'PERM_ACCOUNT_USERS_SETUP_VIEW'),
+                                      ('INSTALLATION_ACCOUNT_OPENING_ARCHIVE'           , 'PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_VIEW'),
+                                      ('PERMIT_ISSUANCE_APPLICATION_SUBMIT'             , 'PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_VIEW')
+                              ) AS t (tp, perm)
+            )
+            update request_task rt
+            set view_permission = t.perm
+                from t
+            where rt.type = t.tp
+              and rt.view_permission is null;
+        </sql>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_TASK_ADD_NON_NULL_CONSTRAINT_COLUMN_VIEW_PERMISSION" author="P70366">
+        <addNotNullConstraint tableName="request_task" columnName="view_permission"/>
+        <rollback>
+            <sql>
+                ALTER TABLE request_task
+                ALTER COLUMN view_permission DROP NOT NULL;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_TASK_ADD_COLUMN_EXECUTE_PERMISSION" author="P70366">
+        <addColumn tableName="request_task">
+            <column name="execute_permission" type="varchar(255)" remarks="The execute permission on the task">
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE request_task
+                DROP COLUMN execute_permission;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_TASK_MIGRATE_EXECUTE_PERMISSION" author="P70366">
+        <comment>Migrate existing records to new execute_permission column</comment>
+        <sql>
+            with t as (
+                SELECT *
+                FROM (VALUES
+                          ('INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW','PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_EXECUTE_TASK'),
+                          ('ACCOUNT_USERS_SETUP','PERM_ACCOUNT_USERS_SETUP_EXECUTE_TASK'),
+                          ('INSTALLATION_ACCOUNT_OPENING_ARCHIVE','PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_EXECUTE_TASK'),
+                          ('PERMIT_ISSUANCE_APPLICATION_SUBMIT','PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_EXECUTE_TASK')
+                     ) AS t (tp, perm)
+            )
+            update request_task rt
+            set execute_permission = t.perm
+                from t
+            where rt.type = t.tp
+        </sql>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_TASK_ADD_NON_NULL_CONSTRAINT_COLUMN_EXECUTE_PERMISSION" author="P70366">
+        <addNotNullConstraint tableName="request_task" columnName="execute_permission"/>
+        <rollback>
+            <sql>
+                ALTER TABLE request_task
+                ALTER COLUMN execute_permission DROP NOT NULL;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_REQUEST_TASK_VIEW_PERMISSIONS" author="P35066">
+        <comment>Rename Request tasks view permissions</comment>
+        <sql>
+            with t as (
+                SELECT * FROM (
+                                  VALUES
+                                      ('PERM_ACCOUNT_USERS_SETUP_VIEW_TASK', 'PERM_ACCOUNT_USERS_SETUP_VIEW'),
+                                      ('PERM_ACCOUNT_USERS_SETUP_EXECUTE_TASK', 'PERM_ACCOUNT_USERS_SETUP_EXECUTE'),
+                                      ('PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_VIEW_TASK', 'PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_VIEW'),
+                                      ('PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_EXECUTE_TASK', 'PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_EXECUTE'),
+                                      ('PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_VIEW_TASK', 'PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_VIEW'),
+                                      ('PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_EXECUTE_TASK', 'PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_EXECUTE'),
+                                      ('PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_VIEW_TASK', 'PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_VIEW'),
+                                      ('PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_EXECUTE_TASK', 'PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_EXECUTE')
+                              ) AS t (nm_new, nm_old)
+            )
+            update request_task p
+            set view_permission = t.nm_new
+                from t
+            where view_permission = t.nm_old;
+        </sql>
+        <rollback>
+            <sql>
+                with t as (
+                SELECT * FROM (
+                VALUES
+                ('PERM_ACCOUNT_USERS_SETUP_VIEW_TASK', 'PERM_ACCOUNT_USERS_SETUP_VIEW'),
+                ('PERM_ACCOUNT_USERS_SETUP_EXECUTE_TASK', 'PERM_ACCOUNT_USERS_SETUP_EXECUTE'),
+                ('PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_VIEW_TASK', 'PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_VIEW'),
+                ('PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_EXECUTE_TASK', 'PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_EXECUTE'),
+                ('PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_VIEW_TASK', 'PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_VIEW'),
+                ('PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_EXECUTE_TASK', 'PERM_PERMIT_ISSUANCE_APPLICATION_SUBMIT_EXECUTE'),
+                ('PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_VIEW_TASK', 'PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_VIEW'),
+                ('PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_EXECUTE_TASK', 'PERM_INSTALLATION_ACCOUNT_OPENING_ARCHIVE_EXECUTE')
+                ) AS t (nm_new, nm_old)
+                )
+                update request_task p
+                set view_permission = t.nm_old
+                from t
+                where view_permission = t.nm_new;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_NOT_NULL_CONSTRAINT_ON_REQUEST_TASK_VIEW_PERMISSION_COLUMN" author="P35066" >
+        <dropNotNullConstraint tableName="REQUEST_TASK" columnName="view_permission" />
+        <rollback>
+            <addNotNullConstraint tableName="REQUEST_TASK" columnName="view_permission"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_NOT_NULL_CONSTRAINT_ON_REQUEST_TASK_EXECUTE_PERMISSION_COLUMN" author="P35066" >
+        <dropNotNullConstraint tableName="REQUEST_TASK" columnName="execute_permission" />
+        <rollback>
+            <addNotNullConstraint tableName="REQUEST_TASK" columnName="execute_permission"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_OPENED_ITEM" author="p70366">
+        <createTable tableName="opened_item" remarks="Represents an opened dashboard item">
+            <column name="task_id" type="bigint" remarks="The task id that the opened item is related to (foreign key to request_task table)">
+                <constraints foreignKeyName="opened_item_request_task_fk" references="request_task(id)" nullable="false"/>
+            </column>
+            <column name="user_id" type="varchar(64)" remarks="The user id to which the opened item is related to">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey
+                columnNames="task_id, user_id"
+                constraintName="opened_item_pk"
+                tableName="opened_item" />
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS opened_item;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REMOVE_PERM_ACCOUNT_USERS_SETUP_EXECUTE_VIEW_TASK_PERMISSION_FROM_TASKS" author="P70383">
+        <comment>Remove PERM_ACCOUNT_USERS_SETUP_EXECUTE_TASK and PERM_ACCOUNT_USERS_SETUP_VIEW_TASK permission from tasks</comment>
+        <sql>
+            update request_task
+            set view_permission = null, execute_permission = null
+            where type = 'ACCOUNT_USERS_SETUP'
+        </sql>
+        <rollback>
+            <sql>
+                update request_task
+                set view_permission = 'PERM_ACCOUNT_USERS_SETUP_VIEW_TASK', execute_permission = 'PERM_ACCOUNT_USERS_SETUP_EXECUTE_TASK'
+                where type = 'ACCOUNT_USERS_SETUP'
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_VIEW_PERMISSION_COLUMN_FROM_REQUEST_TASK_TABLE" author="P35066">
+        <dropColumn tableName="request_task">
+            <column name="view_permission"/>
+        </dropColumn>
+        <rollback>
+            <addColumn tableName="request_task">
+                <column name="view_permission" type="varchar(255)" remarks="The view permission of the task">
+                    <constraints nullable="true" />
+                </column>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_EXECUTE_PERMISSION_COLUMN_FROM_REQUEST_TASK_TABLE" author="P35066">
+        <dropColumn tableName="request_task">
+            <column name="execute_permission"/>
+        </dropColumn>
+        <rollback>
+            <addColumn tableName="request_task">
+                <column name="execute_permission" type="varchar(255)" remarks="The execute permission of the task">
+                    <constraints nullable="true" />
+                </column>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_ADD_VERIFICATION_BODY_ID_COLUMN" author="P70383">
+        <comment>Add verification body id to REQUEST Table</comment>
+        <addColumn tableName="request">
+            <column name="verification_body_id" type="bigint" remarks="The verification body id the request is related to">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE request
+                DROP COLUMN IF EXISTS verification_body_id;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_ACTION_ADD_VERSION_COLUMN" author="P35066">
+        <addColumn tableName="request_action">
+            <column name="version" type="bigint" remarks="The version number (optimistic locking)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE request_action
+                DROP COLUMN IF EXISTS version;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_ACTION_VERSION" author="P35066">
+        <sql>
+            update request_action
+            set version = 0;
+        </sql>
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_ACTION_VERSION_COLUMN_ADD_NOT_NULL_CONSTRAINT" author="P35066" >
+        <addNotNullConstraint tableName="request_action" columnName="version" />
+        <rollback>
+            <dropNotNullConstraint tableName="request_action" columnName="version"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_ACTION_ADD_REQUEST_TASK_ID_COLUMN" author="P70383">
+        <addColumn tableName="request_action">
+            <column name="request_task_id" type="bigint" remarks="The id to request_task table">
+                <constraints foreignKeyName="request_action_task_fk" references="request_task(id)" nullable="true"/>
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE request_action
+                DROP COLUMN IF EXISTS request_task_id;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_FORM_SEQUENCE" author="P70383">
+        <createSequence sequenceName="request_form_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS request_form_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CREATE_REQUEST_FORM_TABLE" author="P70383">
+        <createTable tableName="request_form" remarks="Represents a request form">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="request_form_pk" nullable="false"/>
+            </column>
+            <column name="request_id" type="bigint" remarks="The request the form is related to (foreign key to request table)">
+                <constraints foreignKeyName="request_form_request_fk" references="request(id)" nullable="false"/>
+            </column>
+            <column name="payload" type="text" remarks="The payload">
+                <constraints nullable="false" />
+            </column>
+            <column name="payload_type" type="varchar(255)" remarks="The payload type">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="request_form" columnNames="request_id,payload_type" constraintName="request_payload_type_uc"/>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_form;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_BIND_PERMIT_APPLY_SAVE_REQUEST_ACTION_WITH_OPEN_TASK" author="P70383">
+        <sql>
+            UPDATE request_action ra
+            SET request_task_id = (SELECT id FROM request_task rt WHERE rt.request_id = r.id AND status = 'OPEN' AND "type" = 'PERMIT_ISSUANCE_APPLICATION_SUBMIT')
+                FROM request r
+            WHERE ra."type" = 'PERMIT_APPLY_SAVE' AND ra.request_task_id ISNULL AND r.id = ra.request_id AND r.status = 'OPEN';
+        </sql>
+
+        <rollback>
+            <sql>
+                UPDATE request_action ra
+                SET request_task_id = NULL
+                FROM request r
+                WHERE ra."type" = 'PERMIT_APPLY_SAVE' AND ra.request_task_id NOTNULL AND r.id = ra.request_id AND r.status = 'OPEN';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_UPDATE_REQUEST_TABLE_ADD_PAYLOAD_COLUMN" author="pafilisa@unisystems.gr">
+        <sql>
+            ALTER TABLE request ADD COLUMN payload TEXT;
+
+            COMMENT ON COLUMN request.payload IS 'The request payload';
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE request
+                DROP COLUMN IF EXISTS payload;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYLOAD_COLUMN" author="pafilisa@unisystems.gr">
+        <sql>
+            update request r
+            set payload = (select regexp_replace(rf.payload, '"PERMIT_FORM_PAYLOAD"', '"PERMIT_REQUEST_PAYLOAD"')
+                           from request_form rf
+                           where rf.request_id = r.id)
+            where r.status = 'OPEN';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request r
+                set payload = null
+                from request_form rf
+                where rf.request_id = r.id
+                and r.status = 'OPEN'
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_REQUEST_FORM_TABLE" author="pafilisa@unisystems.gr">
+        <sql>
+            DROP TABLE IF EXISTS request_form;
+        </sql>
+
+        <rollback>
+            <sql>
+                CREATE TABLE request_form (
+                id bigint,
+                request_id bigint NOT NULL,
+                payload TEXT NOT NULL,
+                payload_type VARCHAR(255) NOT NULL
+                );
+
+                ALTER TABLE request_form ADD CONSTRAINT request_form_pk PRIMARY KEY (id);
+                ALTER TABLE request_form ADD CONSTRAINT request_form_request_fk FOREIGN KEY (request_id) REFERENCES request (id);
+                ALTER TABLE request_form ADD CONSTRAINT request_payload_type_uc UNIQUE (request_id,payload_type);
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_REQUEST_FORM_SEQUENCE" author="pafilisa@unisystems.gr">
+        <sql>
+            DROP SEQUENCE IF EXISTS request_form_seq;
+        </sql>
+
+        <rollback>
+            <sql>
+                CREATE SEQUENCE request_form_seq MINVALUE 0 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 1 NO CYCLE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_UPDATE_REQUEST_TASK_TABLE_ADD_PAYLOAD_COLUMN" author="pafilisa@unisystems.gr">
+        <sql>
+            ALTER TABLE request_task ADD COLUMN payload TEXT;
+
+            COMMENT ON COLUMN request_task.payload IS 'The request task payload';
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE request_task
+                DROP COLUMN IF EXISTS payload;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_TASK_PAYLOAD_COLUMN_FOR_TASKS_OF_TYPE_PERMIT_ISSUANCE_APPLICATION_SUBMIT" author="pafilisa@unisystems.gr">
+        <sql>
+            update request_task rt
+            set payload = (select ra.payload
+                           from request_action ra
+                           where ra.request_task_id = rt.id
+                             and ra.type = 'PERMIT_APPLY_SAVE')
+            where rt.type = 'PERMIT_ISSUANCE_APPLICATION_SUBMIT'
+              and rt.status = 'OPEN';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request_task rt
+                set payload = null
+                where rt.type = 'PERMIT_ISSUANCE_APPLICATION_SUBMIT'
+                and rt.status = 'OPEN';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DELETE_REQUEST_ACTION_RECORDS_OF_TYPE_PERMIT_APPLY_SAVE" author="pafilisa@unisystems.gr">
+        <sql>
+            delete
+            from request_action
+            where type = 'PERMIT_APPLY_SAVE'
+              and request_task_id is not null;
+        </sql>
+
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYLOAD_COLUMN_FOR_REQUESTS_OF_TYPE_PERMIT_ISSUANCE_THAT_HAVE_BEEN_SUBMITTED" author="pafilisa@unisystems.gr">
+        <sql>
+            update request r
+            set payload = (select regexp_replace(ra.payload, '"PERMIT_APPLY_PAYLOAD"', '"PERMIT_ISSUANCE_REQUEST_PAYLOAD"')
+                           from request_action ra
+                           where ra.request_id = r.id
+                             and ra.type = 'PERMIT_APPLY_SUBMIT')
+            where r.type = 'PERMIT_ISSUANCE'
+              and r.status = 'OPEN';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request r
+                set payload = null
+                where r.type = 'PERMIT_ISSUANCE'
+                and r.status = 'OPEN';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_ACTION_PAYLOAD_FOR_ACTIONS_OF_TYPE_PERMIT_APPLY_SUBMIT" author="pafilisa@unisystems.gr">
+        <sql>
+            update request_action
+            set payload = regexp_replace(payload, '"PERMIT_APPLY_PAYLOAD"', '"PERMIT_ISSUANCE_APPLICATION_SUBMITTED_PAYLOAD"'),
+                payload_type = 'PERMIT_ISSUANCE_APPLICATION_SUBMITTED_PAYLOAD',
+                type = 'PERMIT_ISSUANCE_APPLICATION_SUBMITTED'
+            where type = 'PERMIT_APPLY_SUBMIT';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request_action
+                set payload = regexp_replace(payload, '"PERMIT_ISSUANCE_APPLICATION_SUBMITTED_PAYLOAD"', '"PERMIT_APPLY_PAYLOAD"'),
+                payload_type = 'PERMIT_APPLY_PAYLOAD',
+                type = 'PERMIT_APPLY_SUBMIT'
+                where type = 'PERMIT_ISSUANCE_APPLICATION_SUBMITTED';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_UPDATE_REQUEST_ACTION_TABLE_DROP_REQUEST_TASK_ID_COLUMN" author="pafilisa@unisystems.gr">
+        <sql>
+            ALTER TABLE request_action
+            DROP COLUMN IF EXISTS request_task_id;
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE request_action ADD COLUMN request_task_id bigint;
+                COMMENT ON COLUMN request_action.request_task_id IS 'The id to request_task table';
+                ALTER TABLE request_action ADD CONSTRAINT request_action_task_fk FOREIGN KEY (request_task_id) REFERENCES request_task (id);
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_UPDATE_REQUEST_ACTION_TABLE_DROP_VERSION_COLUMN" author="pafilisa@unisystems.gr">
+        <sql>
+            ALTER TABLE request_action
+            DROP COLUMN IF EXISTS version;
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE request_action ADD COLUMN version bigint;
+                COMMENT ON COLUMN request_action.version IS 'The version number (optimistic locking)';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_UPDATE_REQUEST_TASK_TABLE_ADD_VERSION_COLUMN" author="pafilisa@unisystems.gr">
+        <sql>
+            ALTER TABLE request_task ADD COLUMN version bigint;
+            COMMENT ON COLUMN request_task.version IS 'The version number (optimistic locking)';
+        </sql>
+        <rollback>
+            <sql>
+                ALTER TABLE request_task
+                DROP COLUMN IF EXISTS version;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_TASK_VERSION" author="pafilisa@unisystems.gr">
+        <sql>
+            update request_task
+            set version = 0;
+        </sql>
+    </changeSet>
+
+    <changeSet id="0_1_0_uppdate_request_task_table_for_deprecated_type_PERMIT_ISSUANCE_APPLICATION_WAIT_FOR_REVIEW" author="pafilisa@unisystems.gr">
+        <sql>
+            update request_task
+            set type = 'PERMIT_ISSUANCE_WAIT_FOR_REVIEW'
+            where type = 'PERMIT_ISSUANCE_APPLICATION_WAIT_FOR_REVIEW';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request_task
+                set type = 'PERMIT_ISSUANCE_APPLICATION_WAIT_FOR_REVIEW'
+                where type = 'PERMIT_ISSUANCE_WAIT_FOR_REVIEW';
+            </sql>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="0_1_0_update_REQUEST_PAYLOAD_for_requests_of_type_PERMIT_ISSUANCE" author="pafilisa@unisystems.gr">
+        <sql>
+            update request r
+            set payload = regexp_replace(r.payload, '"PERMIT_REQUEST_PAYLOAD"', '"PERMIT_ISSUANCE_REQUEST_PAYLOAD"')
+            where r.type = 'PERMIT_ISSUANCE';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request r
+                set payload = regexp_replace(r.payload, '"PERMIT_ISSUANCE_REQUEST_PAYLOAD"', '"PERMIT_REQUEST_PAYLOAD"')
+                where r.type = 'PERMIT_ISSUANCE';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_PROPERTY_applyStatusesCompleted_IN_REQUEST_TASK_PAYLOAD" author="pafilisa@unisystems.gr">
+        <comment>Rename property applyStatusesCompleted to permitSectionsCompleted in request task payload</comment>
+        <sql>
+            update request_task
+            set payload = regexp_replace(payload, '"applyStatusesCompleted"', '"permitSectionsCompleted"')
+            where type = 'PERMIT_ISSUANCE_APPLICATION_SUBMIT';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request_task
+                set payload = regexp_replace(payload, '"permitSectionsCompleted"', '"applyStatusesCompleted"')
+                where type = 'PERMIT_ISSUANCE_APPLICATION_SUBMIT';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_PROPERTY_attachments_IN_REQUEST_TASK_PAYLOAD" author="pafilisa@unisystems.gr">
+        <comment>Rename property attachments to permitAttachments in request task payload</comment>
+        <sql>
+            update request_task
+            set payload = regexp_replace(payload, '"attachments"', '"permitAttachments"')
+            where type in ('PERMIT_ISSUANCE_APPLICATION_SUBMIT', 'PERMIT_ISSUANCE_APPLICATION_REVIEW');
+        </sql>
+
+        <rollback>
+            <sql>
+                update request_task
+                set payload = regexp_replace(payload, '"permitAttachments"', '"attachments"')
+                where type in ('PERMIT_ISSUANCE_APPLICATION_SUBMIT', 'PERMIT_ISSUANCE_APPLICATION_REVIEW');
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_PROPERTY_attachments_IN_REQUEST_ACTION_PAYLOAD" author="pafilisa@unisystems.gr">
+        <comment>Rename property attachments to permitAttachments in request action payload</comment>
+        <sql>
+            update request_action
+            set payload = regexp_replace(payload, '"attachments"', '"permitAttachments"')
+            where type = 'PERMIT_ISSUANCE_APPLICATION_SUBMITTED';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request_action
+                set payload = regexp_replace(payload, '"permitAttachments"', '"attachments"')
+                where type = 'PERMIT_ISSUANCE_APPLICATION_SUBMITTED';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_PROPERTY_attachments_IN_REQUEST_PAYLOAD" author="pafilisa@unisystems.gr">
+        <comment>Rename property attachments to permitAttachments in request payload</comment>
+        <sql>
+            update request
+            set payload = regexp_replace(payload, '"attachments"', '"permitAttachments"')
+            where type = 'PERMIT_ISSUANCE';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request
+                set payload = regexp_replace(payload, '"permitAttachments"', '"attachments"')
+                where type = 'PERMIT_ISSUANCE';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_PROPERTY_payloadType_IN_PAYLOAD_FOR_TASKS_OF_TYPE_PERMIT_ISSUANCE_APPLICATION_SUBMIT" author="pafilisa@unisystems.gr">
+        <sql>
+            update request_task
+            set payload = regexp_replace(payload, '"PERMIT_APPLY_PAYLOAD"', '"PERMIT_ISSUANCE_APPLICATION_SUBMIT_PAYLOAD"')
+            where type = 'PERMIT_ISSUANCE_APPLICATION_SUBMIT';
+        </sql>
+
+        <rollback>
+            <sql>
+                update request_task
+                set payload = regexp_replace(payload, '"PERMIT_ISSUANCE_APPLICATION_SUBMIT_PAYLOAD"', '"PERMIT_APPLY_PAYLOAD"')
+                where type = 'PERMIT_ISSUANCE_APPLICATION_SUBMIT';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_drop_status_from_request_task" author="P35066">
+        <dropColumn tableName="request_task">
+            <column name="status"/>
+        </dropColumn>
+        <rollback>
+            <sql>
+                alter table request_task ADD column status varchar(255);
+                update request_task set status = 'OPEN';
+                alter table request_task alter column status set not null;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_PAYLOAD_TYPE_COLUMN FROM_REQUEST_ACTION_TABLE" author="pafilisa@unisystems.gr">
+        <sql>
+            ALTER TABLE request_action
+            DROP COLUMN IF EXISTS payload_type;
+        </sql>
+        <rollback>
+            <sql>
+                alter table request_action
+                ADD column payload_type VARCHAR(255);
+
+                update request_action
+                set payload_type = payload::json->>'payloadType';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CLEANUP_ACCOUNT_OPENING_TIMELINE_EVENTS" author="stassinopoulosp@unisystems.gr">
+        <sql>
+            /* Fix INSTALLATION_ACCOUNT_OPENING_APPLICATION_SUBMITTED timeline event */
+            update request_action set
+                                      type = 'INSTALLATION_ACCOUNT_OPENING_APPLICATION_SUBMITTED',
+                                      payload = regexp_replace(payload, '"ACCOUNT_PAYLOAD"', '"INSTALLATION_ACCOUNT_OPENING_APPLICATION_SUBMITTED_PAYLOAD"')
+            where type = 'INSTALLATION_ACCOUNT_OPENING_SUBMIT_APPLICATION';
+
+            /* Fix INSTALLATION_ACCOUNT_OPENING_ACCEPTED/_REJECTED timeline event */
+            update request_action set
+                                      type = case when payload like '%"decision":"ACCEPTED"%'
+                                                      then 'INSTALLATION_ACCOUNT_OPENING_ACCEPTED'
+                                                  else 'INSTALLATION_ACCOUNT_OPENING_REJECTED' end,
+                                      payload = regexp_replace(payload, '"ACCOUNT_SUBMIT_DECISION_PAYLOAD"', '"INSTALLATION_ACCOUNT_OPENING_DECISION_PAYLOAD"')
+            where type = 'INSTALLATION_ACCOUNT_OPENING_SUBMIT_DECISION';
+
+            /* Add INSTALLATION_ACCOUNT_OPENING_ACCOUNT_APPROVED timeline event */
+            with d as (
+                select r.*, raAccept.last_submitted_by, raAccept.last_submission_date,
+                       case when raAmmend.id is not null
+                                then regexp_replace(raAmmend.payload, '"ACCOUNT_PAYLOAD"', '"INSTALLATION_ACCOUNT_OPENING_APPROVED_PAYLOAD"')
+                            else regexp_replace(raSubmit.payload, '"INSTALLATION_ACCOUNT_OPENING_APPLICATION_SUBMITTED_PAYLOAD"', '"INSTALLATION_ACCOUNT_OPENING_APPROVED_PAYLOAD"') end action_payload
+                from request r
+                         join request_action raAccept on raAccept.request_id = r.id and raAccept.type = 'INSTALLATION_ACCOUNT_OPENING_ACCEPTED'
+                         join request_action raSubmit on raSubmit.request_id = r.id and raSubmit.type = 'INSTALLATION_ACCOUNT_OPENING_APPLICATION_SUBMITTED'
+                         left
+                             join request_action raAmmend on raAmmend.request_id = r.id and raAmmend.type = 'INSTALLATION_ACCOUNT_OPENING_AMEND_APPLICATION'
+            )
+            insert into request_action (id, type, payload, last_submitted_by, last_submission_date, request_id)
+            select nextval('request_action_seq') id, 'INSTALLATION_ACCOUNT_OPENING_ACCOUNT_APPROVED' as type, d.action_payload,
+                   last_submitted_by, last_submission_date, d.id as request_id
+            from d;
+
+            /* Remove remaining INSTALLATION_ACCOUNT_OPENING_AMEND_APPLICATION timeline event */
+            delete from request_action
+            where type = 'INSTALLATION_ACCOUNT_OPENING_AMEND_APPLICATION';
+        </sql>
+    </changeSet>
+
+    <changeSet id="0_1_0_DELETE_REQUEST_OBJECT_RECORDS" author="P70453">
+        <sql>
+            delete
+            from request_object
+        </sql>
+
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DELETE_NEW_USER_CONFIRMED_REQUESTS_AND_TASKS" author="P70383">
+        <comment>Delete tasks of type NEW_USER_CONFIRMED with their parent request</comment>
+        <sql>
+            DELETE FROM opened_item WHERE task_id IN (SELECT id FROM request_task WHERE type = 'NEW_USER_CONFIRMED');
+
+            with RECURSIVE deleted as (
+            DELETE FROM request_task WHERE type = 'NEW_USER_CONFIRMED'
+                returning request_id
+            ) DELETE FROM request WHERE id IN (SELECT request_id FROM deleted);
+        </sql>
+    </changeSet>
+
+    <changeSet id="0_1_0_UPDATE_REQUEST_TABLE_DROP_SUBMITTED_BY_COLUMN" author="pafilisa@unisystems.gr">
+        <sql>
+            ALTER TABLE request
+            DROP COLUMN IF EXISTS submitted_by;
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE request ADD COLUMN submitted_by VARCHAR(255);
+                COMMENT ON COLUMN request.submitted_by IS 'The id of the user that submitted the request';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_UPDATE_REQUEST_TABLE_DROP_ASSIGNEE_COLUMN" author="pafilisa@unisystems.gr">
+        <sql>
+            ALTER TABLE request
+            DROP COLUMN IF EXISTS assignee;
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE request ADD COLUMN assignee VARCHAR(255);
+                COMMENT ON COLUMN request.assignee IS 'The id of the user to whom the request is assigned to';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_TASK_ADD_PAUSE_DATE_COLUMN" author="P70605">
+        <addColumn tableName="request_task">
+            <column name="pause_date" type="date" remarks="The pause date"/>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE request_task DROP COLUMN IF EXISTS pause_date;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_ACTION_ADD_SUBMITTER_COLUMN" author="P70605">
+        <renameColumn tableName="request_action" oldColumnName="last_submitted_by" newColumnName="submitter_id"/>
+        <addColumn tableName="request_action">
+            <column name="submitter" type="varchar(512)"/>
+        </addColumn>
+        <sql>
+            UPDATE request_action SET submitter = submitter_id;
+        </sql>
+        <addNotNullConstraint tableName="request_action" columnName="submitter"/>
+        <rollback>
+            <dropNotNullConstraint tableName="request_action" columnName="submitter"/>
+            <sql>
+                ALTER TABLE request_action DROP COLUMN IF EXISTS submitter;
+            </sql>
+            <renameColumn tableName="request_action" oldColumnName="submitter_id" newColumnName="last_submitted_by"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CHANGE_REQUEST_STATUS_OPEN_CLOSED" author="P70383">
+        <comment>Change request status OPEN to IN_PROGRESS and CLOSED to COMPLETED</comment>
+        <sql>
+            UPDATE request SET status = 'IN_PROGRESS' WHERE status = 'OPEN';
+            UPDATE request SET status = 'COMPLETED' WHERE status = 'CLOSED';
+        </sql>
+        <rollback>
+            <sql>
+                UPDATE request SET status = 'CLOSED' WHERE status != 'IN_PROGRESS';
+                UPDATE request SET status = 'OPEN' WHERE status = 'IN_PROGRESS';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_NOT_NULL_CONSTRAINT_ON_REQUEST_ACTION_SUBMITTER" author="P70605">
+        <dropNotNullConstraint tableName="request_action" columnName="submitter_id"/>
+        <dropNotNullConstraint tableName="request_action" columnName="submitter"/>
+        <rollback>
+            <addNotNullConstraint tableName="request_action" columnName="submitter_id"/>
+            <addNotNullConstraint tableName="request_action" columnName="submitter"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_MODIFY_REQUEST_ID_TYPE_TO_VARCHAR" author="P62629">
+        <dropForeignKeyConstraint baseTableName="request_action" constraintName="request_action_request_fk"/>
+        <dropForeignKeyConstraint baseTableName="request_object" constraintName="request_object_request_fk"/>
+        <dropForeignKeyConstraint baseTableName="request_task" constraintName="request_task_request_fk"/>
+        <dropForeignKeyConstraint baseTableName="request_parameter" constraintName="request_parameter_request_fk"/>
+
+        <modifyDataType tableName="request_action" columnName="request_id" newDataType="varchar(20)"/>
+        <modifyDataType tableName="request_object" columnName="request_id" newDataType="varchar(20)"/>
+        <modifyDataType tableName="request_task" columnName="request_id" newDataType="varchar(20)"/>
+        <modifyDataType tableName="request_parameter" columnName="request_id" newDataType="varchar(20)"/>
+
+        <modifyDataType tableName="request" columnName="id" newDataType="varchar(20)"/>
+
+        <addForeignKeyConstraint baseTableName="request_action" baseColumnNames="request_id" referencedTableName="request" referencedColumnNames="id"  constraintName="request_action_request_fk"/>
+        <addForeignKeyConstraint baseTableName="request_object" baseColumnNames="request_id" referencedTableName="request" referencedColumnNames="id"  constraintName="request_object_request_fk"/>
+        <addForeignKeyConstraint baseTableName="request_task" baseColumnNames="request_id" referencedTableName="request" referencedColumnNames="id"  constraintName="request_task_request_fk"/>
+        <addForeignKeyConstraint baseTableName="request_parameter" baseColumnNames="request_id" referencedTableName="request" referencedColumnNames="id"  constraintName="request_parameter_request_fk"/>
+
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="0_1_0_CREATE_REQUEST_SEQUENCE_TABLE" author="P62629">
+        <createSequence sequenceName="request_sequence_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <createTable tableName="request_sequence" remarks="Represents a request sequence">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="request_sequence_pk" nullable="false"/>
+            </column>
+            <column name="account_id" type="bigint" remarks="The account id related to the request">
+                <constraints foreignKeyName="request_sequence_account_fk" references="account(id)" nullable="false"/>
+            </column>
+            <column name="version" type="bigint" remarks="The version number (optimistic locking)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="sequence" type="bigint"
+                    remarks="The sequence, specific to each request type (e.g. incrementing number or year etc.)">
+            </column>
+            <column name="type" type="varchar(255)" remarks="The request type">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_sequence;
+                DROP SEQUENCE IF EXISTS request_sequence_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_OPENED_ITEM_TABLE" author="P70453">
+        <renameTable newTableName="request_task_visit" oldTableName="opened_item" />
+        <rollback>
+            <renameTable newTableName="opened_item" oldTableName="request_task_visit" />
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_rename_request_table_submission_date_column_to_creation_date" author="P35066">
+        <renameColumn tableName="request" oldColumnName="submission_date" newColumnName="creation_date"/>
+        <rollback>
+            <renameColumn tableName="request" oldColumnName="creation_date" newColumnName="submission_date"/>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_add_request_submission_date_column" author="P35066">
+        <addColumn tableName="request">
+            <column name="submission_date" type="timestamp" remarks="The submission date of the request (when the initial task of the flow was completed)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <sql>
+        	update request
+        	set submission_date = creation_date where type = 'INSTALLATION_ACCOUNT_OPENING';
+        
+        	update request as r
+        	set submission_date = ra.last_submission_date
+        	from request_action as ra
+        	where ra.request_id  = r.id and r.type = 'PERMIT_ISSUANCE' and ra.type = 'PERMIT_ISSUANCE_APPLICATION_SUBMITTED';
+        	
+        	update request as r
+        	set submission_date = ra.last_submission_date
+        	from request_action as ra
+        	where ra.request_id  = r.id and r.type = 'PERMIT_SURRENDER' and ra.type = 'PERMIT_SURRENDER_APPLICATION_SUBMITTED';
+        	
+        	update request as r
+        	set submission_date = ra.last_submission_date
+        	from request_action as ra
+        	where ra.request_id  = r.id and r.type = 'PERMIT_REVOCATION' and ra.type = 'PERMIT_REVOCATION_APPLICATION_SUBMITTED';
+        	
+        	update request as r
+        	set submission_date = ra.last_submission_date
+        	from request_action as ra
+        	where ra.request_id  = r.id and r.type = 'PERMIT_NOTIFICATION' and ra.type = 'PERMIT_NOTIFICATION_APPLICATION_SUBMITTED';
+        </sql>
+        <rollback>
+        	<dropColumn tableName="request">
+	            <column name="submission_date"/> 
+	        </dropColumn>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_rename_request_action_table_last_submission_date_column_to_creation_date" author="P35066">
+        <renameColumn tableName="request_action" oldColumnName="last_submission_date" newColumnName="creation_date"/>
+        <rollback>
+            <renameColumn tableName="request_action" oldColumnName="creation_date" newColumnName="last_submission_date"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_METADATA_COLUMN" author="P70383">
+        <addColumn tableName="request">
+            <column name="metadata" type="text" remarks="The request metadata details">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+
+        <rollback>
+            <sql>
+                ALTER TABLE request
+                DROP COLUMN IF EXISTS metadata;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_END_DATE_COLUMN" author="P70383">
+        <addColumn tableName="request">
+            <column name="end_date" type="timestamp" remarks="The end date of the request (when the last task of the flow was completed)">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE request
+                DROP COLUMN IF EXISTS end_date;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_REQUEST_SEQUENCE_ACCOUNT_FOREIGN_KEY_CONSTRAINT" author="P70453">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyName="request_sequence_account_fk"/>
+        </preConditions>
+        <dropForeignKeyConstraint  baseTableName="request_sequence" constraintName="request_sequence_account_fk"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,210 @@
+<app-page-heading [caption]="(actionType$ | async) ? undefined : 'Apply for an installation account'" size="xl">
+  <ng-container [ngSwitch]="actionType$ | async">
+    <ng-container *ngSwitchCase="'INSTALLATION_ACCOUNT_OPENING_APPROVED_PAYLOAD'"
+      >Installation application approved</ng-container
+    >
+    <ng-container *ngSwitchCase="'INSTALLATION_ACCOUNT_OPENING_APPLICATION_SUBMITTED_PAYLOAD'"
+      >Original application</ng-container
+    >
+    <ng-container *ngSwitchDefault>Check the information provided before submitting</ng-container>
+  </ng-container>
+</app-page-heading>
+
+<h2
+  app-summary-header
+  class="govuk-heading-m"
+  [changeRoute]="(actionType$ | async) ? undefined : ['..', 'responsibility']"
+>
+  Operator confirmation of responsibility
+</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>
+      The applicant has confirmed that the legal entity holding the permit undertakes to comply with these conditions
+    </dt>
+    <dd govukSummaryListRowValue>
+      <div>
+        Manage site operations through having day-to-day control of plant operation including the manner and rate of
+        operation
+      </div>
+      <br />
+      <div>Ensure that permit conditions are effectively complied with</div>
+      <br />
+      <div>Control, monitor and report specified emission</div>
+    </dd>
+  </div>
+</dl>
+
+<ng-container *ngIf="legalEntity$ | async as legalEntity">
+  <h2
+    app-summary-header
+    class="govuk-heading-m"
+    [changeRoute]="(actionType$ | async) ? undefined : ['..', 'legal-entity']"
+  >
+    Identity of the legal entity operating the permit
+  </h2>
+  <dl govuk-summary-list class="govuk-!-margin-bottom-9">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>New or existing organisation</dt>
+      <dd govukSummaryListRowValue>{{ legalEntity.selectGroup.isNew ? 'New' : 'Existing' }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Type of the operator</dt>
+      <dd govukSummaryListRowValue>{{ legalEntity.detailsGroup.type | i18nSelect: legalEntityTypeMap }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Name of the operator</dt>
+      <dd govukSummaryListRowValue>{{ legalEntity.detailsGroup.name }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Company registration number</dt>
+      <dd govukSummaryListRowValue>
+        {{ legalEntity.detailsGroup.referenceNumber || legalEntity.detailsGroup.noReferenceNumberReason }}
+      </dd>
+    </div>
+    <ng-container
+      [ngTemplateOutlet]="address"
+      [ngTemplateOutletContext]="{ $implicit: legalEntity.detailsGroup.address }"
+    ></ng-container>
+  </dl>
+</ng-container>
+
+<h2
+  app-summary-header
+  class="govuk-heading-m"
+  [changeRoute]="(actionType$ | async) ? undefined : ['..', 'installation']"
+>
+  Installation details type
+</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Installation type</dt>
+    <dd govukSummaryListRowValue>{{ installationType$ | async | titlecase }}</dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  class="govuk-heading-m"
+  [changeRoute]="(actionType$ | async) ? undefined : ['..', 'installation', installationType$ | async | lowercase]"
+>
+  Installation details for {{ installationType$ | async | lowercase }}
+</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <ng-container *ngIf="(installationType$ | async) === 'ONSHORE'; else offshoreDetails">
+    <ng-container *ngIf="onshoreInstallation$ | async as onshoreInstallation">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Installation name</dt>
+        <dd govukSummaryListRowValue>{{ onshoreInstallation.name }}</dd>
+      </div>
+      <div govukSummaryListRow *ngIf="onshoreInstallation.siteName">
+        <dt govukSummaryListRowKey>Site name</dt>
+        <dd govukSummaryListRowValue>{{ onshoreInstallation.siteName }}</dd>
+      </div>
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>UK Ordnance Survey grid reference</dt>
+        <dd govukSummaryListRowValue>{{ onshoreInstallation.gridReference }}</dd>
+      </div>
+      <ng-container
+        [ngTemplateOutlet]="address"
+        [ngTemplateOutletContext]="{ $implicit: onshoreInstallation.address }"
+      ></ng-container>
+    </ng-container>
+  </ng-container>
+  <ng-template #offshoreDetails>
+    <ng-container *ngIf="offshoreInstallation$ | async as offshoreInstallation">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Installation name</dt>
+        <dd govukSummaryListRowValue>{{ offshoreInstallation.name }}</dd>
+      </div>
+      <div govukSummaryListRow *ngIf="offshoreInstallation.siteName">
+        <dt govukSummaryListRowKey>Site name</dt>
+        <dd govukSummaryListRowValue>{{ offshoreInstallation.siteName }}</dd>
+      </div>
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Latitude</dt>
+        <dd govukSummaryListRowValue>{{ offshoreInstallation.latitude | coordinate }}</dd>
+      </div>
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Longitude</dt>
+        <dd govukSummaryListRowValue>{{ offshoreInstallation.longitude | coordinate }}</dd>
+      </div>
+    </ng-container>
+  </ng-template>
+</dl>
+
+<ng-container *ngIf="(installationType$ | async) === 'ONSHORE'">
+  <h2
+    app-summary-header
+    class="govuk-heading-m"
+    [changeRoute]="(actionType$ | async) ? undefined : ['..', 'installation', 'emissions']"
+  >
+    Installation details location
+  </h2>
+  <dl govuk-summary-list class="govuk-!-margin-bottom-9">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Location of the installation</dt>
+      <dd govukSummaryListRowValue>{{ installationEmissions$ | async }}</dd>
+    </div>
+  </dl>
+</ng-container>
+
+<h2 app-summary-header class="govuk-heading-m" [changeRoute]="(actionType$ | async) ? undefined : ['..', 'ets-scheme']">
+  ETS scheme
+</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Emissions trading scheme which the installation will be part of</dt>
+    <dd govukSummaryListRowValue>{{ etsScheme$ | async | etsScheme }}</dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  class="govuk-heading-m"
+  [changeRoute]="(actionType$ | async) ? undefined : ['..', 'commencement']"
+>
+  Estimated date on which Annex 1 activities will commence
+</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>What is the date of commencement of Annex 1 activities?</dt>
+    <dd govukSummaryListRowValue>{{ dateOfCommencement$ | async | govukDate }}</dd>
+  </div>
+</dl>
+
+<ng-container *ngIf="(actionType$ | async) === undefined">
+  <h2 class="govuk-heading-m">Now submit your application</h2>
+  <p class="govuk-body">
+    By submitting this application you confirm that all the information you have given is correct and up to date
+  </p>
+
+  <button
+    (click)="onApplicationSubmit()"
+    [disabled]="isSubmitDisabled"
+    govukButton
+    title="Submit the application"
+    type="button"
+  >
+    Confirm and submit
+  </button>
+</ng-container>
+
+<ng-template #address let-address>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Address</dt>
+    <dd govukSummaryListRowValue>{{ address.line1 }}<span *ngIf="address.line2">,</span> {{ address.line2 }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Town or city</dt>
+    <dd govukSummaryListRowValue>{{ address.city }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Country</dt>
+    <dd govukSummaryListRowValue>{{ address.country | country }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Post code</dt>
+    <dd govukSummaryListRowValue>{{ address.postcode }}</dd>
+  </div>
+</ng-template>

@@ -1,0 +1,93 @@
+<app-permit-task [breadcrumb]="[{ text: 'Measurement', link: ['measurement'] }]">
+  <ng-container *ngIf="(isEditable$ | async) === false; else start">
+    <app-page-heading caption="Measurement"> Add a source stream category </app-page-heading>
+    <p class="govuk-body">Get help with <a [routerLink]="" govukLink>source stream categories</a>.</p>
+    <p class="govuk-body">Get help with <a [routerLink]="" govukLink>measurement</a>.</p>
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Source streams (fuels and materials)</li>
+      <li>Emission sources</li>
+      <li>Emission points</li>
+    </ul>
+  </ng-container>
+
+  <ng-template #start>
+    <app-page-heading caption="Measurement">
+      <ng-container
+        *ngIf="
+          ('MEASUREMENT' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers as tiers;
+          else addStream
+        "
+      >
+        <ng-container *ngIf="tiers && tiers[index$ | async]; else addStream">
+          {{ tiers[index$ | async] | sourceStreamCategoryName | async }}
+          <button *ngIf="(store.isEditable$ | async) === true" routerLink="delete" govukSecondaryButton type="button">
+            Delete
+          </button>
+        </ng-container>
+      </ng-container>
+      <ng-template #addStream>
+        <ng-container *ngIf="(store.isEditable$ | async) === true">Add a source stream category</ng-container>
+      </ng-template>
+    </app-page-heading>
+    <p class="govuk-body">Get help with <a [routerLink]="" govukLink>source stream categories</a>.</p>
+    <p class="govuk-body">Get help with <a [routerLink]="" govukLink>measurement</a>.</p>
+    <h2 class="govuk-heading-m">Define the source stream category</h2>
+    <ul app-task-item-list>
+      <li
+        app-task-item
+        link="category/summary"
+        linkText="Source stream category"
+        [status]="'MEASUREMENT_Category' | taskStatus: (index$ | async) | async"
+      >
+        <app-category-summary-overview
+          *ngIf="('MEASUREMENT_Category' | taskStatus: (index$ | async) | async) === 'complete'"
+          [sourceStreamCategory]="
+            ('MEASUREMENT' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async]
+              .sourceStreamCategory
+          "
+          cssClass="govuk-!-margin-bottom-0"
+        >
+        </app-category-summary-overview>
+      </li>
+    </ul>
+
+    <h2 class="govuk-heading-m">Define measurement approach and apply monitoring tiers</h2>
+    <ul app-task-item-list>
+      <li
+        app-task-item
+        link="emissions/summary"
+        linkText="Measured emissions"
+        [status]="'MEASUREMENT_Measured_Emissions' | taskStatus: (index$ | async) | async"
+      >
+        <app-measured-emissions-overview
+          *ngIf="('MEASUREMENT_Measured_Emissions' | taskStatus: (index$ | async) | async) === 'complete'"
+          [measuredEmissions]="
+            ('MEASUREMENT' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async]
+              .measuredEmissions
+          "
+          cssClass="govuk-!-margin-bottom-0"
+        >
+        </app-measured-emissions-overview>
+      </li>
+      <li
+        app-task-item
+        link="./applied-standard/summary"
+        linkText="Applied standard"
+        [status]="'MEASUREMENT_Applied_Standard' | taskStatus: (index$ | async) | async"
+      >
+        <app-applied-standard-form-summary
+          *ngIf="('MEASUREMENT_Applied_Standard' | taskStatus: (index$ | async) | async) === 'complete'"
+          [appliedStandard]="
+            ('MEASUREMENT' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async]
+              .appliedStandard
+          "
+          cssClass="govuk-!-margin-bottom-0"
+        >
+        </app-applied-standard-form-summary>
+      </li>
+    </ul>
+  </ng-template>
+
+  <app-approach-return-link parentTitle="Measurement" reviewGroupUrl="measurement"></app-approach-return-link>
+</app-permit-task>

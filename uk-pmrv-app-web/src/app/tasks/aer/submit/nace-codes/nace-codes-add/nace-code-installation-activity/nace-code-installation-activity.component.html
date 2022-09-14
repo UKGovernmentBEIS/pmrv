@@ -1,0 +1,29 @@
+<app-aer-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Add a NACE code"
+    heading="Select the option that describes your installation's activity"
+    submitText="Save and continue"
+  >
+    <div formControlName="installationActivity" govuk-radio>
+      <ng-container *ngFor="let option of installationActivityOptions">
+        <ng-container *ngIf="!option[1].children">
+          <govuk-radio-option [value]="option[1].value" [label]="option[1].label"></govuk-radio-option>
+        </ng-container>
+        <ng-container *ngIf="option[1].children">
+          <govuk-radio-option [value]="option[0]" [label]="option[1].label">
+            <ng-container govukConditionalContent>
+              <div formControlName="installationActivityChild" govuk-radio>
+                <ng-container *ngFor="let child of option[1].children">
+                  <govuk-radio-option [value]="child.value" [label]="child.label"></govuk-radio-option>
+                </ng-container>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+        </ng-container>
+      </ng-container>
+    </div>
+  </app-wizard-step>
+  <a govukLink routerLink="..">Return to: report task list</a>
+</app-aer-task>

@@ -1,0 +1,26 @@
+<app-aer-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    heading="European Pollutant Release and Transfer Register codes (PRTR)"
+    [hideSubmit]="(isEditable$ | async) === false"
+  >
+    <p class="govuk-body">
+      A PRTR is a national or regional environmental inventory of potentially hazardous chemical substances or
+      pollutants released to air, water and soil and transferred off-site for treatment or disposal.
+    </p>
+    <p class="govuk-body">
+      <a href="https://www.legislation.gov.uk/eur/2006/166/annex/I" rel="noreferrer noopener" target="_blank"
+        >Annex I of the UK PRTR legislation</a
+      >
+      on PRTRs specifies which activities need to report their information.
+    </p>
+
+    <app-boolean-radio-group
+      controlName="exist"
+      legend="Are emissions from the installation reported under the Pollutant Release and Transfer Register?"
+    ></app-boolean-radio-group>
+  </app-wizard-step>
+
+  <app-return-link></app-return-link>
+</app-aer-task>

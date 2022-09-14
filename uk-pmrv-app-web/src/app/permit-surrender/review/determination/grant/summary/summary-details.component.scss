@@ -1,0 +1,10 @@
+@use '~govuk-frontend/govuk/base' as govuk;
+
+.error {
+  border-left: govuk.govuk-spacing(1) solid govuk.$govuk-error-colour;
+  padding-left: govuk.govuk-spacing(2);
+  span {
+    color: govuk.$govuk-error-colour;
+    font-weight: bold;
+  }
+}

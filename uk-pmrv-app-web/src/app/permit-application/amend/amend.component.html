@@ -1,0 +1,14 @@
+<govuk-error-summary *ngIf="displayErrorSummary$ | async" [form]="form"></govuk-error-summary>
+
+<app-amend-summary-template></app-amend-summary-template>
+
+<form (ngSubmit)="confirm()" [formGroup]="form">
+  <div formControlName="changes" govuk-checkboxes>
+    <govuk-checkbox [value]="true" label="I have made changes and want to mark this task as complete"></govuk-checkbox>
+  </div>
+  <div *ngIf="store.isEditable$ | async" class="govuk-button-group">
+    <button appPendingButton govukButton type="submit">Confirm and Complete</button>
+  </div>
+</form>
+
+<a govukLink routerLink="../..">Return to: Apply for a permit</a>

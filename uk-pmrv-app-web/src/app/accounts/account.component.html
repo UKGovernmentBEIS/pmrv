@@ -1,0 +1,26 @@
+<ng-container *ngIf="account$ | async as account">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+      <app-page-heading size="xl">
+        {{ account.name }}
+        <span class="status govuk-tag govuk-tag--grey">
+          <strong>{{ account.status | accountStatus }} </strong>
+        </span>
+      </app-page-heading>
+    </div>
+    <div class="govuk-grid-column-one-quarter">
+      <button govukButton type="button" routerLink="process-actions" class="start-new-process">Start a new task</button>
+    </div>
+  </div>
+</ng-container>
+<govuk-tabs>
+  <ng-template govukTab id="details" label="Details">
+    <app-account-details></app-account-details>
+  </ng-template>
+  <ng-template govukTab id="workflows" label="Workflows">
+    <app-workflows></app-workflows>
+  </ng-template>
+  <ng-template govukTab id="users" label="Users and contacts">
+    <app-operators></app-operators>
+  </ng-template>
+</govuk-tabs>

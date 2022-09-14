@@ -1,0 +1,58 @@
+<form [formGroup]="searchForm">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+      <div class="govuk-grid-row">
+        <div class="govuk-checkboxes govuk-checkboxes--small">
+          <div class="govuk-grid-column-full">
+            <div class="govuk-heading-m">Workflows</div>
+            <div class="govuk-heading-s">Type</div>
+            <div formControlName="workflowTypes" govuk-checkboxes>
+              <govuk-checkbox
+                *ngFor="let type of workflowTypesMap | keyvalue: keyValueWithoutSort"
+                [value]="type.key"
+                [label]="type.value"
+              ></govuk-checkbox>
+            </div>
+          </div>
+          <div class="govuk-grid-column-full">
+            <div class="govuk-heading-s">Status</div>
+            <div formControlName="workflowStatuses" govuk-checkboxes>
+              <govuk-checkbox
+                *ngFor="let type of workflowStatusesMap | keyvalue"
+                [value]="type.key"
+                [label]="type.value"
+              ></govuk-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="govuk-grid-column-three-quarters">
+      <ul class="govuk-list">
+        <li *ngFor="let workflow of workflows$ | async" class="search-results-list_item">
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-three-quarters">
+              <a [routerLink]="['workflows', workflow.id]" govukLink>
+                {{ workflow.id }} {{ workflowTypesMap[workflow.requestType] }}
+              </a>
+              <div>Created: {{ workflow.creationDate | govukDate }}</div>
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+              <span
+                class="search-results-list_item_status govuk-tag govuk-tag--{{ workflow.requestStatus | tagColor }}"
+              >
+                <strong>{{ workflow.requestStatus | i18nSelect: workflowStatusesTagMap }}</strong>
+              </span>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <app-pagination
+        *ngIf="(pageCount$ | async) > 0 && showPagination$ | async"
+        [count]="pageCount$ | async"
+        (currentPageChange)="page$.next($event)"
+        [pageSize]="pageSize"
+      ></app-pagination>
+    </div>
+  </div>
+</form>

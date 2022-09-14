@@ -1,0 +1,24 @@
+<govuk-notification-banner *ngIf="notification" type="success">
+  <h1 class="govuk-notification-banner__heading">Template updated</h1>
+</govuk-notification-banner>
+
+<ng-container *ngIf="documentTemplate$ | async as documentTemplate">
+  <app-page-heading>{{ documentTemplate.name }}</app-page-heading>
+  <h1 class="govuk-heading-m">Template Content</h1>
+  <dl govuk-summary-list>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Uploaded Document</dt>
+      <dd govukSummaryListRowValue>
+        <a [routerLink]="['file-download', documentTemplate.fileUuid]" govukLink target="_blank">{{
+          documentTemplate.filename
+        }}</a>
+      </dd>
+      <dd govukSummaryListRowActions>
+        <a govukLink routerLink="edit">Change</a>
+      </dd>
+    </div>
+  </dl>
+  <app-document-template-details-template
+    [documentTemplate]="documentTemplate"
+  ></app-document-template-details-template>
+</ng-container>

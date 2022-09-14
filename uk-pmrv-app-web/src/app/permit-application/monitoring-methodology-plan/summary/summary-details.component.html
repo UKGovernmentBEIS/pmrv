@@ -1,0 +1,37 @@
+<ng-container *ngIf="'monitoringMethodologyPlans' | task | async as monitoringMethodologyPlans">
+  <dl
+    govuk-summary-list
+    [hasBorders]="false"
+    [class.summary-list--edge-border]="hasBottomBorder"
+    [class.govuk-!-margin-bottom-0]="isPreview"
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>
+        Are you supplying a Monitoring and Methodology Plan as part of your permit application?
+      </dt>
+      <dd govukSummaryListRowValue>{{ monitoringMethodologyPlans.exist ? 'Yes' : 'No' }}</dd>
+      <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true && !isPreview">
+        <a govukLink [routerLink]="['..']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+  </dl>
+  <ng-container *ngIf="(files$ | async).length">
+    <dl
+      govuk-summary-list
+      [hasBorders]="false"
+      [class.summary-list--edge-border]="hasBottomBorder"
+      [class.govuk-!-margin-bottom-0]="isPreview"
+    >
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Uploaded files</dt>
+        <dd govukSummaryListRowValue>
+          <app-summary-download-files [files]="store.getDownloadUrlFiles(files$ | async)">
+          </app-summary-download-files>
+        </dd>
+        <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true && !isPreview">
+          <a govukLink [routerLink]="['..', 'upload-file']" [state]="{ changing: true }">Change</a>
+        </dd>
+      </div>
+    </dl>
+  </ng-container>
+</ng-container>

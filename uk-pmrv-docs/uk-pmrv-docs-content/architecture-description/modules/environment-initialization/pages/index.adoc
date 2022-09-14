@@ -1,0 +1,20 @@
+= Initialization of Environment
+
+In order fot the PMRV to be functional some actions are needed for the initialization of the environment:
+
+== Seed users
+
+At least one Regulator per Competent Authority needs to exist in the system in order to be able to invite other Regulator users and perform Regulator related tasks for Installation/Aviation Account Opening applications.
+
+For this purpose a special link:{attachmentsdir}/create_seed_user.sh[script] has been implemented to:
+
+* Register the user in keycloak. The user is registered with a temporary password which needs to change upon his first login.
+* Give permissions to user in order to be able to perform administrative tasks. The user is assigned all the permissions a CA-super-user has.
+
+NOTE: All seed users will have to go into their profile from Regulators User management and upload their signature after the first login. Signature is considered mandatory for all Regulators and if not uploaded several problems could occur later when the user makes an action where the signature is used.
+
+== Terms and Conditions
+
+An entry in terms table needs to exist in order for users signing in to PMRV for the first time to be able to perform the 'accept Terms and Conditions' step, a step thet is mandatory for all users.
+
+A link:{attachmentsdir}/initialize_terms.sh[script] has been implemented to automate this process.

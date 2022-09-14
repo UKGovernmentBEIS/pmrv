@@ -1,0 +1,11 @@
+<app-page-heading>Permit surrender grant</app-page-heading>
+
+<govuk-notification-banner *ngIf="notification" type="success">
+  <h1 class="govuk-notification-banner__heading">Details updated</h1>
+</govuk-notification-banner>
+
+<app-grant-determination-summary-details
+  [grantDetermination$]="grantDetermination$"
+></app-grant-determination-summary-details>
+
+<a govukLink routerLink="../../..">Return to: Permit surrender review</a>

@@ -1,0 +1,36 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Transferred CO2"
+    [heading]="taskKey$ | async | i18nSelect: headingMap"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-procedure-form>
+      <ng-container [ngSwitch]="taskKey$ | async">
+        <ng-container *ngSwitchCase="'monitoringApproaches.TRANSFERRED_CO2.transferOfCO2'">
+          <div class="govuk-body">
+            <p>
+              Provide details of the procedure that ensures CO2 is transferred to an installation that has a greenhouse
+              gas emissions permit, or where emitted CO2 is effectively monitored and accounted for.
+            </p>
+            <p>Get help with <a [routerLink]="" govukLink>transfer of CO2</a>.</p>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'monitoringApproaches.TRANSFERRED_CO2.quantificationMethodologies'">
+          <div class="govuk-body">
+            <p>Provide details of the procedure that describes the quantification methodologies for:</p>
+            <ul>
+              <li>actual emissions of CO2 released to the water column from leakages</li>
+              <li>emissions of CO2 released to the water column from potential leakages</li>
+            </ul>
+            <p>Get help with <a [routerLink]="" govukLink>quantification methodologies</a>.</p>
+          </div>
+        </ng-container>
+      </ng-container>
+    </app-procedure-form>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

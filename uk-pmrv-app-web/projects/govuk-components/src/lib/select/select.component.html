@@ -1,0 +1,16 @@
+<label [class.govuk-visually-hidden]="isLabelHidden" [for]="identifier" [id]="'l.' + identifier" class="govuk-label">
+  {{ currentLabel }}
+</label>
+<select
+  [formControl]="control"
+  [id]="identifier"
+  [attr.name]="identifier"
+  [ngClass]="widthClass"
+  class="govuk-select"
+  govukFormError
+>
+  <option *ngFor="let option of options" [attr.disabled]="option.disabled || null" [ngValue]="option.value">
+    {{ option.text }}
+  </option>
+  <ng-content></ng-content>
+</select>

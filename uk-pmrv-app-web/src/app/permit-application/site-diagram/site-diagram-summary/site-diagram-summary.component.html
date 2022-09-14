@@ -1,0 +1,40 @@
+<app-permit-task
+  [notification]="notification"
+  [breadcrumb]="true"
+  reviewGroupTitle="Fuels and equipment inventory"
+  reviewGroupUrl="fuels"
+>
+  <app-page-heading caption="Fuels and equipment inventory">Site diagram</app-page-heading>
+
+  <p class="govuk-body">Upload a diagram of the installation site.</p>
+
+  <p class="govuk-body">The diagram must show the:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>source streams</li>
+    <li>emission sources</li>
+    <li>emission points</li>
+    <li>metering equipment</li>
+  </ul>
+
+  <p class="govuk-body">Clearly show how all of these elements are connected.</p>
+  <p class="govuk-body">
+    Include any other parts of the installation that are relevant to the monitoring method, such as data flow activities
+    and control activities.
+  </p>
+
+  <p class="govuk-body">
+    If the installation uses or supplies power, heat, fuel or materials to another installation, the diagram must show
+    all the boundaries and technical connections.
+  </p>
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    Uploaded Site diagram
+  </h2>
+
+  <app-site-diagram-summary-template></app-site-diagram-summary-template>
+
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

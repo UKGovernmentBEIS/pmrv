@@ -1,0 +1,230 @@
+<govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="usersForm"></govuk-error-summary>
+<app-page-heading size="l">Users, contacts and verifiers</app-page-heading>
+<ng-container *ngIf="(isAccountEditable$ | async) === true && isEditable$ | async">
+  <ng-container [ngSwitch]="(authService.userStatus | async).roleType">
+    <ng-container *ngSwitchCase="'OPERATOR'">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half">
+          <form
+            (ngSubmit)="addUser(addUserForm.get('userType').value)"
+            [formGroup]="addUserForm"
+            class="govuk-grid-row row-container"
+            id="add-user-form"
+            name="add-user"
+          >
+            <div class="govuk-grid-column-two-thirds">
+              <div
+                [options]="userType$ | async"
+                formControlName="userType"
+                govuk-select
+                label="Add a new user"
+                widthClass="govuk-!-width-full"
+              ></div>
+            </div>
+            <div class="govuk-grid-column-one-third">
+              <button govukButton type="submit">Continue</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <govuk-details summary="Learn more about user types, roles and permissions">
+        <article>
+          <h3 class="govuk-heading-s govuk-!-padding-bottom-3">User types</h3>
+          <section>
+            <h4 class="govuk-heading-s govuk-!-font-weight-regular">Operator admin</h4>
+            <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">
+              Every permit holding account must have at least one person assigned as operator admin. Operator admins are
+              able to add and delete other users on the account. They can also be assigned as the primary or secondary
+              contact, the service contact or the financial contact.
+            </p>
+          </section>
+          <section>
+            <h4 class="govuk-heading-s govuk-!-font-weight-regular">Operator</h4>
+            <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">
+              Every permit holding account can have any number of operator users. These user types can be assigned as
+              the primary or secondary contact, the service contact or the financial contact.
+            </p>
+          </section>
+          <section>
+            <h4 class="govuk-heading-s govuk-!-font-weight-regular">Consultant / agent</h4>
+            <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">
+              You may wish to employ the services of a consultant agent to access this website and help you with all of
+              the tasks relating to your permit. A consultant / agent can be assigned as the primary or secondary
+              contact, the service contact or the financial contact.
+            </p>
+          </section>
+          <section>
+            <h4 class="govuk-heading-s govuk-!-font-weight-regular">Emitter contact</h4>
+            <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">
+              This role enables a non-operational person to receive official notifices and other legal communications.
+              This person cannot be assigned any additional permissions.
+            </p>
+            <h4 class="govuk-heading-s govuk-!-font-weight-regular">Verifier</h4>
+            <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">You can appoint a verifier at an TBC TBC</p>
+          </section>
+        </article>
+        <article>
+          <h3 class="govuk-heading-s govuk-!-padding-bottom-3 govuk-!-padding-top-6">User permissions</h3>
+          <section>
+            <h4 class="govuk-heading-s govuk-!-font-weight-regular">Primary and secondary contacts</h4>
+            <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">
+              Responsible for day-to-day operations Must have a primary site contact Can have a secondary site contact
+              Both can send / receive messages to the relevant CA Both can initiate and receive tasks on the system
+            </p>
+          </section>
+          <section>
+            <h4 class="govuk-heading-s govuk-!-font-weight-regular">Primary and secondary contacts</h4>
+            <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">
+              Person who receives all legal and regulatory notices and correspondence. An individual with this role will
+              be the official representative of the legal entity holding the permit.
+            </p>
+          </section>
+          <section>
+            <h4 class="govuk-heading-s govuk-!-font-weight-regular">Financial contact</h4>
+            <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">
+              Person who receives all information regarding fees, fines or other charges. Can be primary and secondary
+              site contact. Can be service contact.
+            </p>
+          </section>
+          <section>
+            <h4 class="govuk-heading-s govuk-!-font-weight-regular">Service contact</h4>
+            <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">
+              Person who receives all notices e.g. regarding enforcements.
+            </p>
+          </section>
+        </article>
+      </govuk-details>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'REGULATOR'">
+      <ng-container *ngIf="(isAccountEditable$ | async) === true">
+        <button (click)="addUser('operator_admin')" govukButton id="reg-add-user" type="button">
+          Add new operator admin
+        </button>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>
+<form (ngSubmit)="saveUsers()" [formGroup]="usersForm" id="users-form" name="users">
+  <govuk-table
+    [columns]="
+      (isEditable$ | async) && (authService.userStatus | async).roleType !== 'VERIFIER' ? editableCols : nonEditableCols
+    "
+    [form]="usersForm"
+    [users]="accountAuthorities$"
+    appUsersTable
+  >
+    <ng-template let-column="column" let-index="index" let-row="row">
+      <ng-container *ngIf="row.roleCode !== 'verifier'; else verifier">
+        <div [ngSwitch]="column.field" class="cell-container">
+          <ng-container *ngSwitchCase="'name'">
+            <a
+              *ngIf="
+                (authService.userStatus | async).userId === row.userId ||
+                  ((authService.userStatus | async).roleType !== 'VERIFIER' &&
+                    (isEditable$ | async) &&
+                    row.authorityStatus !== 'PENDING');
+                else simpleUserName
+              "
+              [routerLink]="['users', row.userId]"
+            >
+              {{ row | userFullName }}
+            </a>
+            <ng-template #simpleUserName>{{ row | userFullName }}</ng-template>
+          </ng-container>
+          <ng-container *ngSwitchCase="'roleName'" formArrayName="usersArray">
+            <ng-container [formGroupName]="index">
+              <ng-container
+                *ngIf="
+                  (isEditable$ | async) === false ||
+                    row.authorityStatus === 'PENDING' ||
+                    !(['operator', 'operator_admin'] | includes: row.roleCode) ||
+                    (authService.userStatus | async).roleType === 'VERIFIER' ||
+                    usersArray.at(index).get('authorityStatus').value === 'DISABLED';
+                  else selectRole
+                "
+              >
+                {{ row[column.field] }}
+              </ng-container>
+              <ng-template #selectRole>
+                <div
+                  [options]="userTypes"
+                  formControlName="roleCode"
+                  govuk-select
+                  widthClass="govuk-!-width-full"
+                ></div>
+              </ng-template>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngSwitchCase="'authorityStatus'" formArrayName="usersArray">
+            <ng-container *ngIf="row.authorityStatus !== 'PENDING'; else simpleStatus" [formGroupName]="index">
+              <app-user-locked *ngIf="row.locked"></app-user-locked>
+              <div
+                [options]="row.authorityStatus === 'ACCEPTED' ? authorityStatusesAccepted : authorityStatuses"
+                formControlName="authorityStatus"
+                govuk-select
+                widthClass="govuk-!-width-full"
+              ></div>
+            </ng-container>
+            <ng-template #simpleStatus>Awaiting confirmation</ng-template>
+          </ng-container>
+          <ng-container *ngSwitchCase="'deleteBtn'">
+            <a [routerLink]="['users', row.userId, 'delete']" govukLink> Delete </a>
+          </ng-container>
+          <ng-container *ngSwitchDefault formGroupName="contactTypes">
+            <ng-container
+              *ngIf="
+                (isEditable$ | async) === true && (authService.userStatus | async).roleType !== 'VERIFIER';
+                else nonEditableContact
+              "
+            >
+              <div
+                *ngIf="
+                  row.authorityStatus !== 'PENDING' &&
+                  (row.roleCode !== 'emitter_contact' || column.field === 'FINANCIAL' || column.field === 'SERVICE')
+                "
+                [formControlName]="column.field"
+                [index]="index"
+                [isDisabled]="usersArray.at(index).get('authorityStatus').value === 'DISABLED'"
+                [value]="row.userId"
+                app-radio-option
+              ></div>
+            </ng-container>
+            <ng-template #nonEditableContact>
+              <ng-container *ngIf="row.userId === contactTypes.get(column.field).value"> &#10003;</ng-container>
+            </ng-template>
+          </ng-container>
+        </div>
+      </ng-container>
+
+      <ng-template #verifier>
+        <div [ngSwitch]="column.field" class="cell-container">
+          <ng-container *ngSwitchCase="'name'">{{ row | userFullName }}</ng-container>
+          <ng-container *ngSwitchCase="'deleteBtn'">
+            <a
+              *ngIf="(authService.userStatus | async).roleType === 'OPERATOR'"
+              govukLink
+              routerLink="verification-body/replace"
+            >
+              Replace verifier
+            </a>
+          </ng-container>
+          <ng-container *ngSwitchDefault>{{ row[column.field] }}</ng-container>
+        </div>
+      </ng-template>
+    </ng-template>
+  </govuk-table>
+
+  <div *ngIf="(isEditable$ | async) && (authService.userStatus | async).roleType !== 'VERIFIER'">
+    <div
+      *ngIf="(hasVerificationBody$ | async) === false && (authService.userStatus | async).roleType === 'OPERATOR'"
+      class="govuk-!-margin-bottom-6"
+    >
+      <a govukLink routerLink="verification-body/appoint">Appoint a verifier</a>
+    </div>
+    <div *ngIf="(accountAuthorities$ | async)?.length > 0" class="govuk-button-group">
+      <button appPendingButton govukButton type="submit">Save</button>
+      <button govukSecondaryButton type="button" (click)="refresh$.next()">Discard changes</button>
+    </div>
+  </div>
+</form>

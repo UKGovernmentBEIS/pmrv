@@ -1,0 +1,16 @@
+<ng-container *ngIf="('PFC' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier">
+  <app-permit-task>
+    <app-page-heading caption="Perfluorocarbons, {{ tier | sourceStreamCategoryName | async }}"
+      >Confirm your answers</app-page-heading
+    >
+    <p class="govuk-body">Get help with <a [routerLink]="" govukLink>emission factor</a>.</p>
+
+    <app-category-tier-emission-factor-summary-overview></app-category-tier-emission-factor-summary-overview>
+
+    <div *ngIf="(store.isEditable$ | async) === true" class="govuk-button-group">
+      <button appPendingButton govukButton type="button" (click)="onConfirm()">Confirm and complete</button>
+    </div>
+
+    <a govukLink routerLink="../.."> Return to: {{ tier | sourceStreamCategoryName | async }} </a>
+  </app-permit-task>
+</ng-container>

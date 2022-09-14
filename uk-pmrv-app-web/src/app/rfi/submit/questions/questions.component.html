@@ -1,0 +1,43 @@
+<app-wizard-step (formSubmit)="onContinue()" [formGroup]="form" heading="Request for information" submitText="Continue">
+  <div formArrayName="questions">
+    <fieldset
+      *ngFor="let question of questions.controls; index as i"
+      [formGroupName]="i"
+      govukFieldset
+      id="question-{{ i }}"
+    >
+      <legend govukLegend>Question</legend>
+      <button
+        (click)="questions.removeAt(i)"
+        *ngIf="questions.length > 1"
+        [heading]="heading"
+        appAddAnother
+        govukSecondaryButton
+        type="button"
+        #removeButton
+      >
+        Remove
+      </button>
+      <div formControlName="question" govuk-textarea [maxLength]="10000" label=""></div>
+    </fieldset>
+
+    <button (click)="addOtherQuestion()" govukSecondaryButton type="button">Add another</button>
+  </div>
+
+  <app-multiple-file-input
+    [baseDownloadUrl]="getDownloadUrl()"
+    [listTitle]="'Uploaded files'"
+    [label]="(isFileUploaded$ | async) ? 'Upload a different file' : 'Upload files (optional)'"
+    formControlName="files"
+    hint="The file must be smaller than 20MB"
+  ></app-multiple-file-input>
+
+  <div
+    formControlName="deadline"
+    label="Set a response deadline"
+    hint="For example, 27 3 2022"
+    govuk-date-input
+    [min]="tomorrow"
+  ></div>
+</app-wizard-step>
+<app-return-link></app-return-link>

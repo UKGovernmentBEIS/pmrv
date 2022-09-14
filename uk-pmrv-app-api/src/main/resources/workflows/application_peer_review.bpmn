@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_12rvvni" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="PROCESS_APPLICATION_PEER_REVIEW" name="Process Peer Review" isExecutable="true">
+    <bpmn:startEvent id="Event_0bfxsrp">
+      <bpmn:outgoing>Flow_1938er6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:parallelGateway id="Gateway_09l299r">
+      <bpmn:incoming>Flow_1938er6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wqnk8l</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1e4xntd</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="WAIT_FOR_PEER_REVIEW" name="Regulator:&#10;Wait for peer review">
+      <bpmn:incoming>Flow_1e4xntd</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f4ekud</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1tgorrx">
+      <bpmn:incoming>Flow_0f4ekud</bpmn:incoming>
+      <bpmn:incoming>Flow_130o6tc</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1fgpnly" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1938er6" sourceRef="Event_0bfxsrp" targetRef="Gateway_09l299r" />
+    <bpmn:sequenceFlow id="Flow_1wqnk8l" sourceRef="Gateway_09l299r" targetRef="APPLICATION_PEER_REVIEW" />
+    <bpmn:sequenceFlow id="Flow_1e4xntd" sourceRef="Gateway_09l299r" targetRef="WAIT_FOR_PEER_REVIEW" />
+    <bpmn:sequenceFlow id="Flow_0f4ekud" sourceRef="WAIT_FOR_PEER_REVIEW" targetRef="Event_1tgorrx" />
+    <bpmn:userTask id="APPLICATION_PEER_REVIEW" name="Regulator:&#10;Peer review application">
+      <bpmn:incoming>Flow_1wqnk8l</bpmn:incoming>
+      <bpmn:outgoing>Flow_130o6tc</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_130o6tc" sourceRef="APPLICATION_PEER_REVIEW" targetRef="Event_1tgorrx" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PROCESS_APPLICATION_PEER_REVIEW">
+      <bpmndi:BPMNEdge id="Flow_130o6tc_di" bpmnElement="Flow_130o6tc">
+        <di:waypoint x="480" y="122" />
+        <di:waypoint x="550" y="122" />
+        <di:waypoint x="550" y="194" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f4ekud_di" bpmnElement="Flow_0f4ekud">
+        <di:waypoint x="480" y="305" />
+        <di:waypoint x="550" y="305" />
+        <di:waypoint x="550" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e4xntd_di" bpmnElement="Flow_1e4xntd">
+        <di:waypoint x="300" y="237" />
+        <di:waypoint x="300" y="305" />
+        <di:waypoint x="380" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wqnk8l_di" bpmnElement="Flow_1wqnk8l">
+        <di:waypoint x="300" y="187" />
+        <di:waypoint x="300" y="122" />
+        <di:waypoint x="380" y="122" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1938er6_di" bpmnElement="Flow_1938er6">
+        <di:waypoint x="188" y="212" />
+        <di:waypoint x="275" y="212" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0bfxsrp_di" bpmnElement="Event_0bfxsrp">
+        <dc:Bounds x="152" y="194" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_09l299r_di" bpmnElement="Gateway_09l299r">
+        <dc:Bounds x="275" y="187" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1b0gp1w_di" bpmnElement="WAIT_FOR_PEER_REVIEW">
+        <dc:Bounds x="380" y="265" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1tgorrx_di" bpmnElement="Event_1tgorrx">
+        <dc:Bounds x="532" y="194" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05ur2a4_di" bpmnElement="APPLICATION_PEER_REVIEW">
+        <dc:Bounds x="380" y="82" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,64 @@
+<div class="govuk-grid-row">
+  <div [class]="(hasRelatedActions$ | async) === true ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+    <ng-container *ngIf="requestTaskItem$ | async as requestTaskItem">
+      <app-page-heading size="xl">
+        {{ (route.data | async)?.pageTitle }}
+        <app-task-header-info
+            [assignee]="requestTaskItem.requestTask.assigneeFullName"
+            [daysRemaining]="requestTaskItem.requestTask.daysRemaining"
+        ></app-task-header-info>
+      </app-page-heading>
+
+      <!-- Action buttons -->
+      <ng-container>
+        <div class="govuk-button-group">
+          <button
+            *ngIf="isNotifyOperatorActionEnabled$ | async"
+            (click)="notifyOperator()"
+            govukButton
+            title="Notify Operator for decision"
+            type="button"
+          >
+            Notify operator of decision
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- Sections -->
+      <ul app-task-item-list>
+        <li
+          app-task-item
+          link="confirm/outcome"
+          linkText="Confirm cessation of regulated activities"
+          [status]="confirmSectionStatus$ | async"
+        ></li>
+      </ul>
+
+      <!-- Related tasks -->
+      <ng-container *ngIf="relatedTasks$ | async as relatedTasks">
+        <app-related-tasks *ngIf="relatedTasks?.length > 0" [items]="relatedTasks"></app-related-tasks>
+      </ng-container>
+
+      <!-- Timeline events -->
+      <div class="govuk-grid-row" *ngIf="timelineActions$ | async as actions">
+        <app-timeline class="govuk-grid-column-full">
+          <app-timeline-item
+            *ngFor="let action of actions"
+            [action]="action"
+            [link]="action | timelineItemLink"
+            [state]="navigationState"
+          ></app-timeline-item>
+          <p class="govuk-body" *ngIf="actions?.length === 0">No timeline events</p>
+        </app-timeline>
+      </div>
+    </ng-container>
+    <a govukLink routerLink="/dashboard">Return to: Dashboard</a>
+  </div>
+  <div class="govuk-grid-column-one-third" *ngIf="(hasRelatedActions$ | async) === true">
+    <app-related-actions
+        [isAssignable]="store.select('assignable') | async"
+        [taskId]="taskId$ | async"
+        [allowedActions]="store.select('allowedRequestTaskActions') | async"
+    ></app-related-actions>
+  </div>
+</div>

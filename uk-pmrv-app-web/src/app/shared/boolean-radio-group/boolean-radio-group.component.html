@@ -1,0 +1,8 @@
+<div [formControlName]="controlName" [hint]="hint" [isInline]="true" [legend]="legend" legendSize="medium" govuk-radio>
+  <govuk-radio-option [value]="true" [label]="yesLabel"></govuk-radio-option>
+  <govuk-radio-option [value]="false" [label]="noLabel"></govuk-radio-option>
+</div>
+
+<div [class.govuk-radios__conditional--hidden]="(value$ | async) !== true" [id]="conditionalId">
+  <ng-content select="[govukConditionalContent]"></ng-content>
+</div>

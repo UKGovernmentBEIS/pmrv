@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+		logicalFilePath="v0.1.0/changelog_notification_system_message.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_CREATE_TABLE_NOTIFICATION_SYSTEM_MESSAGE" author="pafilisa@unisystems.gr" context="migrate">
+
+        <comment>CREATE notification_system_message TABLE</comment>
+        <sql>
+            CREATE SEQUENCE notification_system_message_seq MINVALUE 0 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 1 NO CYCLE;
+
+            CREATE TABLE notification_system_message (
+            id bigint,
+            type VARCHAR(255) NOT NULL,
+            subject VARCHAR(255) NOT NULL,
+            text TEXT NOT NULL,
+            creation_date TIMESTAMP NOT NULL,
+            access_permission VARCHAR(255) NOT NULL,
+            competent_authority VARCHAR(255),
+            account_id bigint);
+
+            ALTER TABLE notification_system_message ADD CONSTRAINT notification_system_message_pk PRIMARY KEY (id);
+
+            COMMENT ON TABLE notification_system_message IS 'Stores information about created notification system messages';
+            COMMENT ON COLUMN notification_system_message.type IS 'The notification system message type';
+            COMMENT ON COLUMN notification_system_message.subject IS 'The notification system message subject';
+            COMMENT ON COLUMN notification_system_message.text IS 'The notification system message text';
+            COMMENT ON COLUMN notification_system_message.creation_date IS 'The date-time that the notification system message was created';
+            COMMENT ON COLUMN notification_system_message.access_permission IS 'The permission needed to access the notification system message';
+            COMMENT ON COLUMN notification_system_message.competent_authority IS 'The competent authority the notification system message is related to';
+            COMMENT ON COLUMN notification_system_message.account_id IS 'The account id the notification system message is related to';
+
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS notification_system_message CASCADE;
+                DROP SEQUENCE IF EXISTS notification_system_message_seq;
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="0_1_0_NOTIFICATION_SYSTEM_MESSAGE_ADD_RECEIVER_COLUMN" author="pafilisa@unisystems.gr">
+        <comment>Add RECEIVER column to NOTIFICATION_SYSTEM_MESSAGE Table</comment>
+        <sql>
+            ALTER TABLE notification_system_message ADD COLUMN receiver VARCHAR(255) NOT NULL DEFAULT '';
+
+            COMMENT ON COLUMN notification_system_message.receiver IS 'The receiver (user id) of the notification system message';
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE notification_system_message
+                DROP COLUMN IF EXISTS receiver;
+            </sql>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_DROP_NOT_NULL_CONSTRAINT_ON_NOTIFICATION_SYSTEM_MESSAGE_ACCESS_PERMISSION_COLUMN" author="P35066" >
+		<dropNotNullConstraint tableName="NOTIFICATION_SYSTEM_MESSAGE" columnName="access_permission" />
+		<rollback>
+            <addNotNullConstraint tableName="NOTIFICATION_SYSTEM_MESSAGE" columnName="access_permission"/>
+        </rollback>
+	</changeSet>
+
+    <changeSet id="0_1_0_NOTIFICATION_SYSTEM_MESSAGE_DROP_ACCESS_PERMISSION_COLUMN" author="P70383">
+        <comment>Drop access_permission column from NOTIFICATION_SYSTEM_MESSAGE Table</comment>
+        <dropColumn tableName="notification_system_message">
+            <column name="access_permission"/>
+        </dropColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE notification_system_message ADD COLUMN access_permission VARCHAR(255);
+                COMMENT ON COLUMN notification_system_message.access_permission IS 'The permission needed to access the notification system message';
+            </sql>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_ADD_VERIFICATION_BODY_ID_TO_NOTIFICATION_SYSTEM_MESSAGE_TABLE" author="P35066">
+        <comment>Add verification body id to notification_system_message Table</comment>
+        <addColumn tableName="notification_system_message">
+            <column name="verification_body_id" type="bigint" remarks="The verification body id the the notification system message is related to">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE notification_system_message
+                DROP COLUMN IF EXISTS verification_body_id;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

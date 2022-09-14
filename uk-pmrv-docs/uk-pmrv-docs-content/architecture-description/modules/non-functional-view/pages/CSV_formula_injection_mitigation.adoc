@@ -1,0 +1,17 @@
+= 05 CSV formula injection mitigation
+
+== Status 
+
+== Context
+This is based on the Jira Issue https://pmo.trasys.be/jira/browse/PMRV-2981[PMRV-2981 - Formula injection and client-side RCE]
+
+As mentioned in the Jira, the PMRV users that download an Excel file uploaded by another malicious user of the system, can possibly be exposed to formula injection attack through xls files.
+
+Proposal from security is either to validate that file does not contain formulas or edit the file on upload to filter out specific characters.
+
+== Recommendation
+Do nothing
+
+== Decision
+The threat is quite low since Microsoft Excel, OpenOffice, LibreOffice have fixed this issue in previous versions. A disclaimer will be added and no other actions will be taken in the application.
+

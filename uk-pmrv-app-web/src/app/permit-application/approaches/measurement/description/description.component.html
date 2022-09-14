@@ -1,0 +1,19 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Measurement"
+    heading="Approach description"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-hint></app-hint>
+    <div
+      formControlName="approachDescription"
+      govuk-textarea
+      [maxLength]="30000"
+      label="Describe the measurement used to determine the annual CO2 emissions"
+    ></div>
+  </app-wizard-step>
+  <app-approach-return-link parentTitle="Measurement" reviewGroupUrl="measurement"></app-approach-return-link>
+</app-permit-task>

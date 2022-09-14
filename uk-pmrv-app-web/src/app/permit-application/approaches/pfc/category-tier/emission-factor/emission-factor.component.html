@@ -1,0 +1,45 @@
+<app-permit-task>
+  <ng-container *ngIf="cannotStart$ | async; else edit">
+    <app-page-heading caption="Perfluorocarbons">Emission factor</app-page-heading>
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Source stream category</li>
+    </ul>
+    <a govukLink routerLink="..">Return to: Add a source stream category</a>
+  </ng-container>
+
+  <ng-template #edit>
+    <ng-container
+      *ngIf="('PFC' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+    >
+      <app-wizard-step
+        (formSubmit)="onContinue()"
+        [formGroup]="form"
+        caption="Perfluorocarbons, {{ tier | sourceStreamCategoryName | async }}"
+        heading="Emission factor"
+        submitText="Continue"
+        [hideSubmit]="(store.isEditable$ | async) === false"
+      >
+        <p class="govuk-body">Get help with <a [routerLink]="" govukLink>emission factor</a>.</p>
+
+        <div formControlName="tier" govuk-radio legend="What emission factor tier is applied?" legendSize="medium">
+          <govuk-radio-option value="TIER_2" label="Tier 2"></govuk-radio-option>
+          <govuk-radio-option value="TIER_1" label="Tier 1">
+            <ng-container govukConditionalContent>
+              <div
+                formControlName="isHighestRequiredTierT1"
+                govuk-radio
+                legend="Are you applying the highest required tier?"
+              >
+                <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+                <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+        </div>
+      </app-wizard-step>
+
+      <a govukLink routerLink="..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+    </ng-container>
+  </ng-template>
+</app-permit-task>

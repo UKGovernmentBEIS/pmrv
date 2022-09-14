@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        logicalFilePath="v0.1.0/changelog_data_migrations.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+
+    <changeSet id="0_1_0_ACCOUNT_MIGRATE_ACCEPTED_DATE_COLUMN" author="P35066">
+        <comment>Populate account accepted_date for existing accounts</comment>
+        <sql>
+            with v as (
+                select acc.id as accountId, rt.end_date as acceptedDate
+                from account acc
+                inner join request r on r.account_id = acc.id
+                inner join request_task rt on rt.request_id = r.id
+                where rt.type = 'INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW'
+                and rt.end_date is not null
+            )
+            update account
+            set accepted_date = v.acceptedDate
+            from v
+            where id = v.accountId;
+        </sql>
+     </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYLOAD_FOR_SYSTEM_MESSAGE_NOTIFICATIONS" author="pafilisa@unisystems.gr" logicalFilePath="v0.1.0/changelog_request_model.xml">
+        <sql>
+            with
+            message_content as (
+            select r.id as request_id,
+            nsm.text notification_text,
+            nsm.subject notification_subject
+            from request r,
+            request_object ro,
+            notification_system_message nsm
+            where  ro.request_id = r.id
+            and ro.reference_object_id = nsm.id
+            and ro.reference_object_type = 'MESSAGE_NOTIFICATION'
+            and r.status = 'OPEN'
+            ),
+            request_info as(
+            select request_id,
+            json_strip_nulls(
+            json_build_object(
+            'payloadType', 'SYSTEM_MESSAGE_NOTIFICATION_REQUEST_PAYLOAD',
+            'subject', notification_subject,
+            'text', notification_text
+            )
+            ) as updated_payload
+            from message_content
+            )
+            update request
+            set payload = request_info.updated_payload
+            from request_info
+            where id = request_info.request_id;
+        </sql>
+
+        <rollback>
+            update request
+            set payload = null
+            where type = 'SYSTEM_MESSAGE_NOTIFICATION'
+            and status = 'OPEN';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_TASK_PAYLOAD_FOR_SYSTEM_MESSAGE_NOTIFICATIONS" author="pafilisa@unisystems.gr" logicalFilePath="v0.1.0/changelog_request_model.xml">
+        <sql>
+            with notification_request as (
+            select rt.id task_id,
+            r.payload request_payload
+            from request_task rt,
+            request r
+            where rt.request_id = r.id
+            and r.type = 'SYSTEM_MESSAGE_NOTIFICATION'
+            and r.status = 'OPEN'
+            )
+            update request_task
+            set payload = regexp_replace(notification_request.request_payload, '"SYSTEM_MESSAGE_NOTIFICATION_REQUEST_PAYLOAD"', '"SYSTEM_MESSAGE_NOTIFICATION_PAYLOAD"')
+            from notification_request
+            where id = notification_request.task_id;
+        </sql>
+
+        <rollback>
+            update request_task rt
+            set payload = null
+            from request r
+            where rt.request_id = r.id
+            and r.type = 'SYSTEM_MESSAGE_NOTIFICATION'
+            and r.status = 'OPEN';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_1_DROP_REQUEST_OBJECT_TABLE" author="P70453">
+        <preConditions onFail="MARK_RAN"><tableExists tableName="request_object"/></preConditions>
+        <dropTable cascadeConstraints="true" tableName="request_object"/>
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_1_DROP_REQUEST_OBJECT_SEQUENCE" author="P70453">
+        <preConditions onFail="MARK_RAN"><sequenceExists sequenceName="request_object_seq"/></preConditions>
+        <dropSequence sequenceName="request_object_seq"/>
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_1_DROP_REQUEST_PARAMETER_TABLE" author="P70453">
+        <preConditions onFail="MARK_RAN"><tableExists tableName="request_parameter"/></preConditions>
+        <dropTable cascadeConstraints="true" tableName="request_parameter"/>
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_LOCATION_TABLE" author="P70453">
+        <preConditions onFail="MARK_RAN"><tableExists tableName="location"/></preConditions>
+        <renameTable newTableName="account_location" oldTableName="location" />
+        <rollback>
+            <renameTable newTableName="location" oldTableName="account_location" />
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_LOCATION_SEQUENCE" author="P70453">
+        <preConditions onFail="MARK_RAN"><sequenceExists sequenceName="location_seq"/></preConditions>
+        <renameSequence newSequenceName="account_location_seq" oldSequenceName="location_seq" />
+        <rollback>
+            <renameSequence newSequenceName="location_seq" oldSequenceName="account_location_seq" />
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_LEGAL_ENTITY_TABLE" author="P70453">
+        <preConditions onFail="MARK_RAN"><tableExists tableName="legal_entity"/></preConditions>
+        <renameTable newTableName="account_legal_entity" oldTableName="legal_entity" />
+        <rollback>
+            <renameTable newTableName="legal_entity" oldTableName="account_legal_entity" />
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_RENAME_LEGAL_ENTITY_SEQUENCE" author="P70453">
+        <preConditions onFail="MARK_RAN"><sequenceExists sequenceName="legal_entity_seq"/></preConditions>
+        <renameSequence newSequenceName="account_legal_entity_seq" oldSequenceName="legal_entity_seq" />
+        <rollback>
+            <renameSequence newSequenceName="legal_entity_seq" oldSequenceName="account_legal_entity_seq" />
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_UNIQUE_CONSTRAINT_LEGAL_ENTITY" author="P70383">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                select count(constraint_name) from information_schema.constraint_column_usage where table_name = 'account_legal_entity' and constraint_name = 'legal_entity_name_uc'
+            </sqlCheck>
+        </preConditions>
+        <dropUniqueConstraint tableName="account_legal_entity" constraintName="legal_entity_name_uc"/>
+    </changeSet>
+
+    <changeSet id="0_1_0_CHANGE_LEGAL_ENTITY_VARIABLES_VARCHAR_LENGTH" author="P70383">
+        <modifyDataType tableName="account_legal_entity" columnName="type" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account_legal_entity" columnName="name" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account_legal_entity" columnName="status" newDataType="varchar(256)"/>
+        <rollback>
+            <modifyDataType tableName="account_legal_entity" columnName="type" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account_legal_entity" columnName="name" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account_legal_entity" columnName="status" newDataType="varchar(255)"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CHANGE_ACCOUNT_LOCATION_VARIABLES_VARCHAR_LENGTH" author="P70383">
+        <modifyDataType tableName="account_location" columnName="type" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account_location" columnName="grid_reference" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account_location" columnName="line1" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account_location" columnName="line2" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account_location" columnName="city" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account_location" columnName="latitude" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account_location" columnName="longitude" newDataType="varchar(256)"/>
+        <rollback>
+            <modifyDataType tableName="account_location" columnName="type" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account_location" columnName="grid_reference" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account_location" columnName="line1" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account_location" columnName="line2" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account_location" columnName="city" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account_location" columnName="latitude" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account_location" columnName="longitude" newDataType="varchar(255)"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CHANGE_LEGAL_ENTITY_VARIABLES_VARCHAR_LENGTH_REVERT" author="P70605">
+        <modifyDataType tableName="account_legal_entity" columnName="type" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account_legal_entity" columnName="name" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account_legal_entity" columnName="status" newDataType="varchar(255)"/>
+        <rollback>
+            <modifyDataType tableName="account_legal_entity" columnName="type" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account_legal_entity" columnName="name" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account_legal_entity" columnName="status" newDataType="varchar(256)"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CHANGE_ACCOUNT_LOCATION_VARIABLES_VARCHAR_LENGTH_REVERT" author="P70605">
+        <modifyDataType tableName="account_location" columnName="type" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account_location" columnName="grid_reference" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account_location" columnName="line1" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account_location" columnName="line2" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account_location" columnName="city" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account_location" columnName="latitude" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account_location" columnName="longitude" newDataType="varchar(255)"/>
+        <rollback>
+            <modifyDataType tableName="account_location" columnName="type" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account_location" columnName="grid_reference" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account_location" columnName="line1" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account_location" columnName="line2" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account_location" columnName="city" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account_location" columnName="latitude" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account_location" columnName="longitude" newDataType="varchar(256)"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

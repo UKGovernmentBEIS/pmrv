@@ -1,0 +1,40 @@
+<app-permit-task
+  [breadcrumb]="true"
+  [notification]="notification"
+  reviewGroupTitle="Monitoring Methodology Plan"
+  reviewGroupUrl="monitoring-methodology-plan"
+>
+  <app-page-heading caption="Monitoring Methodology Plan">Monitoring Methodology Plan</app-page-heading>
+
+  <h2 class="govuk-heading-m">Download and complete</h2>
+  <p class="govuk-body">
+    Download the Monitoring Methodology Plan (MMP) template and fill it in with details about your installation.
+    <br />
+    Get help <a govukLink href="#">filling in the MMP</a>
+  </p>
+
+  <div class="govuk-!-margin-bottom-6">
+    <app-attachment
+      size="588 KB"
+      title="Monitoring Methodology Plan template"
+      type="CSV"
+      url="assets/files/{{ 'MMP' | templateFile }}"
+    ></app-attachment>
+  </div>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    Uploaded Monitoring Methodology Plan
+  </h2>
+
+  <app-monitoring-methodology-summary-details cssClass="summary-list--edge-border">
+  </app-monitoring-methodology-summary-details>
+
+  <app-list-return-link
+    reviewGroupTitle="Monitoring Methodology Plan"
+    reviewGroupUrl="monitoring-methodology-plan"
+  ></app-list-return-link>
+</app-permit-task>

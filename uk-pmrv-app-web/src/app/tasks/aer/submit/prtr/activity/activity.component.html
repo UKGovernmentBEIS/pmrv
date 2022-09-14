@@ -1,0 +1,191 @@
+<app-aer-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Add an EPRTR activity"
+    [heading]="
+      (isActivitySector$ | async) === true
+        ? 'Select the relevant sector for the main activity at the installation'
+        : 'Select the activity'
+    "
+    [hideSubmit]="(isEditable$ | async) === false"
+    [submitText]="(isFinalWizard$ | async) === true ? 'Save and continue' : 'Continue'"
+  >
+    <ng-container *ngIf="(hasSubActivities$ | async) === false; else statical">
+      <div formControlName="activity" govuk-radio>
+        <govuk-radio-option
+          *ngFor="let option of activityItems$ | async"
+          [label]="option | i18nSelect: activityItemName"
+          [value]="option"
+        ></govuk-radio-option>
+      </div>
+    </ng-container>
+    <ng-template #statical>
+      <div formControlName="activity" govuk-radio>
+        <ng-container *ngIf="(isA1Sector$ | async) === true; else activityB">
+          <govuk-radio-option [label]="'_1_A_1' | i18nSelect: activityItemName" [value]="'_1_A_1'">
+            <ng-container govukConditionalContent>
+              <div formControlName="subActivityA1" govuk-radio>
+                <govuk-radio-option
+                  [value]="'_1_A_1_A'"
+                  [label]="'_1_A_1_A' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_1_B'"
+                  [label]="'_1_A_1_B' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_1_C'"
+                  [label]="'_1_A_1_C' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option [label]="'_1_A_2' | i18nSelect: activityItemName" [value]="'_1_A_2'">
+            <ng-container govukConditionalContent>
+              <div formControlName="subActivityA2" govuk-radio>
+                <govuk-radio-option
+                  [value]="'_1_A_2_A'"
+                  [label]="'_1_A_2_A' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_2_B'"
+                  [label]="'_1_A_2_B' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_2_C'"
+                  [label]="'_1_A_2_C' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_2_D'"
+                  [label]="'_1_A_2_D' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_2_E'"
+                  [label]="'_1_A_2_E' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_2_F'"
+                  [label]="'_1_A_2_F' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_2_GVII'"
+                  [label]="'_1_A_2_GVII' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_2_GVIII'"
+                  [label]="'_1_A_2_GVIII' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option [label]="'_1_A_3' | i18nSelect: activityItemName" [value]="'_1_A_3'">
+            <ng-container govukConditionalContent>
+              <div formControlName="subActivityA3" govuk-radio>
+                <govuk-radio-option
+                  [value]="'_1_A_3_AI'"
+                  [label]="'_1_A_3_AI' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_3_AII'"
+                  [label]="'_1_A_3_AII' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_3_B'"
+                  [label]="'_1_A_3_B' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_3_C'"
+                  [label]="'_1_A_3_C' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_3_DI'"
+                  [label]="'_1_A_3_DI' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_3_DII'"
+                  [label]="'_1_A_3_DII' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_3_E'"
+                  [label]="'_1_A_3_E' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option [label]="'_1_A_4' | i18nSelect: activityItemName" [value]="'_1_A_4'">
+            <ng-container govukConditionalContent>
+              <div formControlName="subActivityA4" govuk-radio>
+                <govuk-radio-option
+                  [value]="'_1_A_4_A'"
+                  [label]="'_1_A_4_A' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_4_B'"
+                  [label]="'_1_A_4_B' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_4_C'"
+                  [label]="'_1_A_4_C' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option [label]="'_1_A_5' | i18nSelect: activityItemName" [value]="'_1_A_5'">
+            <ng-container govukConditionalContent>
+              <div formControlName="subActivityA5" govuk-radio>
+                <govuk-radio-option
+                  [value]="'_1_A_5_A'"
+                  [label]="'_1_A_5_A' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_A_5_B'"
+                  [label]="'_1_A_5_B' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+        </ng-container>
+        <ng-template #activityB>
+          <govuk-radio-option [label]="'_1_B_1' | i18nSelect: activityItemName" [value]="'_1_B_1'">
+            <ng-container govukConditionalContent>
+              <div formControlName="subActivityB1" govuk-radio>
+                <govuk-radio-option
+                  [value]="'_1_B_1_A'"
+                  [label]="'_1_B_1_A' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_B_1_B'"
+                  [label]="'_1_B_1_B' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_B_1_C'"
+                  [label]="'_1_B_1_C' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option [label]="'_1_B_2' | i18nSelect: activityItemName" [value]="'_1_B_2'">
+            <ng-container govukConditionalContent>
+              <div formControlName="subActivityB2" govuk-radio>
+                <govuk-radio-option
+                  [value]="'_1_B_2_A'"
+                  [label]="'_1_B_2_A' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_B_2_B'"
+                  [label]="'_1_B_2_B' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+                <govuk-radio-option
+                  [value]="'_1_B_2_C'"
+                  [label]="'_1_B_2_C' | i18nSelect: activityItemName"
+                ></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+        </ng-template>
+      </div>
+    </ng-template>
+  </app-wizard-step>
+  <a govukLink routerLink="../../summary">Return to: European Pollutant Release and Transfer Register codes (PRTR)</a>
+</app-aer-task>

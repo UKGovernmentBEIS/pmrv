@@ -1,0 +1,66 @@
+<app-permit-task *ngIf="(isDeleteConfirmationDisplayed$ | async) === false; else deleteConfirmation">
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Installation details"
+    heading="Select the regulated activities that happen at the installation"
+    submitText="Confirm and complete"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div
+      *ngFor="let group of activityGroups | keyvalue: originalOrder"
+      [formControlName]="group.key"
+      [legend]="group.key | i18nSelect: activityGroupMap"
+      govuk-checkboxes
+      legendSize="medium"
+    >
+      <govuk-checkbox
+        *ngFor="let activity of group.value"
+        [hint]="activity | i18nSelect: activityHintMap"
+        [value]="activity"
+      >
+        <ng-container govukLabel>{{ activity | regulatedActivityType }} ({{ activity | gas }})</ng-container>
+        <div govukConditionalContent>
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+              <div
+                [formControlName]="activity + '_CAPACITY'"
+                govuk-text-input
+                inputType="number"
+                label="Total capacity"
+              ></div>
+            </div>
+            <div class="govuk-grid-column-one-half">
+              <div [formControlName]="activity + '_CAPACITY_UNIT'" govuk-select label="Unit">
+                <option *ngFor="let option of unitOptions" [value]="option">
+                  {{ option | capacityUnit }}
+                </option>
+              </div>
+            </div>
+          </div>
+        </div>
+      </govuk-checkbox>
+    </div>
+  </app-wizard-step>
+
+  <app-list-return-link reviewGroupTitle="Installation details" reviewGroupUrl="details"></app-list-return-link>
+</app-permit-task>
+
+<ng-template #deleteConfirmation>
+  <app-page-heading size="xl">
+    Are you sure you want to delete <br />
+    <ng-container *ngFor="let activity of uncheckedRegulatedActivities; let isLast = last">
+      {{ activity.type | regulatedActivityType }}{{ isLast ? '?' : ', ' }}
+    </ng-container>
+  </app-page-heading>
+
+  <p class="govuk-body">
+    Any reference to {{ uncheckedRegulatedActivities.length > 1 ? 'these items' : 'this item' }} will be removed from
+    your application.
+  </p>
+
+  <div class="govuk-button-group">
+    <button (click)="confirmSubmit()" appPendingButton govukWarnButton>Yes, delete</button>
+    <a (click)="isDeleteConfirmationDisplayed$.next(false)" govukLink routerLink=".">Cancel</a>
+  </div>
+</ng-template>

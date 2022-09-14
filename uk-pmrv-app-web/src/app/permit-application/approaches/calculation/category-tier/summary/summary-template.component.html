@@ -1,0 +1,150 @@
+<ng-container
+  *ngIf="
+    ('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async]
+      ?.[subtaskName] as subtaskData
+  "
+>
+  <dl
+    govuk-summary-list
+    class="govuk-summary-list--no-border"
+    [class.summary-list--edge-border]="!isPreview"
+    [class.govuk-!-margin-bottom-0]="isPreview"
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Details</dt>
+      <dd govukSummaryListRowValue></dd>
+      <dd govukSummaryListRowActions></dd>
+    </div>
+
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Using {{ statusKey | subtaskName | lowercase }} as part of your calculation?</dt>
+      <dd govukSummaryListRowValue>{{ subtaskData?.exist ? 'Yes' : 'No' }}</dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.tier">
+      <dt govukSummaryListRowKey>Tier applied</dt>
+      <dd govukSummaryListRowValue>{{ subtaskData.tier | appliedTier }}</dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'tier']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData.isHighestRequiredTier !== undefined">
+      <dt govukSummaryListRowKey>Applying the highest required tier?</dt>
+      <dd govukSummaryListRowValue>{{ subtaskData?.isHighestRequiredTier ? 'Yes' : 'No' }}</dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'tier']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.oneThirdRule !== undefined">
+      <dt govukSummaryListRowKey>Applying the 1/3 rule to reduce your sampled emissions to once a year?</dt>
+      <dd govukSummaryListRowValue>{{ subtaskData?.oneThirdRule ? 'Yes' : 'No' }}</dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'one-third']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.oneThirdRuleFiles?.length">
+      <dt govukSummaryListRowKey>1/3 rule files</dt>
+      <dd govukSummaryListRowValue>
+        <app-summary-download-files [files]="store.getDownloadUrlFiles(subtaskData?.oneThirdRuleFiles)">
+        </app-summary-download-files>
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'one-third']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.noHighestRequiredTierJustification">
+      <dt govukSummaryListRowKey>Reasons for not applying the highest required tier</dt>
+      <dd govukSummaryListRowValue>
+        <ng-container *ngIf="subtaskData?.noHighestRequiredTierJustification?.isCostUnreasonable"
+          >Unreasonable cost<br
+        /></ng-container>
+        <ng-container *ngIf="subtaskData?.noHighestRequiredTierJustification?.isTechnicallyInfeasible"
+          >Technical infeasibility</ng-container
+        >
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'tier-justification']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.noHighestRequiredTierJustification?.isTechnicallyInfeasible">
+      <dt govukSummaryListRowKey>Explanation of technical infeasibility</dt>
+      <dd govukSummaryListRowValue class="pre-wrap">
+        {{ subtaskData.noHighestRequiredTierJustification.technicalInfeasibilityExplanation }}
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'tier-justification']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.noHighestRequiredTierJustification?.files?.length">
+      <dt govukSummaryListRowKey>Supporting files</dt>
+      <dd govukSummaryListRowValue>
+        <app-summary-download-files
+          [files]="store.getDownloadUrlFiles(subtaskData.noHighestRequiredTierJustification.files)"
+        >
+        </app-summary-download-files>
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'tier-justification']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.defaultValueApplied !== undefined">
+      <dt govukSummaryListRowKey>Applying a default value</dt>
+      <dd govukSummaryListRowValue>
+        {{ subtaskData?.defaultValueApplied ? 'Yes' : 'No' }}
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'default-value']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.standardReferenceSource">
+      <dt govukSummaryListRowKey>Standard reference source</dt>
+      <dd govukSummaryListRowValue>
+        {{ subtaskData?.standardReferenceSource?.type | i18nSelect: referenceMap?.[statusKey] }}
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'reference']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.standardReferenceSource?.type === 'OTHER'">
+      <dt govukSummaryListRowKey>Details</dt>
+      <dd govukSummaryListRowValue class="pre-wrap">
+        {{ subtaskData.standardReferenceSource.otherTypeDetails }}
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'reference']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.standardReferenceSource?.defaultValue">
+      <dt govukSummaryListRowKey>Default value</dt>
+      <dd govukSummaryListRowValue class="pre-wrap">
+        {{ subtaskData.standardReferenceSource.defaultValue }}
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'reference']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="subtaskData?.analysisMethodUsed !== undefined">
+      <dt govukSummaryListRowKey>Using an analysis method?</dt>
+      <dd govukSummaryListRowValue>{{ subtaskData?.analysisMethodUsed ? 'Yes' : 'No' }}</dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['..', 'analysis-method-used']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+  </dl>
+
+  <app-analysis-method-list-template [isPreview]="isPreview"></app-analysis-method-list-template>
+</ng-container>

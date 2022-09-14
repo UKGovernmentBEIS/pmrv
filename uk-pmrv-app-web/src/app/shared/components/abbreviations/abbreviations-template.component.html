@@ -1,0 +1,41 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  [caption]="caption"
+  heading="Definitions of abbreviations, acronyms and terminology"
+  submitText="Confirm and complete"
+  [hideSubmit]="!isEditable"
+>
+  <app-boolean-radio-group
+    controlName="exist"
+    legend="Are you using any abbreviations, acronyms or terminology in your permit application which may require definition?"
+  >
+    <div govukConditionalContent>
+      <div formArrayName="abbreviationDefinitions">
+        <fieldset
+          *ngFor="let abbreviationDef of abbreviationDefs.controls; index as i"
+          [formGroupName]="i"
+          govukFieldset
+          id="abbreviation-def-{{ i }}"
+        >
+          <legend govukLegend>Definition {{ i + 1 }}</legend>
+          <button
+            (click)="abbreviationDefs.removeAt(i)"
+            *ngIf="abbreviationDefs.length > 1"
+            [heading]="heading"
+            appAddAnother
+            govukSecondaryButton
+            type="button"
+            #removeButton
+          >
+            Remove
+          </button>
+          <div formControlName="abbreviation" govuk-text-input label="Abbreviation, acronym or terminology"></div>
+          <div formControlName="definition" govuk-text-input label="Definition"></div>
+        </fieldset>
+
+        <button #addAnother (click)="addAbbreviationDef()" govukSecondaryButton type="button">Add another</button>
+      </div>
+    </div>
+  </app-boolean-radio-group>
+</app-wizard-step>

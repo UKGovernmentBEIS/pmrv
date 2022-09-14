@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" packages="uk.gov.pmrv.api.web.logging">
+    <Appenders>
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} [%t] %-5level %logger{36} - %encode{%msg}{CRLF}%n" />
+        </Console>
+        <Rewrite name="mask">
+            <MaskRewritePolicy>
+                <property name="payloadProperty">password</property>
+                <property name="payloadProperty">token</property>
+                <property name="payloadProperty">emailToken</property>
+                <property name="payloadProperty">invitationToken</property>
+                <property name="payloadProperty">email</property>
+                <property name="payloadProperty">firstName</property>
+                <property name="payloadProperty">lastName</property>
+                <property name="payloadProperty">line1</property>
+                <property name="payloadProperty">line2</property>
+                <property name="payloadProperty">city</property>
+                <property name="payloadProperty">country</property>
+                <property name="payloadProperty">postcode</property>
+                <property name="payloadProperty">number</property>
+                <property name="payloadProperty">phoneNumber</property>
+                <property name="payloadProperty">mobileNumber</property>
+                <property name="payloadProperty">jobTitle</property>
+            </MaskRewritePolicy>
+            <AppenderRef ref="consoleAppender"/>
+        </Rewrite>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="consoleAppender"/>
+        </Root>
+        <Logger name="uk.gov.pmrv.api" level="debug" additivity="false">
+            <AppenderRef ref="mask"/>
+        </Logger>
+    </Loggers>
+</Configuration>

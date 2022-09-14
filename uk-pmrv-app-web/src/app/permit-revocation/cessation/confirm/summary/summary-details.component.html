@@ -1,0 +1,118 @@
+<h2
+  app-summary-header
+  (changeClick)="changeClick('outcome')"
+  [changeRoute]="isEditable ? '.' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Outcome of the emission report determination</span>
+</h2>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Outcome of the emission report determination</dt>
+    <dd govukSummaryListRowValue>
+      {{ cessation.determinationOutcome === 'APPROVED' ? 'Approved' : 'Rejected' }}
+    </dd>
+  </div>
+</dl>
+
+<ng-container *ngIf="allowancesSurrenderRequired">
+  <h2
+    app-summary-header
+    (changeClick)="changeClick('allowances-date')"
+    [changeRoute]="isEditable ? '.' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">When were the installation allowances surrendered?</span>
+  </h2>
+  <dl govuk-summary-list>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>When were the installation allowances surrendered?</dt>
+      <dd govukSummaryListRowValue>
+        {{ cessation.allowancesSurrenderDate | govukDate }}
+      </dd>
+    </div>
+  </dl>
+
+  <h2
+    app-summary-header
+    (changeClick)="changeClick('allowances-number')"
+    [changeRoute]="isEditable ? '.' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Surrendered allowances</span>
+  </h2>
+  <dl govuk-summary-list>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Surrendered allowances</dt>
+      <dd govukSummaryListRowValue>
+        {{ cessation.numberOfSurrenderAllowances | number }}
+      </dd>
+    </div>
+  </dl>
+</ng-container>
+
+<h2
+  app-summary-header
+  (changeClick)="changeClick('emissions')"
+  [changeRoute]="isEditable ? '.' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Installations annual reportable emissions</span>
+</h2>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Installations annual reportable emissions</dt>
+    <dd govukSummaryListRowValue>{{ cessation.annualReportableEmissions | number }} tCO2e</dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  (changeClick)="changeClick('refund')"
+  [changeRoute]="isEditable ? '.' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Should the installations subsistence fee be refunded?</span>
+</h2>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Should the installations subsistence fee be refunded?</dt>
+    <dd govukSummaryListRowValue>
+      {{ cessation.subsistenceFeeRefunded ? 'Yes' : 'No' }}
+    </dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  (changeClick)="changeClick('notice')"
+  [changeRoute]="isEditable ? '.' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Text for the official notice</span>
+</h2>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Text for the official notice</dt>
+    <dd govukSummaryListRowValue>
+      {{ officialNoticeTypeMap[cessation.noticeType] }}
+    </dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  (changeClick)="changeClick('notes')"
+  [changeRoute]="isEditable ? '.' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Notes</span>
+</h2>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Notes</dt>
+    <dd govukSummaryListRowValue class="pre-wrap">
+      {{ cessation.notes }}
+    </dd>
+  </div>
+</dl>

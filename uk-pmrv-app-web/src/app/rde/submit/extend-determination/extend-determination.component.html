@@ -1,0 +1,19 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  submitText="Continue"
+  heading="Request a determination extension (RDE)"
+>
+  <div>
+    <h2 class="govuk-heading-m">Propose an extension date</h2>
+    <span class="govuk-hint">For example, 27 3 2007</span>
+  </div>
+  <div formControlName="extensionDate" govuk-date-input></div>
+
+  <div class="govuk-!-margin-top-9">
+    <h2 class="govuk-heading-m">Set a deadline to receive a reply</h2>
+    <div class="govuk-hint">For example, 27 3 2007</div>
+  </div>
+  <div formControlName="deadline" govuk-date-input></div>
+</app-wizard-step>
+<app-return-link></app-return-link>

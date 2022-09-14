@@ -1,0 +1,27 @@
+<app-aer-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    [caption]="caption$ | async | regulatedActivityType"
+    heading="What is the total capacity for this regulated activity?"
+    submitText="Continue"
+    [hideSubmit]="(aerService.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">Guidance explaining this text.</p>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-quarter">
+        <div formControlName="activityCapacity" govuk-text-input inputType="number" label="Total capacity"></div>
+      </div>
+    </div>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-quarter">
+        <div formControlName="activityCapacityUnit" govuk-select label="Unit">
+          <option *ngFor="let option of unitOptions" [value]="option">
+            {{ option | capacityUnit }}
+          </option>
+        </div>
+      </div>
+    </div>
+  </app-wizard-step>
+  <a govukLink routerLink="../..">Return to: Regulated activities</a>
+</app-aer-task>

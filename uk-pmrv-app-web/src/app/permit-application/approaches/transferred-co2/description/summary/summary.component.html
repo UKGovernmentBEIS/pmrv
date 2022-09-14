@@ -1,0 +1,20 @@
+<app-permit-task [notification]="notification" [breadcrumb]="[{ text: 'Transferred CO2', link: ['transferred-co2'] }]">
+  <app-page-heading caption="Transferred CO2">Approach description</app-page-heading>
+
+  <p class="govuk-body">
+    Explain how transferred CO2 will be accounted for through the use of a measurement method. If the transferred CO2
+    involves precipitated calcium carbonate (CaCO3) then a calculation approach can also be used.
+  </p>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Approach description</span>
+  </h2>
+
+  <app-transferred-co2-description-summary-template></app-transferred-co2-description-summary-template>
+
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

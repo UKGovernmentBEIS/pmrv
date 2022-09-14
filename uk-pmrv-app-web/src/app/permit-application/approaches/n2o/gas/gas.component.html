@@ -1,0 +1,28 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Nitrous oxide"
+    heading="Calculation of gas flow"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-body">
+      <p>Text explaining this task and any additional information needed to complete the task.</p>
+      <p>Get help with <a [routerLink]="" govukLink>calculation of gas flow</a>.</p>
+    </div>
+
+    <app-boolean-radio-group controlName="exist" legend="Is gas flow determined by calculation?">
+      <div govukConditionalContent>
+        <app-procedure-form formGroupName="procedureForm">
+          <div class="govuk-body">
+            <h2>Provide gas flow details</h2>
+            <p>Provide details of the procedures used for this calculation for each relevant emission source.</p>
+          </div>
+        </app-procedure-form>
+      </div>
+    </app-boolean-radio-group>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Nitrous oxide" reviewGroupUrl="nitrous-oxide"></app-approach-return-link>
+</app-permit-task>

@@ -1,0 +1,23 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form (ngSubmit)="submitContactDetails()" [formGroup]="form">
+      <govuk-error-summary *ngIf="isSummaryDisplayed" [form]="form"></govuk-error-summary>
+      <app-page-heading caption="Create user account" size="xl">Enter your details</app-page-heading>
+      <fieldset govukFieldset id="user-details-fieldset">
+        <legend govukLegend>Your name</legend>
+        <app-user-input phoneType="full"></app-user-input>
+      </fieldset>
+      <div formControlName="sendNotices" govuk-checkboxes>
+        <ng-container govukLegend>
+          <span class="govuk-visually-hidden">Your address</span>
+        </ng-container>
+        <govuk-checkbox [value]="true" label="Send me a copy of notices and official communications by post">
+          <ng-container govukConditionalContent>
+            <app-address-input formGroupName="address"></app-address-input>
+          </ng-container>
+        </govuk-checkbox>
+      </div>
+      <button govukButton type="submit">Continue</button>
+    </form>
+  </div>
+</div>

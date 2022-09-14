@@ -1,0 +1,24 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <span class="govuk-caption-l">Grant permit surrender</span>
+
+  <app-page-heading>Is an annual emissions monitoring surrender report required?</app-page-heading>
+  <div formControlName="reportRequired" govuk-radio legendSize="medium">
+    <govuk-radio-option [value]="true" label="Yes">
+      <ng-container govukConditionalContent>
+        <div
+          formControlName="reportDate"
+          govuk-date-input
+          [min]="today"
+          label="When is the surrender report required"
+        ></div>
+      </ng-container>
+    </govuk-radio-option>
+    <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+  </div>
+</app-wizard-step>
+<a govukLink routerLink="../../..">Return to: Permit surrender review</a>

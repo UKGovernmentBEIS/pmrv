@@ -1,0 +1,35 @@
+<app-page-heading>Response to official request for information</app-page-heading>
+<dl govuk-summary-list [hasBorders]="false" [class.summary-list--edge-border]="true">
+  <ng-container *ngFor="let pair of pairs$ | async; index as i">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Question {{ i + 1 }}</dt>
+      <dd govukSummaryListRowValue>{{ pair[0] }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Response</dt>
+      <dd govukSummaryListRowValue>{{ pair[1] }}</dd>
+    </div>
+  </ng-container>
+</dl>
+<dl govuk-summary-list *ngIf="(store | async).rfiQuestionPayload?.files?.length > 0">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Regulator files</dt>
+    <dd govukSummaryListRowValue>
+      <app-summary-download-files
+        [files]="store.getDownloadUrlFiles((store | async).rfiQuestionPayload.files)"
+      >
+      </app-summary-download-files>
+    </dd>
+  </div>
+</dl>
+<dl govuk-summary-list *ngIf="(store | async).rfiResponsePayload?.files?.length > 0">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Operator files</dt>
+    <dd govukSummaryListRowValue>
+      <app-summary-download-files
+        [files]="store.getDownloadUrlFiles(((store | async).rfiResponsePayload.files))"
+      >
+      </app-summary-download-files>
+    </dd>
+  </div>
+</dl>

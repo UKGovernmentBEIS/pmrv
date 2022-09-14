@@ -1,0 +1,145 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Fuels and equipment inventory">
+  <ul app-task-item-list>
+    <li
+      *ngIf="'sourceStreams' | taskStatus | async as status"
+      app-task-item
+      linkText="Source streams (fuels and materials)"
+      link="../../source-streams/summary"
+      [status]="status"
+    >
+      <govuk-table
+        *ngIf="status === 'complete'"
+        [columns]="sourceStreamsColumns"
+        [data]="'sourceStreams' | task | async"
+        [class.no-bottom-border]="true"
+      >
+        <ng-template let-column="column" let-row="row">
+          <ng-container [ngSwitch]="column.field">
+            <ng-container *ngSwitchCase="'reference'">{{ row.reference }}</ng-container>
+            <ng-container *ngSwitchCase="'description'">
+              {{ row | sourceStreamDescription }}
+            </ng-container>
+            <ng-container *ngSwitchCase="'type'">{{ row.type | sourceStreamType }}</ng-container>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+    </li>
+    <li
+      *ngIf="'emissionSources' | taskStatus | async as status"
+      app-task-item
+      linkText="Emission sources"
+      link="../../emission-sources/summary"
+      [status]="status"
+    >
+      <govuk-table
+        *ngIf="status === 'complete'"
+        [columns]="pointsAndSourcesColumns"
+        [data]="'emissionSources' | task | async"
+        [class.no-bottom-border]="true"
+      ></govuk-table>
+    </li>
+    <li
+      *ngIf="'emissionPoints' | taskStatus | async as status"
+      app-task-item
+      linkText="Emission points"
+      link="../../emission-points/summary"
+      [status]="status"
+    >
+      <govuk-table
+        *ngIf="status === 'complete'"
+        [columns]="pointsAndSourcesColumns"
+        [data]="'emissionPoints' | task | async"
+        [class.no-bottom-border]="true"
+      ></govuk-table>
+    </li>
+    <li
+      *ngIf="'emissionSummaries' | taskStatus | async as status"
+      app-task-item
+      linkText="Emission summaries"
+      link="../../emission-summaries/summary"
+      [status]="status"
+    >
+      <govuk-table
+        *ngIf="status === 'complete'"
+        [columns]="emissionSummariesColumns"
+        [data]="'emissionSummaries' | task | async"
+        [class.no-bottom-border]="true"
+      >
+        <ng-template let-column="column" let-row="row">
+          <ng-container [ngSwitch]="column.field">
+            <ng-container *ngSwitchCase="'sourceStream'">
+              <ng-container *ngIf="'sourceStreams' | task | async | sourceStream: row.sourceStream as sourceStream">
+                <strong>{{ sourceStream.reference }}</strong>
+                {{ sourceStream | sourceStreamDescription }}
+              </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="'emissionSources'">
+              <ng-container *ngFor="let id of row.emissionSources; let isLast = last">
+                <ng-container *ngIf="'emissionSources' | task | async | emissionSource: id as emissionSource">
+                  <strong>{{ emissionSource.reference }}</strong>
+                  {{ emissionSource.description }}
+                  <ng-container *ngIf="!isLast">
+                    <br />
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="'emissionPoints'">
+              <ng-container *ngFor="let id of row.emissionPoints; let isLast = last">
+                <ng-container *ngIf="'emissionPoints' | task | async | emissionPoint: id as emissionPoint">
+                  <strong>{{ emissionPoint.reference }}</strong>
+                  {{ emissionPoint.description }}
+                  <ng-container *ngIf="!isLast">
+                    <br />
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="'regulatedActivity'">
+              <ng-container *ngIf="'regulatedActivities' | task | async as regulatedActivities">
+                {{
+                  (row.excludedRegulatedActivity
+                    ? 'excludedRegulatedActivity'
+                    : (regulatedActivities | regulatedActivity: row.regulatedActivity).type
+                  ) | regulatedActivityType
+                }}
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+    </li>
+    <li
+      *ngIf="'measurementDevicesOrMethods' | taskStatus | async as status"
+      app-task-item
+      linkText="Measurement devices"
+      link="../../measurement-devices/summary"
+      [status]="status"
+    >
+      <govuk-table
+        *ngIf="status === 'complete'"
+        [columns]="measurementDevicesColumns"
+        [data]="'measurementDevicesOrMethods' | task | async"
+        [class.no-bottom-border]="true"
+      >
+        <ng-template let-column="column" let-row="row">
+          <ng-container [ngSwitch]="column.field">
+            <ng-container *ngSwitchCase="'reference'">{{ row.reference }}</ng-container>
+            <ng-container *ngSwitchCase="'type'">
+              {{ row.type === 'OTHER' ? row.otherTypeName : (row.type | measurementDevicesType) }}
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+    </li>
+    <li app-task-item linkText="Site diagram" link="../../site-diagram/summary" status="complete">
+      <app-site-diagram-summary-template cssClass="dl--no-bottom-border govuk-!-margin-bottom-0">
+      </app-site-diagram-summary-template>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

@@ -1,0 +1,48 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="reportOptionsForm">
+  <div formControlName="option" govuk-radio legend="Completed Work Report Options" legendSize="medium">
+    <govuk-radio-option value="LAST_30_DAYS" label="Last 30 days"></govuk-radio-option>
+    <govuk-radio-option value="ANNUAL" label="Annual">
+      <div govukConditionalContent>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-half">
+            <div formControlName="year" govuk-text-input label="Provide year"></div>
+          </div>
+        </div>
+      </div>
+    </govuk-radio-option>
+  </div>
+  <button govukButton type="submit">Execute</button>
+</form>
+<div *ngIf="pageItems$ | async as items; else noResults">
+  <ng-container *ngIf="items.length; else noResults">
+    <div class="overflow-auto overflow-auto-table">
+      <govuk-table [columns]="tableColumns" [data]="items">
+        <ng-template let-column="column" let-row="row">
+          <ng-container [ngSwitch]="column.field">
+            <ng-container *ngSwitchCase="'accountType'">{{ row[column.field] | accountType }}</ng-container>
+            <ng-container *ngSwitchCase="'accountStatus'">{{ row[column.field] | accountStatus }}</ng-container>
+            <ng-container *ngSwitchCase="'requestType'">{{ row[column.field] | workflowType }}</ng-container>
+            <ng-container *ngSwitchCase="'requestStatus'">{{ row[column.field] | workflowStatus }}</ng-container>
+            <ng-container *ngSwitchCase="'requestActionType'">{{ row[column.field] | itemActionType }}</ng-container>
+            <ng-container *ngSwitchCase="'requestActionCompletionDate'">{{
+              row[column.field] | govukDate
+            }}</ng-container>
+            <ng-container *ngSwitchDefault>{{ row[column.field] }}</ng-container>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+    </div>
+    <app-pagination
+      [count]="totalNumOfItems$ | async"
+      (currentPageChange)="currentPage$.next($event)"
+      [pageSize]="pageSize"
+    ></app-pagination>
+  </ng-container>
+</div>
+<ng-template #noResults>
+  <div class="govuk-grid-row noResults">
+    <div class="govuk-grid-column-full">
+      <p class="govuk-body" tabindex="-1">There are no results to show</p>
+    </div>
+  </div>
+</ng-template>

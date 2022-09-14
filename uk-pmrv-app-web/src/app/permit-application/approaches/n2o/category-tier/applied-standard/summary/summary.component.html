@@ -1,0 +1,36 @@
+<ng-container *ngIf="('N2O' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier">
+  <app-permit-task
+    [notification]="notification"
+    [breadcrumb]="[
+      {
+        text: 'Nitrous oxide',
+        link: ['nitrous-oxide']
+      },
+      {
+        text: tier | sourceStreamCategoryName | async,
+        link: ['nitrous-oxide', 'category-tier', index$ | async]
+      }
+    ]"
+  >
+    <app-page-heading caption="Nitrous oxide, {{ tier | sourceStreamCategoryName | async }}"
+      >Applied standard
+    </app-page-heading>
+
+    <p class="govuk-body">Get help with <a [routerLink]="" govukLink>Applied standard</a>.</p>
+
+    <h2
+      app-summary-header
+      [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+      class="govuk-heading-m"
+    >
+      <span class="govuk-visually-hidden">Applied standard</span>
+    </h2>
+
+    <app-applied-standard-form-summary
+      [appliedStandard]="tier.appliedStandard"
+      cssClass="summary-list--edge-border"
+    ></app-applied-standard-form-summary>
+
+    <a govukLink routerLink="../.."> Return to: {{ tier | sourceStreamCategoryName | async }} </a>
+  </app-permit-task>
+</ng-container>

@@ -1,0 +1,48 @@
+= Development flow and Branching model
+
+== Development flow
+
+A special flow for branching and deployment has been designed inspired from
+https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow[Gitflow Workflow] but simplified and tailor-made for the needs of PMRV.
+
+The goal of the design is to be able to deploy code for fixes and create new releases without any problem at any time and by ensuring that the branching model allows us to deploy only the code needed in each case.
+
+The PMRV flow is summarized in the following diagram:
+
+image::pmrv_flow.svg[]
+
+== Branching model
+
+image::pmrv_branching.png[]
+
+* There are 3 main branches observed in the gitflow
+
+** MASTER (master):
+The main branch where devs are working on feature requests by creating a "feature/pmrv-ticket-number" branch. Once the feature is ready a PR to master is opened and if approved it is merged to MASTER.
+On every MASTER branch merge the auto deployment to INTEGRATION environment is being triggered through the build pipeline.
+
+** RELEASE (release-vX.Y.0):
+Once the development reaches a point where we are happy to "release" the code then the pm will instructs for a "kovoume release". At this point a RELEASE branch is created for all services (through Jenkins job 'aws-release') and tagged with the desired version eg. release-v0.1.0
+In this process the release pipeline is being triggered which: checkouts the (each) service repo, builds an image, pushes to nexus docker registry and finally deploys the new release image to RELEASE environment.
+
+** HOTFIX (release-vX.Y.1-9)::
+If at some point the release code has been deployed to production and a hotfix is needed then the HOTFIX branch will be created for that service (hotfix branch is of the following format release-vX.Y.[1-9])
+The hotfix branch is created using through Jenkins job 'aws-hotfix' by using the problematic release branch as an origin branch. The hotfix pipeline is being triggered and deploy the hotfix branch to hotfix environment. The developers working on the fix will create a new branch (suggested in the hotfix/XXX format) based on the newly created hotfix branch (release-vX.Y.[1-9]). After finalizing the fix a PR needs to be opened from the hotfix/XXX branch to the release-vX.Y.[1-9] branch. At this stage the release-vX.Y.[1-9] code will be autodeployed to hotfix environment. If the hotfix branch is tested and founded to be ready for deploying to production then an on demand deployment is being performed though "deployment_od" jenkins job to the production/demo or uat enviroment.
+
+* There are 8 environments:
+** INTEGRATION:
+This is where the master code (ci image) is deployed automatically on each master build
+** E2E
+This is where the master code (ci image) is deployed on demand by e2e team
+** RELEASE
+This is where the release code (release image) is deployed automatically of each release branch build and is designed to be used for e2e automated testing
+** UAT
+This is where the release code (release image) is deployed on demand and is used for manual testing of the app
+** HOTFIX
+This is where the hotfix code (hotfix image) is deployed automatically on each hotfix branch build and is used for both automatic and manual testing
+** MIGRATION
+This is an environment where the release code? (release image) is deployed on demand and is used for migrating data from the provided SQL data from beis
+** SEC
+This is where the master code (ci image) is deployed on daily basis and is being used by sec team for penetration testing
+** DEMO
+This is where the release code (release image) is deployed on demand and is used for demo purposes

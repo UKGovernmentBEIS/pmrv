@@ -1,0 +1,26 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Transferred CO2"
+    heading="Approach description"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-body">
+      <p>
+        Explain how transferred CO2 will be accounted for through the use of a measurement method. If the transferred
+        CO2 involves precipitated calcium carbonate (CaCO3) then a calculation approach can also be used.
+      </p>
+    </div>
+
+    <div
+      formControlName="approachDescription"
+      govuk-textarea
+      [maxLength]="30000"
+      label="Describe the approach used to determine transferred CO2"
+    ></div>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

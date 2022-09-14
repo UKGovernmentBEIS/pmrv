@@ -1,0 +1,54 @@
+<ng-container *ngIf="permitSurrender$ | async as permitSurrender">
+  <dl
+    *ngIf="!!permitSurrender.stopDate"
+    govuk-summary-list
+    [hasBorders]="false"
+    [class.summary-list--edge-border]="hasBottomBorder"
+    [class.govuk-!-margin-bottom-0]="isPreview"
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Date the regulated activities ended</dt>
+      <dd govukSummaryListRowValue>{{ permitSurrender.stopDate | govukDate }}</dd>
+      <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true && !isPreview">
+        <a govukLink [routerLink]="['..']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+  </dl>
+  <dl
+    *ngIf="!!permitSurrender.justification"
+    govuk-summary-list
+    [hasBorders]="false"
+    [class.summary-list--edge-border]="hasBottomBorder"
+    [class.govuk-!-margin-bottom-0]="isPreview"
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Explain why the regulated activities have ended</dt>
+      <dd govukSummaryListRowValue>{{ permitSurrender.justification }}</dd>
+      <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true && !isPreview">
+        <a govukLink [routerLink]="['..', 'justification']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+  </dl>
+
+  <dl
+    *ngIf="permitSurrender.documentsExist !== null && permitSurrender.documentsExist !== undefined"
+    govuk-summary-list
+    [hasBorders]="false"
+    [class.summary-list--edge-border]="hasBottomBorder"
+    [class.govuk-!-margin-bottom-0]="isPreview"
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Supporting documents</dt>
+      <dd govukSummaryListRowValue>
+        <ng-container *ngIf="(store | async).permitSurrender.documents as documents; else noDocumentsSupport">
+          <app-summary-download-files [files]="store.getDownloadUrlFiles(documents)">
+          </app-summary-download-files>
+        </ng-container>
+        <ng-template #noDocumentsSupport> No </ng-template>
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true && !isPreview">
+        <a govukLink [routerLink]="['..', 'support-documents']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+  </dl>
+</ng-container>

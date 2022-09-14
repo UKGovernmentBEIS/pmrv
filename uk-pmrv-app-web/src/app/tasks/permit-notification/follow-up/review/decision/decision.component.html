@@ -1,0 +1,114 @@
+<govuk-notification-banner *ngIf="showNotificationBanner" type="success">
+  <h1 class="govuk-notification-banner__heading">Details updated</h1>
+</govuk-notification-banner>
+
+<ng-container *ngIf="reviewPayload$ | async as payload">
+  <app-page-heading [caption]="payload.permitNotificationType | notificationType">{{
+    (route.data | async)?.pageTitle
+  }}</app-page-heading>
+
+  <div class="govuk-!-margin-bottom-8 govuk-!-display-block summaryDetails">
+    <h2 app-summary-header class="govuk-heading-m">Response details</h2>
+    <dl govuk-summary-list class="summary-list--edge-border" [hasBorders]="false">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Request from the regulator</dt>
+        <dd govukSummaryListRowValue>
+          {{ payload.followUpRequest }}
+        </dd>
+      </div>
+    </dl>
+    <dl govuk-summary-list class="summary-list--edge-border" [hasBorders]="false">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Due date</dt>
+        <dd govukSummaryListRowValue>
+          {{ payload.followUpResponseExpirationDate | govukDate }}
+        </dd>
+      </div>
+    </dl>
+    <dl govuk-summary-list class="summary-list--edge-border" [hasBorders]="false">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Submission date</dt>
+        <dd govukSummaryListRowValue>
+          {{ payload.submissionDate | govukDate }}
+        </dd>
+      </div>
+    </dl>
+    <dl govuk-summary-list class="summary-list--edge-border" [hasBorders]="false">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Operators response</dt>
+        <dd govukSummaryListRowValue>
+          {{ payload.followUpResponse }}
+        </dd>
+      </div>
+    </dl>
+    <dl govuk-summary-list class="summary-list--edge-border" [hasBorders]="false">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Supporting documents</dt>
+        <dd govukSummaryListRowValue>
+          <ng-container *ngIf="files && files?.length > 0; else noDocumentsSupport">
+            <app-summary-download-files [files]="files"> </app-summary-download-files>
+          </ng-container>
+          <ng-template #noDocumentsSupport> No </ng-template>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <ng-container *ngIf="(showSummary$ | async) === false; else summaryDecision">
+    <ng-container *ngIf="(isEditable$ | async) === true">
+      <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <div class="govuk-!-margin-top-6">
+          <govuk-error-summary *ngIf="isErrorSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+
+          <div formControlName="type" govuk-radio legend="What is your decision on the information submitted?">
+            <govuk-radio-option value="ACCEPTED" label="Accepted"></govuk-radio-option>
+            <govuk-radio-option value="AMENDS_NEEDED" label="Operator amends needed">
+              <ng-container govukConditionalContent>
+                <div
+                  govuk-textarea
+                  [maxLength]="10000"
+                  formControlName="changesRequired"
+                  label="List all of the changes required"
+                  hint="This will be sent to the operator after all sections have been reviewed"
+                ></div>
+                <app-multiple-file-input
+                  [baseDownloadUrl]="getDownloadUrl()"
+                  [label]="(isFileUploaded$ | async) === true ? 'Upload a different file' : 'Upload a file (optional)'"
+                  listTitle="Uploading supporting documents (optional)"
+                  formControlName="files"
+                  hint="The file must be smaller than 20MB"
+                ></app-multiple-file-input>
+                <div
+                  formControlName="dueDate"
+                  label="Set a new due date for the response (optional)"
+                  govuk-date-input
+                ></div>
+              </ng-container>
+            </govuk-radio-option>
+          </div>
+        </div>
+
+        <h2 class="govuk-heading-m">Notes</h2>
+        <div govuk-textarea [maxLength]="10000" formControlName="notes" hint="The operator cannot view this"></div>
+        <button class="submitButton" appPendingButton govukButton type="submit">Confirm and complete</button>
+      </form>
+    </ng-container>
+  </ng-container>
+
+  <ng-template id="summary-review-decision" #summaryDecision>
+    <h2
+      app-summary-header
+      class="govuk-heading-m"
+      (changeClick)="changeDecisionClick()"
+      [changeRoute]="(isEditable$ | async) ? '.' : undefined"
+    >
+      Decision details
+    </h2>
+    <app-follow-up-summary
+      class="govuk-!-margin-bottom-8 govuk-!-display-block"
+      [data]="summaryData$ | async"
+      [summaryListMapper]="followUpDecisionSummaryListMapper"
+      [allowChange]="isEditable$ | async"
+    ></app-follow-up-summary>
+  </ng-template>
+</ng-container>

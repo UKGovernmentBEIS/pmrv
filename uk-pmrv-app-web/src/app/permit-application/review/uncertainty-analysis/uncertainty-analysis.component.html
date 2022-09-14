@@ -1,0 +1,22 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Uncertainty analysis">
+  <ul app-task-item-list>
+    <li
+      *ngIf="'uncertaintyAnalysis' | taskStatus | async as status"
+      app-task-item
+      link="../../uncertainty-analysis/summary"
+      linkText="Uncertainty analysis"
+      [status]="status"
+      [hasContent]="true"
+    >
+      <app-uncertainty-analysis-summary-details
+        [hasBottomBorder]="false"
+        [isPreview]="true"
+      ></app-uncertainty-analysis-summary-details>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

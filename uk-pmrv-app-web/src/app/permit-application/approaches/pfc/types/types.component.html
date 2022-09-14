@@ -1,0 +1,38 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Perfluorocarbons"
+    heading="Cell and anode types"
+    submitText="Confirm and complete"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div formArrayName="cellAndAnodeTypes">
+      <fieldset
+        *ngFor="let cellAnodeType of cellAndAnodeTypesFormArray.controls; index as i"
+        [formGroupName]="i"
+        govukFieldset
+        id="cell-anode-type-{{ i }}"
+      >
+        <legend govukLegend>Cell and anode type {{ i + 1 }}</legend>
+        <button
+          (click)="cellAndAnodeTypesFormArray.removeAt(i)"
+          *ngIf="cellAndAnodeTypesFormArray.length > 1"
+          [heading]="heading"
+          appAddAnother
+          govukSecondaryButton
+          type="button"
+          #removeButton
+        >
+          Remove
+        </button>
+        <div formControlName="cellType" govuk-text-input label="Cell type"></div>
+        <div formControlName="anodeType" govuk-text-input label="Anode type"></div>
+      </fieldset>
+
+      <button (click)="addCellAnodeType()" govukSecondaryButton type="button">Add another cell and anode type</button>
+    </div>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Perfluorocarbons" reviewGroupUrl="pfc"></app-approach-return-link>
+</app-permit-task>

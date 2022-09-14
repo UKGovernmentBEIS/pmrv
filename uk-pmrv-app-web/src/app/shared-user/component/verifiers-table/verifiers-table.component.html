@@ -1,0 +1,59 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="verifiersForm" id="verifiers">
+  <govuk-table
+    [columns]="(isEditable$ | async) ? editableCols : nonEditableCols"
+    [form]="verifiersForm"
+    [users]="verifiers$"
+    appUsersTable
+  >
+    <ng-template let-column="column" let-index="index" let-row="row">
+      <ng-container formArrayName="verifiersArray">
+        <div [formGroupName]="index" [ngSwitch]="column.field" class="cell-container">
+          <ng-container *ngSwitchCase="'name'">
+            <ng-container
+              *ngIf="
+                ((isEditable$ | async) && row.authorityStatus !== 'PENDING') ||
+                  row.userId === (authService.userStatus | async).userId;
+                else bareName
+              "
+            >
+              <a [routerLink]="['/user/verifiers', row.userId]">{{ row | userFullName }}</a>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngSwitchCase="'roleName'">
+            <div
+              *ngIf="
+                (isEditable$ | async) && verifiersArray.at(index).value.authorityStatus === 'ACTIVE';
+                else bareField
+              "
+              [options]="roleCodes"
+              formControlName="roleCode"
+              govuk-select
+              widthClass="govuk-!-width-full"
+            ></div>
+          </ng-container>
+          <ng-container *ngSwitchCase="'authorityStatus'">
+            <ng-container *ngIf="row.authorityStatus !== 'PENDING'; else bareStatus">
+              <app-user-locked *ngIf="row.locked"></app-user-locked>
+              <div
+                [options]="row.authorityStatus === 'ACCEPTED' ? authorityStatusesAccepted : authorityStatuses"
+                formControlName="authorityStatus"
+                govuk-select
+                widthClass="govuk-!-width-full"
+              ></div>
+            </ng-container>
+          </ng-container>
+          <ng-container *ngSwitchCase="'deleteBtn'">
+            <a [routerLink]="['/user/verifiers', row.userId, 'delete']" govukLink>Delete</a>
+          </ng-container>
+        </div>
+        <ng-template #bareField>{{ row[column.field] | titlecase }}</ng-template>
+        <ng-template #bareStatus>Awaiting confirmation</ng-template>
+        <ng-template #bareName>{{ row | userFullName }}</ng-template>
+      </ng-container>
+    </ng-template>
+  </govuk-table>
+  <div *ngIf="(isEditable$ | async) && (verifiers$ | async)?.length > 0" class="govuk-button-group">
+    <button appPendingButton govukButton type="submit">Save</button>
+    <button govukSecondaryButton type="button" (click)="discard.emit()">Discard changes</button>
+  </div>
+</form>

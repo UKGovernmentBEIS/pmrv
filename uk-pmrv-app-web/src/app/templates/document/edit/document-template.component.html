@@ -1,0 +1,18 @@
+<ng-container *ngIf="documentTemplate$ | async as documentTemplate">
+  <govuk-error-summary *ngIf="displayErrorSummary$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading>Edit {{ documentTemplate.name }}</app-page-heading>
+  <h2 class="govuk-heading-m">Document template</h2>
+  <p class="govuk-body">Uploaded file</p>
+  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <app-file-input
+      [downloadUrl]="getDownloadUrl"
+      formControlName="documentFile"
+      hint="The file must be smaller than 20MB"
+      label="Upload a file"
+    ></app-file-input>
+    <button appPendingButton govukButton type="submit">Confirm and complete</button>
+  </form>
+  <app-document-template-details-template
+    [documentTemplate]="documentTemplate"
+  ></app-document-template-details-template>
+</ng-container>

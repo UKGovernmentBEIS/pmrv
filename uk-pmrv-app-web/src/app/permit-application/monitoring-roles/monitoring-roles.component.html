@@ -1,0 +1,60 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Management procedures"
+    heading="Monitoring and reporting roles"
+    submitText="Confirm and complete"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">
+      Provide details of the key roles that are responsible for monitoring and reporting on emissions and the main
+      duties the holders of these roles carry out.
+    </p>
+
+    <div formArrayName="monitoringRoles">
+      <fieldset
+        *ngFor="let permit of roles.controls; index as i"
+        [formGroupName]="i"
+        govukFieldset
+        id="monitoring-role-{{ i }}"
+      >
+        <legend govukLegend>Role {{ i + 1 }}</legend>
+        <button
+          (click)="roles.removeAt(i)"
+          *ngIf="roles.length > 1"
+          [heading]="heading"
+          appAddAnother
+          govukSecondaryButton
+          type="button"
+          #removeButton
+        >
+          Remove
+        </button>
+        <div formControlName="jobTitle" govuk-text-input label="Job title"></div>
+        <div formControlName="mainDuties" govuk-text-input label="Main duties"></div>
+      </fieldset>
+
+      <button *ngIf="(store.isEditable$ | async) === true" (click)="addOtherRole()" govukSecondaryButton type="button">
+        Add another role
+      </button>
+    </div>
+
+    <app-multiple-file-input
+      [baseDownloadUrl]="getDownloadUrl()"
+      [listTitle]="'Uploaded organisation chart (optional)'"
+      [label]="
+        (isFileUploaded$ | async) === true
+          ? 'Upload a different organisation chart'
+          : 'Upload an organisation chart (optional)'
+      "
+      formControlName="organisationCharts"
+      hint="The file must be smaller than 20MB"
+    ></app-multiple-file-input>
+  </app-wizard-step>
+
+  <app-list-return-link
+    reviewGroupTitle="Management procedures"
+    reviewGroupUrl="management-procedures"
+  ></app-list-return-link>
+</app-permit-task>

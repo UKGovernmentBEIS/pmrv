@@ -1,0 +1,42 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Measurement"
+    [heading]="taskKey$ | async | i18nSelect: headingMap"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-procedure-form>
+      <ng-container [ngSwitch]="taskKey$ | async">
+        <ng-container *ngSwitchCase="'monitoringApproaches.MEASUREMENT.emissionDetermination'">
+          <div class="govuk-body">
+            <p>
+              Provide details about the procedures describing the calculation formulae used and the method of data
+              aggregation.
+            </p>
+            <p>Get help with <a [routerLink]="" govukLink>Determination of emissions by measurement</a>.</p>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'monitoringApproaches.MEASUREMENT.referencePeriodDetermination'">
+          <div class="govuk-body">
+            <p>Provide details about the procedures describing the methods used to:</p>
+            <ul>
+              <li>determine if valid hours or shorter reference periods for each parameter can be provided</li>
+              <li>substitute missing data</li>
+            </ul>
+            <p>Get help with <a [routerLink]="" govukLink>Determination of reference period</a>.</p>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'monitoringApproaches.MEASUREMENT.corroboratingCalculations'">
+          <div class="govuk-body">
+            <p>Provide details about the procedures for carrying out corroborating calculations.</p>
+            <p>Get help with <a [routerLink]="" govukLink>Corroborating calculations</a>.</p>
+          </div>
+        </ng-container>
+      </ng-container>
+    </app-procedure-form>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Measurement" reviewGroupUrl="measurement"></app-approach-return-link>
+</app-permit-task>

@@ -1,0 +1,6 @@
+<app-page-heading
+  >{{ (route.data | async)?.pageTitle }}
+  <span class="govuk-body govuk-!-display-block govuk-!-margin-top-2">{{ creationDate$ | async | govukDate }}</span>
+</app-page-heading>
+<app-withdraw-summary sectionHeading="Details"></app-withdraw-summary>
+<app-official-notice-recipients [noticeRecipientsData]="noticeRecipients$ | async"></app-official-notice-recipients>

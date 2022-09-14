@@ -1,0 +1,45 @@
+<h2
+  app-summary-header
+  [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+  class="govuk-heading-m"
+  (changeClick)="changeDetailsClick()"
+>
+  Request details
+</h2>
+
+<dl govuk-summary-list class="govuk-summary-list--no-border summary-list--edge-border govuk-!-margin-bottom-3">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Proposed due date</dt>
+    <dd govukSummaryListRowValue>{{ (store | async)?.rdePayload?.extensionDate | govukDate }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Reply deadline</dt>
+    <dd govukSummaryListRowValue>{{ (store | async)?.rdePayload?.deadline | govukDate }}</dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+  class="govuk-heading-m"
+  (changeClick)="changeRecipientsClick()"
+>
+  Recipients
+</h2>
+
+<dl govuk-summary-list class="govuk-summary-list--no-border summary-list--edge-border">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Users</dt>
+    <dd govukSummaryListRowValue>
+      <div *ngFor="let user of operators$ | async">
+        {{ user | userInfoResolver: (usersInfo$ | async) }}
+      </div>
+    </dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Name and signature on the official notice</dt>
+    <dd govukSummaryListRowValue>
+      {{ signatory$ | async | userInfoResolver: (usersInfo$ | async) }}
+    </dd>
+  </div>
+</dl>

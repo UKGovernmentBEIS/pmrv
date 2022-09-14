@@ -1,0 +1,20 @@
+<header #header class="govuk-header" role="banner">
+  <ng-content select="govuk-skip-link"></ng-content>
+  <div class="govuk-header__container govuk-width-container">
+    <div class="govuk-header__logo">
+      <a href="https://www.gov.uk" class="govuk-header__link govuk-header__link--homepage">
+        <span [inlineSVG]="logoSvg" [prepend]="true" class="govuk-header__logotype">
+          <span class="govuk-header__logotype-text"> GOV.UK </span>
+        </span>
+      </a>
+    </div>
+    <div class="govuk-header__content">
+      <a [routerLink]="['/']" class="govuk-header__link govuk-header__link--service-name govuk-!-font-size-19">
+        {{ title }}
+      </a>
+      <ng-content select="govuk-header-actions-list"></ng-content>
+      <ng-content select="govuk-header-nav-list"></ng-content>
+    </div>
+    <ng-content></ng-content>
+  </div>
+</header>

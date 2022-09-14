@@ -1,0 +1,35 @@
+<dialog
+  #modal
+  role="dialog"
+  class="govuk-timeout-warning dialog fixed"
+  aria-live="polite"
+  aria-labelledby="dialog-title"
+  aria-describedby="at-timer"
+>
+  <app-page-heading size="l" id="dialog-title">Your session will end soon</app-page-heading>
+  <div class="govuk-body">
+    <ng-container *ngIf="timeoutBannerService.timeExtensionAllowed$ | async; else noMoreTimeExtension">
+      <div aria-hidden="true" aria-relevant="additions">
+        You will be automatically signed out of the PMRV if you do not respond in
+        {{ timeoutBannerService.timeOffsetSeconds | secondsToMinutes }}. Your progress will not be saved. Select
+        "Continue" to stay signed in.
+      </div>
+      <div class="govuk-visually-hidden" role="status">
+        We will reset your application if you do not respond in
+        {{ timeoutBannerService.timeOffsetSeconds | secondsToMinutes }}. We do this to keep your information secure.
+      </div>
+    </ng-container>
+    <ng-template #noMoreTimeExtension>
+      <div aria-hidden="true" aria-relevant="additions">
+        You will be automatically signed out of the PMRV in
+        {{ timeoutBannerService.timeOffsetSeconds | secondsToMinutes }}. Your progress will not be saved.
+      </div>
+      <div class="govuk-visually-hidden" role="status">
+        We will reset your application in
+        {{ timeoutBannerService.timeOffsetSeconds | secondsToMinutes }}. We do this to keep your information secure.
+      </div>
+    </ng-template>
+  </div>
+  <button govukButton type="button" (click)="continue()">Continue</button>
+  <button govukSecondaryButton (click)="signOut()">Sign out</button>
+</dialog>

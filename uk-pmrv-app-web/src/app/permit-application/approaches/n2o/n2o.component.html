@@ -1,0 +1,125 @@
+<app-permit-task [breadcrumb]="true">
+  <app-page-heading caption="Monitoring approaches">Nitrous oxide</app-page-heading>
+
+  <p class="govuk-body">Create an annual emissions monitoring plan for all your nitrous oxide emissions.</p>
+  <p class="govuk-body">Get help with <a [routerLink]="" govukLink>Source stream categories</a>.</p>
+
+  <app-site-emissions></app-site-emissions>
+
+  <h2 class="govuk-heading-m">Nitrous oxide source stream categories</h2>
+  <ul app-task-item-list>
+    <ng-container *ngIf="(sourceStreamCategoryAppliedTiers$ | async)?.length > 0; else addNew">
+      <govuk-table [columns]="columns" [data]="sourceStreamCategoryAppliedTiers$ | async">
+        <ng-template let-column="column" let-row="row" let-index="index">
+          <ng-container [ngSwitch]="column.field">
+            <ng-container *ngSwitchCase="'category'">
+              <a govukLink [routerLink]="['./category-tier', index]">
+                <ng-container
+                  *ngIf="
+                    row?.sourceStreamCategory?.sourceStream | findSourceStream | async as sourceStream;
+                    else noSourceStream
+                  "
+                >
+                  {{ sourceStream | tierSourceStreamName: row.sourceStreamCategory }}
+                </ng-container>
+                <ng-template #noSourceStream>
+                  UNDEFINED: {{ row?.sourceStreamCategory?.categoryType | categoryTypeName }}
+                </ng-template>
+              </a>
+            </ng-container>
+            <ng-container *ngSwitchCase="'emissions'">
+              {{ row?.sourceStreamCategory?.annualEmittedCO2Tonnes | number }} t ({{
+                (row?.sourceStreamCategory?.annualEmittedCO2Tonnes ?? 0) / (sumOfAnnualEmitted$ | async) | percent
+              }})
+            </ng-container>
+            <ng-container *ngSwitchCase="'status'">
+              <govuk-tag
+                [color]="'N2O_Category_Tier' | taskStatus: index | async | tagColor"
+                class="app-task-list__tag"
+              >
+                {{ 'N2O_Category_Tier' | taskStatus: index | async | i18nSelect: statusMap }}
+              </govuk-tag>
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+      <a
+        *ngIf="(store.isEditable$ | async) === true"
+        govukLink
+        [routerLink]="['category-tier', (sourceStreamCategoryAppliedTiers$ | async)?.length]"
+      >
+        Add a source stream category
+      </a>
+    </ng-container>
+
+    <ng-template #addNew>
+      <li
+        *ngIf="(store.isEditable$ | async) === true"
+        app-task-item
+        link="category-tier/0"
+        linkText="Add a source stream category"
+        [status]="sourceStreamCategoriesStatus$ | async"
+      ></li>
+    </ng-template>
+  </ul>
+
+  <h2 class="govuk-heading-m">Nitrous oxide details</h2>
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="./description/summary"
+      linkText="Approach description"
+      [status]="'N2O_Description' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./emission/summary"
+      linkText="Emission determination procedure"
+      [status]="'N2O_Emission' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./reference/summary"
+      linkText="Determination of reference period"
+      [status]="'N2O_Reference' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./operational/summary"
+      linkText="Operational management"
+      [status]="'N2O_Operational' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./emissions/summary"
+      linkText="Determination of nitrous oxide emissions"
+      [status]="'N2O_Emissions' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./concentration/summary"
+      linkText="Determination of nitrous oxide concentration"
+      [status]="'N2O_Concentration' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./product/summary"
+      linkText="Determination of the quantity of product produced"
+      [status]="'N2O_Product' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./materials/summary"
+      linkText="Quantity of materials"
+      [status]="'N2O_Materials' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./gas/summary"
+      linkText="Calculation of gas flow"
+      [status]="'N2O_Gas' | taskStatus | async"
+    ></li>
+  </ul>
+
+  <app-list-return-link></app-list-return-link>
+</app-permit-task>

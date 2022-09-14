@@ -1,0 +1,28 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Installation details"
+    heading="Description of the installation"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div
+      formControlName="mainActivitiesDesc"
+      govuk-textarea
+      hint="Include the business sector and its primary purpose, for example the production of energy or materials."
+      label="Which activities take place at the installation?"
+      [maxLength]="10000"
+    ></div>
+
+    <div
+      formControlName="siteDescription"
+      govuk-textarea
+      hint="Give a brief description of the site, including the location of the installation on the site."
+      label="Description of the site"
+      [maxLength]="10000"
+    ></div>
+  </app-wizard-step>
+
+  <app-list-return-link reviewGroupTitle="Installation details" reviewGroupUrl="details"></app-list-return-link>
+</app-permit-task>

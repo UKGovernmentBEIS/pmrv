@@ -1,0 +1,133 @@
+<ng-container
+  *ngIf="(taskKey$ | async | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-permit-task>
+    <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+    <app-page-heading
+      caption="{{ (taskKey$ | async) === 'MEASUREMENT' ? 'Measurement' : 'Nitrous oxide' }}, {{
+        tier | sourceStreamCategoryName | async
+      }}"
+      >Confirm your answers</app-page-heading
+    >
+
+    <h2
+      app-summary-header
+      (changeClick)="changeClick('')"
+      [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+      class="govuk-heading-m"
+    >
+      <span class="govuk-visually-hidden">Measured emissions</span>
+    </h2>
+
+    <ng-container
+      *ngIf="
+        (taskKey$ | async | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async]
+          .measuredEmissions as measuredEmissions
+      "
+    >
+      <dl appGroupedSummaryList govuk-summary-list [hasBorders]="false" class="govuk-!-margin-bottom-6">
+        <div govukSummaryListRow>
+          <ng-container *ngIf="!form.errors?.validMeasurementDevicesOrMethods; else invalidMeasurementDevice">
+            <dt govukSummaryListRowKey>Measurement devices</dt>
+            <dd govukSummaryListRowValue>
+              <ng-container *ngFor="let device of measuredEmissions.measurementDevicesOrMethods; let isLast = last">
+                {{ device | measurementDevicesLabel | async }}
+                <br *ngIf="!isLast && measuredEmissions.measurementDevicesOrMethods.length !== 1" />
+              </ng-container>
+            </dd>
+          </ng-container>
+          <ng-template #invalidMeasurementDevice>
+            <dt class="missing-row-key"><span>Measurement devices</span></dt>
+            <dd govukSummaryListRowValue>
+              <span class="error">{{ form.errors.validMeasurementDevicesOrMethods }}</span>
+            </dd>
+          </ng-template>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Sampling frequency</dt>
+          <dd govukSummaryListRowValue>
+            {{ measuredEmissions.samplingFrequency | samplingFrequency }}
+          </dd>
+        </div>
+        <div govukSummaryListRow *ngIf="measuredEmissions.samplingFrequency === 'OTHER'">
+          <dt govukSummaryListRowKey>Details</dt>
+          <dd govukSummaryListRowValue>{{ measuredEmissions.otherSamplingFrequency }}</dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Applied tier</dt>
+          <dd govukSummaryListRowValue>{{ measuredEmissions.tier | appliedTier }}</dd>
+        </div>
+        <ng-container
+          *ngIf="
+            ((taskKey$ | async) === 'N2O' && measuredEmissions.tier !== 'TIER_3') ||
+            ((taskKey$ | async) === 'MEASUREMENT' && !['TIER_4', 'NO_TIER'].includes(measuredEmissions.tier))
+          "
+        >
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Highest tier</dt>
+            <dd govukSummaryListRowValue>{{ measuredEmissions.isHighestRequiredTier ? 'Yes' : 'No' }}</dd>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="measuredEmissions.noTierJustification">
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>How will emissions from transferred CO2 be estimated?</dt>
+            <dd govukSummaryListRowValue>{{ measuredEmissions.noTierJustification }}</dd>
+          </div>
+        </ng-container>
+      </dl>
+      <ng-container *ngIf="measuredEmissions?.isHighestRequiredTier === false">
+        <h2
+          app-summary-header
+          (changeClick)="changeClick('justification')"
+          [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+          class="govuk-heading-m"
+        >
+          <span class="govuk-visually-hidden">Applied standard</span>
+        </h2>
+
+        <dl appGroupedSummaryList govuk-summary-list [hasBorders]="false" class="govuk-!-margin-bottom-6">
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Reasons for not applying the highest required tier</dt>
+            <dd govukSummaryListRowValue>
+              <ng-container *ngIf="measuredEmissions?.noHighestRequiredTierJustification?.isCostUnreasonable">
+                Unreasonable cost <br />
+              </ng-container>
+              <ng-container *ngIf="measuredEmissions?.noHighestRequiredTierJustification?.isTechnicallyInfeasible">
+                Technical infeasibility
+              </ng-container>
+            </dd>
+          </div>
+          <div
+            govukSummaryListRow
+            *ngIf="measuredEmissions?.noHighestRequiredTierJustification?.technicalInfeasibilityExplanation"
+          >
+            <dt govukSummaryListRowKey>Explanation of technical infeasibility</dt>
+            <dd class="pre-wrap" govukSummaryListRowValue>
+              {{ measuredEmissions.noHighestRequiredTierJustification.technicalInfeasibilityExplanation }}
+            </dd>
+          </div>
+          <div govukSummaryListRow *ngIf="(files$ | async)?.length">
+            <dt govukSummaryListRowKey>Supporting files</dt>
+            <dd govukSummaryListRowValue>
+              <app-summary-download-files [files]="store.getDownloadUrlFiles(files$ | async)">
+              </app-summary-download-files>
+            </dd>
+          </div>
+        </dl>
+      </ng-container>
+    </ng-container>
+
+    <div class="govuk-button-group">
+      <button
+        appPendingButton
+        govukButton
+        type="button"
+        (click)="confirm()"
+        *ngIf="(store.isEditable$ | async) === true"
+      >
+        Confirm and complete
+      </button>
+    </div>
+    <a govukLink routerLink="../.."> Return to: {{ tier | sourceStreamCategoryName | async }} </a>
+  </app-permit-task>
+</ng-container>

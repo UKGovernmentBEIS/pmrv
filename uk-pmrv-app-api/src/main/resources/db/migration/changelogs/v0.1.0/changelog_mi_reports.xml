@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        logicalFilePath="v0.1.0/changelog_mi_reports.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_CREATE_MI_REPORT_TABLE" author="cgeorgoulis">
+        <comment>Create MI REPORT TABLE</comment>
+        <sql>
+            create table mi_report
+            (
+                id integer constraint mi_report_pkey primary key,
+                competent_authority varchar,
+                type      varchar
+            );
+
+            create unique index comp_auth_mi_rep_type_uniq
+                on mi_report (competent_authority, type);
+            COMMENT ON TABLE mi_report IS 'Stores mi report type, competent authority combinations';
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS mi_report CASCADE;
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_MI_REPORT_TABLE" author="cgeorgoulis">
+        <comment>Populate MI REPORT TABLE</comment>
+        <sql>
+            insert into mi_report
+            select row_number() over (), *
+            from (VALUES ('ENGLAND'),
+                         ('NORTHERN_IRELAND'),
+                         ('OPRED'),
+                         ('SCOTLAND'),
+                         ('WALES')) t1,
+                 (VALUES ('LIST_OF_ACCOUNTS_USERS_CONTACTS'),
+                         ('LIST_OF_ACCOUNTS_REGULATORS'),
+                         ('LIST_OF_VERIFICATION_BODIES_AND_USERS'),
+                         ('LIST_OF_ACCOUNTS'),
+                         ('COMPLETED_WORK')) t2;
+        </sql>
+
+        <rollback>
+            <sql>
+                truncate mi_report cascade;
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+</databaseChangeLog>

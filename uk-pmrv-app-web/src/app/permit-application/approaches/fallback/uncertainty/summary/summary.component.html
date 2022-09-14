@@ -1,0 +1,20 @@
+<app-permit-task [notification]="notification" [breadcrumb]="[{ text: 'Fall-back approach', link: ['fall-back'] }]">
+  <app-page-heading caption="Fall-back">Annual uncertainty analysis</app-page-heading>
+
+  <p class="govuk-body">Provide details about the procedures used to carry out the annual uncertainty analysis.</p>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden"> Annual uncertainty analysis </span>
+  </h2>
+
+  <app-procedure-form-summary
+    [details]="annualUncertaintyAnalysis$ | async"
+    cssClass="summary-list--edge-border"
+  ></app-procedure-form-summary>
+
+  <app-approach-return-link parentTitle="Fall-back" reviewGroupUrl="fall-back"></app-approach-return-link>
+</app-permit-task>

@@ -1,0 +1,40 @@
+= Domain Driven Design
+
+== Overall design
+PMRV follows a Domain Driven Design (DDD) like architectural style.
+The domain logic does not fully reside inside the domain objects but rather in domain services which interact with the domain objects and together consist the domain layer of the application.
+Application layer is a layer on top of domain layer and is used where orchestration with other domains and other non strictly domain logic related functionality is needed.
+
+=== Architecture and development guidelines
+
+In that context the following architectural decisions have been made and followed throughout PMRV:
+
+* Packaging is based on the business capabilities.
+* Each package is a business domain, managing its own entities through publicly exposed services (that could either be application or domain services).
+* Domain objects are managed only from domain services inside the domain they belong to and never directly from another domain.
+* Database tables and domain status are managed only from the domain they belong to, no foreign keys exist to entities of other domains.
+* Publicly exposed services (the API of the domain) use aggregates and value objects to communicate with other domains, never managed entities.
+* Web layer acts as an API gateway layer with no business logic inside.
+* In case an API needs to trigger multiple domains, orchestration layer applies in the application layer of web package to orchestrate the calls between domains as far as no business logic applies in the orchestration logic.
+* In case business logic applies in the orchestration logic then the domain responsible for this business should take over the orchestration between domains in the application layer.
+
+The above rules enforce a clean design and dependencies between domains and packages within domains.
+If it is clear who is responsible for what from a business point of view, code is more clean, reusability patterns and best practices easier to be applied.
+
+To enforce the above rules https://www.archunit.org/[Archunit] has been introduced and test cases validating the above rules have been implemented.
+
+=== Domains
+
+The following domains have been identified in PMRV:
+
+* *account*: Responsible for managing Installation/Aviation Operator account data and statuses.
+* *permit*: Responsible for managing the permit and any functionality related to the 'permit' part of PMRV. Depends on the account domain as the permit always belongs to an account.
+* *reporting*: Responsible for managing the AER and any functionality related to the 'reporting' part of PMRV.
+* *verificationbody*: Responsible for managing verification bodies.
+* *user*: Responsible for user management and gateway to keycloak.
+* *authorization*: Responsible for managing user permissions, statuses and authorization logic.
+* *workflow*: Responsible for workflow management, gateway to bpmn engine.
+* *notification*: Responsible for managing notification and document templates, sending of emails etc.
+
+
+

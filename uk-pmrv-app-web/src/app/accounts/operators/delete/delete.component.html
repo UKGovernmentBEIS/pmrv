@@ -1,0 +1,40 @@
+<ng-container [ngSwitch]="deleteStatus | async">
+  <div *ngSwitchCase="'success'" class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <govuk-panel
+        [title]="'The user account of ' + (user$ | async | userFullName) + ' has been deleted from your installation'"
+      ></govuk-panel>
+      <a
+        *ngIf="(isCurrentUser$ | async) === false; else deletedSelf"
+        [routerLink]="['/accounts', accountId$ | async]"
+        fragment="users"
+        govukLink
+      >
+        Return to the users, contacts and verifiers page
+      </a>
+      <ng-template #deletedSelf>
+        <ng-container [ngSwitch]="(authService.userStatus | async).loginStatus">
+          <ng-container *ngSwitchCase="'ENABLED'">
+            <a govukLink routerLink="/dashboard">Go to my dashboard</a>
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            <a govukLink routerLink="/">Go to PMRV welcome page</a>
+          </ng-container>
+        </ng-container>
+      </ng-template>
+    </div>
+  </div>
+  <ng-container *ngSwitchDefault>
+    <app-page-heading>Confirm that this user account will be deleted</app-page-heading>
+    <govuk-warning-text assistiveText="Warning">
+      You will not be able to undo this action.<br />
+      Any tasks currently assigned to this user will be automatically assigned to the Primary contact at your
+      installation.<br />
+      You may cancel and manually re-assign tasks before attempting to delete this user.
+    </govuk-warning-text>
+    <div class="govuk-button-group">
+      <button (click)="confirm()" appPendingButton govukWarnButton type="button">Confirm delete</button>
+      <a [routerLink]="['/accounts', accountId$ | async]" fragment="users" govukLink>Cancel</a>
+    </div>
+  </ng-container>
+</ng-container>

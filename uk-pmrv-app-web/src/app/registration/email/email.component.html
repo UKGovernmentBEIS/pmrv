@@ -1,0 +1,15 @@
+<ng-container *ngIf="!isVerificationSent; else verificationSent">
+  <form (ngSubmit)="submitEmail()" [formGroup]="form">
+    <govuk-error-summary *ngIf="isSummaryDisplayed" [form]="form"></govuk-error-summary>
+    <app-page-heading size="xl">Enter your email address</app-page-heading>
+    <p class="govuk-body">
+      This should be your work email. We'll send a link to confirm that you have access to this address.
+    </p>
+    <div autoComplete="email" formControlName="email" govuk-text-input inputType="email" label="Email address"></div>
+    <button [disabled]="isSubmitDisabled" govukButton type="submit">Continue</button>
+  </form>
+</ng-container>
+
+<ng-template #verificationSent>
+  <app-verification-sent [email]="form.get('email').value"></app-verification-sent>
+</ng-template>

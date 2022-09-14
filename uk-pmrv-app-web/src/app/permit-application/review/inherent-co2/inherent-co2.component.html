@@ -1,0 +1,21 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Inherent CO2">
+  <h2 class="govuk-heading-m">Inherent CO2 details</h2>
+  <ul app-task-item-list>
+    <li
+      *ngIf="'INHERENT_CO2' | taskStatus | async as status"
+      app-task-item
+      link="../../inherent-co2/description/summary"
+      linkText="Inherent CO2"
+      [status]="status"
+    >
+      <app-inherent-co2-description-summary-template
+        [hasBottomBorder]="false"
+      ></app-inherent-co2-description-summary-template>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

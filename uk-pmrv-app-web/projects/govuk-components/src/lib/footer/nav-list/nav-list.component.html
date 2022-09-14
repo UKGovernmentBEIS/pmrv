@@ -1,0 +1,9 @@
+<div class="govuk-footer__navigation">
+  <div class="govuk-footer__section">
+    <h2 *ngIf="title" class="govuk-footer__heading govuk-heading-m">{{ title }}</h2>
+    <ul class="govuk-footer__list" [class.govuk-footer__list--columns-2]="columns === 2">
+      <ng-content></ng-content>
+    </ul>
+  </div>
+</div>
+<hr class="govuk-footer__section-break" />

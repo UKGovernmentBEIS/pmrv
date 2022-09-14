@@ -1,0 +1,49 @@
+<div class="govuk-tabs">
+  <ul class="govuk-tabs__list" role="tablist">
+    <li
+      *ngFor="let tabItem of tabList; let i = index"
+      [class.govuk-tabs__list-item--selected]="(tabItem.isSelected | async) === true"
+      class="govuk-tabs__list-item"
+      role="presentation"
+    >
+      <a
+        #anchor
+        (keydown)="anchorKeydown($event, i)"
+        [attr.aria-controls]="tabItem.id"
+        [attr.aria-selected]="tabItem.isSelected | async"
+        [fragment]="tabItem.id"
+        [id]="'tab_' + tabItem.id"
+        [routerLink]=""
+        [state]="getState()"
+        [tabIndex]="(tabItem.isSelected | async) ? 0 : -1"
+        class="govuk-tabs__tab"
+        queryParamsHandling="preserve"
+        role="tab"
+      >
+        {{ tabItem.label }}
+      </a>
+    </li>
+  </ul>
+  <ng-container *ngFor="let tab of tabEagerList">
+    <div
+      [attr.aria-labelledby]="'tab_' + tab.id"
+      [class.govuk-tabs__panel--hidden]="(tab.isSelected | async) === false"
+      [id]="tab.id"
+      class="govuk-tabs__panel"
+      role="tabpanel"
+    >
+      <ng-template [ngTemplateOutlet]="tab.templateRef"></ng-template>
+    </div>
+  </ng-container>
+  <ng-container *ngFor="let tab of tabLazyList">
+    <div
+      *ngIf="tab.isSelected | async"
+      [attr.aria-labelledby]="'tab_' + tab.id"
+      [id]="tab.id"
+      class="govuk-tabs__panel"
+      role="tabpanel"
+    >
+      <ng-template [ngTemplateOutlet]="tab.templateRef"></ng-template>
+    </div>
+  </ng-container>
+</div>

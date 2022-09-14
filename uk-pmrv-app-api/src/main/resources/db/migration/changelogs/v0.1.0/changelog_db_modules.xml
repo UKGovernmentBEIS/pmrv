@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        logicalFilePath="v0.1.0/changelog_db_modules.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_INSTALL_PG_TRGM_MODULE" author="P35066">
+    	<sql>
+    		CREATE EXTENSION pg_trgm;
+    	</sql>
+    	<rollback>
+            <sql>
+                DROP EXTENSION pg_trgm;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,22 @@
+<app-permit-task
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+    heading="Are you using an analysis method to determine {{ statusKey | subtaskName | lowercase }}?"
+    submitText="Continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-hint">
+      Select whether an analysis method has been used to determine {{ statusKey | subtaskName | lowercase }}, for
+      example a laboratory
+    </div>
+    <div formControlName="analysisMethodUsed" govuk-radio legendSize="medium">
+      <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+      <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+    </div>
+  </app-wizard-step>
+  <a govukLink routerLink="../..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+</app-permit-task>

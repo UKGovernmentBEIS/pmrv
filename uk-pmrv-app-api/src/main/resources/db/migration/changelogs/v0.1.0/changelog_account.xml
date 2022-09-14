@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+		logicalFilePath="v0.1.0/changelog_account.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_ACCOUNT_CREATE_SEQUENCE" author="kliropog">
+        <createSequence sequenceName="account_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+         <rollback>
+			<sql>
+				DROP SEQUENCE IF EXISTS account_seq;
+			</sql>
+		</rollback>
+    </changeSet>
+	
+	<changeSet id="0_1_0_ACCOUNT_CREATE_TABLE" author="kliropog">
+		<createTable tableName="account" 
+        		remarks="Represents an operator account">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="account_pk" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)" remarks="The name of the account">
+                <constraints nullable="false" />
+            </column>
+            <column name="competent_authority" type="varchar(255)" remarks="The competent authority">
+            	<constraints nullable="false" />
+            </column>
+        </createTable>
+        <rollback>
+        	<sql>
+        		DROP TABLE IF EXISTS account CASCADE;
+        	</sql>
+        </rollback>
+	</changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_UPDATE_TABLE" author="P70383">
+        <preConditions onFail="WARN">
+            <sqlCheck expectedResult="1">SELECT count(*) FROM information_schema.tables where table_name = 'account';</sqlCheck>
+        </preConditions>
+
+        <addColumn tableName="account">
+            <column name="legal_entity_id" type="bigint" remarks="The legal entity id">
+                <constraints foreignKeyName="account_legal_entity_fk" references="legal_entity(id)" nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="account">
+            <column name="location_id" type="bigint" remarks="The location id">
+                <constraints foreignKeyName="account_location_fk" references="location(id)" nullable="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="account">
+            <column name="type" type="varchar(255)" remarks="The account type">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="account">
+            <column name="commencement_date" type="date" remarks="The account commencement date">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS legal_entity_id,
+                DROP COLUMN IF EXISTS location_id,
+                DROP COLUMN IF EXISTS type,
+                DROP COLUMN IF EXISTS commencement_date;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ADD_UNIQUE_CONSTRAINT_ACCOUNT" author="P70366">
+        <addUniqueConstraint tableName="account" columnNames="name" constraintName="account_name_uc"/>
+        <rollback>
+            <dropUniqueConstraint tableName="account" constraintName="account_name_uc"/>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_DROP_UNIQUE_CONSTRAINT_ACCOUNT" author="P35066">
+    	<dropUniqueConstraint tableName="account" constraintName="account_name_uc"/>
+    	<rollback>
+    		<addUniqueConstraint tableName="account" columnNames="name" constraintName="account_name_uc"/>
+    	</rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_ACCOUNT_ADD_STATUS_COLUMN" author="kliropog">
+        <addColumn tableName="account">
+            <column name="status" type="varchar(255)" remarks="The account status">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS status;
+            </sql>
+        </rollback>
+     </changeSet>
+     
+     <changeSet id="0_1_0_ACCOUNT_STATUS_COLUMN_POPULATE_EXISTING" author="kliropog">
+     	<comment>Populate status column for existing accounts</comment>
+        <sql>
+        	UPDATE account
+        	SET status = 'ACTIVE'
+        	WHERE status is null;
+        </sql>
+     </changeSet>
+     
+     <changeSet id="0_1_0_ACCOUNT_STATUS_COLUMN_ADD_NOT_NULL_CONSTRAINT" author="kliropog" >
+		<addNotNullConstraint tableName="account" columnName="status" />
+		<rollback>
+            <dropNotNullConstraint tableName="account" columnName="status"/>
+        </rollback>
+	</changeSet>
+	
+	<changeSet id="0_1_0_ACCOUNT_ADD_ACCEPTED_DATE_COLUMN" author="P35066">
+        <addColumn tableName="account">
+            <column name="accepted_date" type="timestamp" remarks="The date the account was accepted">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE account 
+                DROP COLUMN IF EXISTS accepted_date;
+            </sql>
+        </rollback>
+     </changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_ADD_VERIFICATION_BODY_ID_COLUMN" author="pafilisa@unisystems.gr">
+        <comment>Add VERIFICATION_BODY_ID column to ACCOUNT Table</comment>
+        <sql>
+            ALTER TABLE account ADD COLUMN verification_body_id BIGINT;
+
+            COMMENT ON COLUMN account.verification_body_id IS 'The verification body id';
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS verification_body_id;
+            </sql>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_ACCOUNT_ADD_SITE_NAME_COLUMN" author="P35066">
+        <addColumn tableName="account">
+            <column name="site_name" type="varchar(255)" remarks="The site name of the installation account">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS site_name;
+            </sql>
+        </rollback>
+     </changeSet>
+     
+     <changeSet id="0_1_0_POPULATE_ACCOUNT_SITE_NAME" author="P35066">
+     	<comment>Populate the site name for the existing accounts with the account name as default value</comment>
+        <sql>
+        	update account
+        	set site_name = name;
+        </sql>
+        <rollback></rollback>
+     </changeSet>
+     
+     <changeSet id="0_1_0_ACCOUNT_SITE_NAME_COLUMN_ADD_NOT_NULL_CONSTRAINT" author="P35066" >
+		<addNotNullConstraint tableName="account" columnName="site_name" />
+		<rollback>
+            <dropNotNullConstraint tableName="account" columnName="site_name"/>
+        </rollback>
+	</changeSet>
+	
+	<changeSet id="0_1_0_ACCOUNT_ADD_EMISSION_TRADING_SCHEME_COLUMN" author="P35066">
+        <addColumn tableName="account">
+            <column name="emission_trading_scheme" type="varchar(255)" remarks="The emission trading scheme the installation account">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS emission_trading_scheme;
+            </sql>
+        </rollback>
+     </changeSet>
+     
+     <changeSet id="0_1_0_POPULATE_ACCOUNT_EMISSION_TRADING_SCHEME_NAME" author="P35066">
+     	<comment>Populate the emission_trading_scheme for the existing accounts with UK_ETS as default value</comment>
+        <sql>
+        	update account
+        	set emission_trading_scheme = 'UK_ETS_INSTALLATIONS';
+        </sql>
+        <rollback>
+        	
+        </rollback>
+     </changeSet>
+     
+     <changeSet id="0_1_0_ACCOUNT_EMISSION_TRADING_SCHEME_COLUMN_ADD_NOT_NULL_CONSTRAINT" author="P35066" >
+		<addNotNullConstraint tableName="account" columnName="emission_trading_scheme" />
+		<rollback>
+            <dropNotNullConstraint tableName="account" columnName="emission_trading_scheme"/>
+        </rollback>
+	</changeSet>
+	
+	<changeSet id="0_1_0_ACCOUNT_SITE_NAME_COLUMN_DROP_NOT_NULL_CONSTRAINT" author="P35066" >
+		<dropNotNullConstraint tableName="account" columnName="site_name"/>
+		<rollback>
+            <addNotNullConstraint tableName="account" columnName="site_name" />
+        </rollback>
+	</changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_ADD_MIGRATED_ACCOUNT_ID_COLUMN" author="pafilisa@unisystems.gr">
+        <comment>Add MIGRATED_ACCOUNT_ID column to ACCOUNT Table</comment>
+        <sql>
+            ALTER TABLE account ADD COLUMN migrated_account_id VARCHAR(255);
+
+            COMMENT ON COLUMN account.migrated_account_id IS 'The id of the migrated account in the ETSWAP schema';
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS migrated_account_id;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ADD_UNIQUE_CONSTRAINT_MIGRATED_ACCOUNT_ID" author="P70453">
+        <addUniqueConstraint tableName="account" columnNames="migrated_account_id" constraintName="migrated_account_id_uc"/>
+        <rollback>
+            <dropUniqueConstraint tableName="account" constraintName="migrated_account_id_uc"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ADD_EMITTER_ID" author="P70383">
+        <comment>Add emitter id in account table</comment>
+        <addColumn tableName="account">
+            <column name="emitter_id" type="varchar(7)" remarks="The emitter id">
+                <constraints unique="true" uniqueConstraintName="emitter_id_uq" nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS emitter_id;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_INITIALIZE_EMITTER_ID" author="P70383">
+        <comment>Initialize emitter id for each row for account table</comment>
+        <sql>
+            UPDATE account
+            SET emitter_id = CONCAT('EM', LPAD(id::text, 5, '0'));
+
+            ALTER TABLE account ALTER COLUMN emitter_id SET NOT NULL;
+        </sql>
+        <rollback>
+            <sql>
+                ALTER TABLE account ALTER COLUMN emitter_id DROP NOT NULL;
+                UPDATE account SET emitter_id = NULL;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_ACCOUNT_SEQUENCE" author="P70383">
+        <comment>Drop account sequence</comment>
+        <sql>
+            DROP SEQUENCE IF EXISTS account_seq;
+        </sql>
+        <rollback>
+            <sql>
+                CREATE SEQUENCE account_seq INCREMENT 1 MINVALUE 0 MAXVALUE 999999999999999999;
+                SELECT setval('account_seq', (SELECT MAX(id) + 1 FROM account));
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_IDENTIFIER_CREATE_TABLE" author="P70383">
+        <comment>Create account identifier table</comment>
+        <createTable tableName="account_identifier" remarks="Represents the latest account id value">
+            <column name="id" type="integer" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="account_identifier_pk" nullable="false"/>
+            </column>
+            <column name="account_id" type="bigint" remarks="The latest account id value">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS account_identifier CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_INITIALIZE_ACCOUNT_IDENTIFIER_TABLE" author="P70383">
+        <comment>Initialize account identifier table with max emitter id from account table</comment>
+        <sql>
+            INSERT INTO account_identifier(id, account_id)
+            VALUES (1, (SELECT CASE WHEN EXISTS (SELECT * FROM account LIMIT 1) THEN (SELECT MAX(id) FROM account) ELSE 0 END));
+        </sql>
+        <rollback>
+            <sql>
+                DELETE FROM account_identifier WHERE id = 1;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_STATUS_SET_ACTIVE_TO_NEW" author="P70605">
+        <comment>Update account status column from active to new</comment>
+        <sql>
+            UPDATE ACCOUNT
+            SET STATUS = 'NEW'
+            WHERE STATUS = 'ACTIVE';
+        </sql>
+        <rollback>
+            <sql>
+                UPDATE ACCOUNT
+                SET STATUS = 'ACTIVE'
+                WHERE STATUS = 'NEW';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_STATUS_SET_PENDING_TO_UNAPPROVED" author="P70605">
+        <comment>Update account status column from pending to unapproved</comment>
+        <sql>
+            UPDATE ACCOUNT
+            SET STATUS = 'UNAPPROVED'
+            WHERE STATUS = 'PENDING';
+        </sql>
+        <rollback>
+            <sql>
+                UPDATE ACCOUNT
+                SET STATUS = 'PENDING'
+                WHERE STATUS = 'UNAPPROVED';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CREATE_INDEXES_FOR_ACCOUNT_SEARCHABLE_COLUMNS" author="P35066">
+        <sql>
+            CREATE INDEX trgm_gin_idx_account_name ON account USING gin (name gin_trgm_ops);
+			CREATE INDEX trgm_gin_idx_account_site_name ON account USING gin (site_name gin_trgm_ops);
+			CREATE INDEX trgm_gin_idx_account_emitter_id ON account USING gin (emitter_id gin_trgm_ops);
+        </sql>
+        <rollback>
+            <sql>
+                DROP INDEX trgm_gin_idx_account_name;
+                DROP INDEX trgm_gin_idx_account_site_name;
+                DROP INDEX trgm_gin_idx_account_emitter_id;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_account_add_sop_id_column" author="P35066">
+        <addColumn tableName="account">
+            <column name="sop_id" type="int" remarks="The sop id of the account">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS sop_id;
+            </sql>
+        </rollback>
+     </changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_SITE_NAME_COLUMN_ADD_DEFAULT_VALUE" author="P70605">
+        <sql>
+            UPDATE ACCOUNT
+            SET SITE_NAME = NAME
+            WHERE SITE_NAME IS NULL;
+        </sql>
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_SITE_NAME_COLUMN_ADD_NOT_NULL_CONSTRAINT" author="P70605">
+        <addNotNullConstraint tableName="account" columnName="site_name"/>
+        <rollback>
+            <dropNotNullConstraint tableName="account" columnName="site_name"/>
+        </rollback>
+    </changeSet>
+     
+     <changeSet id="0_1_0_account_add_registry_id_column" author="P35066">
+        <addColumn tableName="account">
+            <column name="registry_id" type="int" remarks="The uk ets registry id of the account">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS registry_id;
+            </sql>
+        </rollback>
+     </changeSet>
+     
+     <changeSet id="0_1_0_alter_account_sop_id_column_to_biginteger" author="P35066">
+        <modifyDataType
+        	tableName="account"
+	        columnName="sop_id"
+	        newDataType="bigint"/>
+        <rollback></rollback>
+     </changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_SEARCH_ADDITIONAL_KEYWORD_SEQUENCE" author="P62629">
+        <createSequence sequenceName="account_search_additional_keyword_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS account_search_additional_keyword_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ACCOUNT_SEARCH_ADDITIONAL_KEYWORD" author="P62629">
+        <createTable tableName="account_search_additional_keyword" remarks="Represents an account-related additional keyword for search purposes">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="account_search_additional_keyword_pk" nullable="false"/>
+            </column>
+            <column name="account_id" type="bigint" remarks="The account id related to the keyword">
+                <constraints foreignKeyName="account_search_additional_keywordacc_fk" references="account(id)" nullable="false" />
+            </column>
+            <column name="value" type="varchar(255)" remarks="The value of the keyword (e.g. permit_id)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS account_search_additional_keyword CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CREATE_INDEXES_FOR_ACCOUNT_SEARCH_ADDITIONAL_KEYWORD_SEARCHABLE_COLUMN" author="P62629">
+        <sql>
+            CREATE INDEX trgm_gin_idx_account_search_additional_keyword_value
+                ON account_search_additional_keyword USING gin (value gin_trgm_ops);
+        </sql>
+        <rollback>
+            <sql>
+                DROP INDEX trgm_gin_idx_account_search_additional_keyword_value;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_account_table_add_installation_category_column" author="pafilisa@unisystems.gr">
+        <addColumn tableName="account">
+            <column name="installation_category" type="varchar(255)" remarks="The category of the (installation) account">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS installation_category;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_account_table_add_emitter_type_column" author="pafilisa@unisystems.gr">
+        <addColumn tableName="account">
+            <column name="emitter_type" type="varchar(255)" remarks="The emitter type of the (installation) account">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE account
+                DROP COLUMN IF EXISTS emitter_type;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CHANGE_ACCOUNT_VARIABLES_VARCHAR_LENGTH" author="P70383">
+        <modifyDataType tableName="account" columnName="name" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account" columnName="competent_authority" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account" columnName="type" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account" columnName="status" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account" columnName="migrated_account_id" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account" columnName="site_name" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account" columnName="emission_trading_scheme" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account" columnName="installation_category" newDataType="varchar(256)"/>
+        <modifyDataType tableName="account" columnName="emitter_type" newDataType="varchar(256)"/>
+        <rollback>
+            <modifyDataType tableName="account" columnName="name" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account" columnName="competent_authority" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account" columnName="type" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account" columnName="status" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account" columnName="migrated_account_id" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account" columnName="site_name" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account" columnName="emission_trading_scheme" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account" columnName="installation_category" newDataType="varchar(255)"/>
+            <modifyDataType tableName="account" columnName="emitter_type" newDataType="varchar(255)"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CHANGE_ACCOUNT_VARIABLES_VARCHAR_LENGTH_REVERT" author="P70605">
+        <modifyDataType tableName="account" columnName="name" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account" columnName="competent_authority" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account" columnName="type" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account" columnName="status" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account" columnName="migrated_account_id" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account" columnName="site_name" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account" columnName="emission_trading_scheme" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account" columnName="installation_category" newDataType="varchar(255)"/>
+        <modifyDataType tableName="account" columnName="emitter_type" newDataType="varchar(255)"/>
+        <rollback>
+            <modifyDataType tableName="account" columnName="name" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account" columnName="competent_authority" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account" columnName="type" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account" columnName="status" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account" columnName="migrated_account_id" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account" columnName="site_name" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account" columnName="emission_trading_scheme" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account" columnName="installation_category" newDataType="varchar(256)"/>
+            <modifyDataType tableName="account" columnName="emitter_type" newDataType="varchar(256)"/>
+        </rollback>
+    </changeSet>
+     
+</databaseChangeLog>

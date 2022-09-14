@@ -1,0 +1,42 @@
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Description of changes</dt>
+    <dd govukSummaryListRowValue>{{ permitVariationDetails?.reason }}</dd>
+    <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+      <a govukLink [routerLink]="['../..', 'about']" [state]="{ changing: true }">Change</a>
+    </dd>
+  </div>
+  <div govukSummaryListRow *ngIf="nonSignificantChangesText">
+    <dt govukSummaryListRowKey>Non-significant changes to the Monitoring Plan or the Monitoring Methodology Plan</dt>
+    <dd govukSummaryListRowValue>
+      <ng-container *ngFor="let change of nonSignificantChangesText">
+        <p>{{ change }}</p>
+      </ng-container>
+    </dd>
+    <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+      <a govukLink [routerLink]="['..', 'changes']" [state]="{ changing: true }">Change</a>
+    </dd>
+  </div>
+  <div govukSummaryListRow *ngIf="significantChangesMonitoringPlanText">
+    <dt govukSummaryListRowKey>Significant modifications to the Monitoring Plan</dt>
+    <dd govukSummaryListRowValue>
+      <ng-container *ngFor="let change of significantChangesMonitoringPlanText">
+        <p>{{ change }}</p>
+      </ng-container>
+    </dd>
+    <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+      <a govukLink [routerLink]="['..', 'changes']" [state]="{ changing: true }">Change</a>
+    </dd>
+  </div>
+  <div govukSummaryListRow *ngIf="significantChangesMonitoringMethodologyPlanText">
+    <dt govukSummaryListRowKey>Significant modifications to the Monitoring Methodology Plan</dt>
+    <dd govukSummaryListRowValue>
+      <ng-container *ngFor="let change of significantChangesMonitoringMethodologyPlanText">
+        <p>{{ change }}</p>
+      </ng-container>
+    </dd>
+    <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+      <a govukLink [routerLink]="['..', 'changes']" [state]="{ changing: true }">Change</a>
+    </dd>
+  </div>
+</dl>

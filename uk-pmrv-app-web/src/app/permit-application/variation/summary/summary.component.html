@@ -1,0 +1,34 @@
+<ng-template #mainView>
+  <app-permit-task [breadcrumb]="true">
+    <app-page-heading>Submit application to regulator</app-page-heading>
+    <ng-container *ngIf="allowSubmission$ | async; else submissionNotAllowed">
+      <p class="govuk-body">
+        By submitting this application you are confirming that, to the best of your knowledge, the details you are
+        providing are correct
+      </p>
+
+      <div class="govuk-button-group">
+        <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and send</button>
+      </div>
+    </ng-container>
+
+    <ng-template #submissionNotAllowed>
+      <p class="govuk-body">All tasks must be completed before you can submit your application.</p>
+    </ng-template>
+    <a govukLink routerLink="." (click)="location.back()">Return to: Make a change to your permit</a>
+  </app-permit-task>
+</ng-template>
+
+<ng-container *ngIf="variationSubmitted$ | async; else mainView">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <govuk-panel>Application submitted</govuk-panel>
+
+      <h3 class="govuk-heading-m">What happens next</h3>
+
+      <p class="govuk-body">We’ve sent your application to {{ competentAuthority$ | async | competentAuthority }}</p>
+      <p class="govuk-body">The regulator will make a decision and respond within 2 calendar months.</p>
+      <a govukLink routerLink="/dashboard">Return to: Dashboard</a>
+    </div>
+  </div>
+</ng-container>

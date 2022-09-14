@@ -1,0 +1,47 @@
+<form (ngSubmit)="onSave()" *ngIf="isEditable$ | async; else simpleTable" [formGroup]="form">
+  <govuk-table [columns]="columns" [data]="tableData$ | async" formArrayName="siteContacts">
+    <ng-template let-column="column" let-index="index" let-row="row">
+      <ng-container [formGroupName]="index" [ngSwitch]="column.field">
+        <ng-container *ngSwitchCase="'user'">
+          <div
+            [options]="assigneeOptions$ | async"
+            formControlName="userId"
+            govuk-select
+            widthClass="govuk-!-width-full"
+          ></div>
+        </ng-container>
+        <ng-container *ngSwitchDefault>{{ row[column.field] }}</ng-container>
+      </ng-container>
+    </ng-template>
+  </govuk-table>
+
+  <ng-container *ngTemplateOutlet="pagination"></ng-container>
+
+  <div class="govuk-button-group">
+    <button appPendingButton govukButton type="submit" class="govuk-!-margin-top-3">Save</button>
+    <button govukSecondaryButton type="button" (click)="refresh$.next()">Discard changes</button>
+  </div>
+</form>
+
+<ng-template #simpleTable>
+  <govuk-table [columns]="columns" [data]="tableData$ | async">
+    <ng-template let-column="column" let-row="row">
+      <ng-container [ngSwitch]="column.field">
+        <ng-container *ngSwitchCase="'user'">{{
+          row[column.field] ? (row[column.field] | userFullName) : 'Unassigned'
+        }}</ng-container>
+        <ng-container *ngSwitchDefault>{{ row[column.field] }}</ng-container>
+      </ng-container>
+    </ng-template>
+  </govuk-table>
+
+  <ng-container *ngTemplateOutlet="pagination"></ng-container>
+</ng-template>
+
+<ng-template #pagination>
+  <app-pagination
+    [count]="count$ | async"
+    (currentPageChange)="page$.next($event)"
+    [pageSize]="pageSize"
+  ></app-pagination>
+</ng-template>

@@ -1,0 +1,59 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Measurement"
+    heading="Source stream category"
+    submitText="Save and complete"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">Define a source stream category by linking a source stream with its emission source.</p>
+    <p class="govuk-body">
+      You must include the amount of carbon dioxide (CO2) or carbon dioxide equivalent (CO2e) this source stream
+      category emits and the applied monitoring approach being used at the installation.
+    </p>
+
+    <div formControlName="sourceStream" govuk-select label="Source stream" widthClass="govuk-!-width-full">
+      <option *ngFor="let sourceStream of 'sourceStreams' | task | async" [value]="sourceStream.id">
+        {{ sourceStream.reference }} {{ sourceStream | sourceStreamDescription }}
+      </option>
+    </div>
+    <div app-multi-select formControlName="emissionSources" label="Emission sources">
+      <div
+        *ngFor="let emissionSource of 'emissionSources' | task | async"
+        [itemValue]="emissionSource.id"
+        [label]="emissionSource.reference + ' ' + emissionSource.description"
+        app-multi-select-item
+        itemName="emissionSources"
+      ></div>
+    </div>
+    <div app-multi-select formControlName="emissionPoints" label="Emission points">
+      <div
+        *ngFor="let emissionPoint of 'emissionPoints' | task | async"
+        [itemValue]="emissionPoint.id"
+        [label]="emissionPoint.reference + ' ' + emissionPoint.description"
+        app-multi-select-item
+        itemName="emissionPoints"
+      ></div>
+    </div>
+    <div
+      formControlName="annualEmittedCO2Tonnes"
+      govuk-text-input
+      inputType="number"
+      label="Estimated tonnes of CO2 emitted from this source stream category"
+      hint="Include carbon dioxide equivalent (CO2e)"
+      suffix="Tonnes"
+      widthClass="govuk-input--width-10"
+    ></div>
+    <div formControlName="categoryType" govuk-radio legend="What category does this source stream fit in?">
+      <govuk-radio-option
+        *ngFor="let option of categoryTypeOptions"
+        [label]="option | categoryTypeName"
+        [value]="option"
+      >
+      </govuk-radio-option>
+    </div>
+  </app-wizard-step>
+
+  <a govukLink routerLink=".."> Return to: {{ index$ | async | sourceStreamCategoryName: 'MEASUREMENT' | async }} </a>
+</app-permit-task>

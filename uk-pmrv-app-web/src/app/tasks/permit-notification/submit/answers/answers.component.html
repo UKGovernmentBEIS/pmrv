@@ -1,0 +1,24 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <app-page-heading>Check your answers</app-page-heading>
+    <app-permit-notification-summary-details
+      *ngIf="permitNotificationService.permitNotification$ | async as notification"
+      [notification]="notification"
+      [files]="permitNotificationService.downloadUrlFiles$ | async"
+      [allowChange]="store.isEditable$ | async"
+      cssClass="summary-list--edge-border"
+    ></app-permit-notification-summary-details>
+    <div class="govuk-button-group">
+      <button
+        appPendingButton
+        govukButton
+        type="button"
+        (click)="confirm()"
+        *ngIf="(store | async).isEditable === true"
+      >
+        Confirm and complete
+      </button>
+    </div>
+    <a govukLink routerLink="..">Return to: Notify the regulator of a change</a>
+  </div>
+</div>

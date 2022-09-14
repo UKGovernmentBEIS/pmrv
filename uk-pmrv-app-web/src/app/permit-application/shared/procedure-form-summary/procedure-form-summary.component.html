@@ -1,0 +1,40 @@
+<dl
+  *ngIf="details"
+  govuk-summary-list
+  [class]="cssClass"
+  [hasBorders]="false"
+  [class.summary-list--edge-border]="hasBottomBorder"
+>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Procedure description</dt>
+    <dd class="pre-wrap" govukSummaryListRowValue>{{ details.procedureDescription }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Procedure document</dt>
+    <dd govukSummaryListRowValue>{{ details.procedureDocumentName }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Procedure reference</dt>
+    <dd govukSummaryListRowValue>{{ details.procedureReference }}</dd>
+  </div>
+  <div *ngIf="details.diagramReference" govukSummaryListRow>
+    <dt govukSummaryListRowKey>Diagram reference</dt>
+    <dd govukSummaryListRowValue>{{ details.diagramReference }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Department or role that’s responsible</dt>
+    <dd govukSummaryListRowValue>{{ details.responsibleDepartmentOrRole }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Location of records</dt>
+    <dd govukSummaryListRowValue>{{ details.locationOfRecords }}</dd>
+  </div>
+  <div *ngIf="details.itSystemUsed" govukSummaryListRow>
+    <dt govukSummaryListRowKey>IT system used</dt>
+    <dd govukSummaryListRowValue>{{ details.itSystemUsed }}</dd>
+  </div>
+  <div *ngIf="details.appliedStandards" govukSummaryListRow>
+    <dt govukSummaryListRowKey>European or other standards applied</dt>
+    <dd govukSummaryListRowValue>{{ details.appliedStandards }}</dd>
+  </div>
+</dl>

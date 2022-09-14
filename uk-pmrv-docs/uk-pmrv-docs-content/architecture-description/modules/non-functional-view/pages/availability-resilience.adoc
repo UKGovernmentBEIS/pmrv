@@ -1,0 +1,42 @@
+= Availability and resilience
+
+== Definitions
+For reference the following table (adapted from original source on Wikipedia) relates the availability percentage to
+actual downtime:
+
+|===
+|Availability %                 |Downtime per year  |Downtime per month |Downtime per week  |Downtime per day
+|97%	                        |10.96 days	        |21.6 hours	        |5.04 hours	        |43.2 minutes
+|98%	                        |7.30 days          |14.4 hours         |3.36 hours         |28.8 minutes
+|99% ("two nines")	            |3.65 days	        |7.20 hours	        |1.68 hours         |14.4 minutes
+|99.5% ("two and a half nines")	|1.83 days	        |3.60 hours         |50.4 minutes       |7.2 minutes
+|99.8%	                        |17.52 hours        |86.23 minutes      |20.16 minutes      |2.88 minutes
+|99.9% ("three nines")	        |8.76 hours         |43.8 minutes       |10.1 minutes       |1.44 minutes
+|===
+
+Downtime in the above table typically refers to scheduled intervals known and usually communicated in advance. It is
+also important to understand that the above table lists cumulative numbers. For example, 98% availability does not
+mean that the system will be unavailable for about half an hour every day, but rather that during one month it
+could be down twice, each time for about 7 hours for example because of maintenance (software upgrades, hardware
+replacements, etc.).
+
+=== Reliability
+In order for UK PMRV to maintain its availability, it will have to be composed of reliable components.
+In other words in case of external to the system failures (power failures, network failures, OS failures, etc.) the
+system maintains its functionality, or gracefully reduces functionality or eventually cleanly shuts down. Meeting such
+requirements is partly an issue of operational support (or in other words data centre service level agreements and
+application management service level agreements) including the level of automation supported for deployments and
+overall system monitoring/alerting, and partly system design around clustering and in general providing redundancy
+wherever possible cost-effectively.
+
+== Types of services
+The object of this system, is to enable users to perform transactions, that is, transfer units from one account to
+another. Of course there are many other supportive actions that are performed, but unit transfers are the most
+important.
+
+We can already group the provided services as follows:
+
+- User registration
+- Information viewing, like account information, workflow history or viewing the task list, etc.
+- Services that involve updating domain information like user/account/verification body.
+- Action in the context of a workflow.

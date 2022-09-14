@@ -1,0 +1,16 @@
+<app-permit-task [breadcrumb]="true" [notification]="notification">
+  <app-page-heading caption="Monitoring approaches">Define monitoring approaches</app-page-heading>
+
+  <app-approaches-template></app-approaches-template>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    Selected monitoring approaches
+  </h2>
+
+  <app-approaches-summary-template></app-approaches-summary-template>
+  <app-list-return-link></app-list-return-link>
+</app-permit-task>

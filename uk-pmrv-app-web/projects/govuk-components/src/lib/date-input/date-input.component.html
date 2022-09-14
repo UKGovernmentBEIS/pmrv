@@ -1,0 +1,53 @@
+<fieldset [id]="identifier" govukFieldset>
+  <legend govukLegend>{{ label }}</legend>
+  <span *ngIf="hint" govukFieldsetHint>{{ hint }}</span>
+  <div [formGroup]="formGroup" class="govuk-date-input">
+    <govuk-error-message
+      *ngIf="shouldDisplayErrors"
+      [errors]="control.errors"
+      [identifier]="identifier"
+    ></govuk-error-message>
+    <div class="govuk-date-input__item">
+      <label [for]="identifier + '-day'" class="govuk-label govuk-date-input__label"> Day </label>
+      <input
+        (blur)="onInputBlur()"
+        [class.govuk-input--error]="hasFieldError('day')"
+        [id]="identifier + '-day'"
+        [name]="identifier + '-day'"
+        class="govuk-input govuk-date-input__input govuk-input--width-2"
+        formControlName="day"
+        inputmode="numeric"
+        max="31"
+        min="1"
+        type="text"
+      />
+    </div>
+    <div class="govuk-date-input__item">
+      <label [for]="identifier + '-month'" class="govuk-label govuk-date-input__label"> Month </label>
+      <input
+        (blur)="onInputBlur()"
+        [class.govuk-input--error]="hasFieldError('month')"
+        [id]="identifier + '-month'"
+        class="govuk-input govuk-date-input__input govuk-input--width-2"
+        formControlName="month"
+        inputmode="numeric"
+        max="12"
+        min="1"
+        type="text"
+      />
+    </div>
+    <div class="govuk-date-input__item">
+      <label [for]="identifier + '-year'" class="govuk-label govuk-date-input__label"> Year </label>
+      <input
+        (blur)="onInputBlur()"
+        [class.govuk-input--error]="hasFieldError('year')"
+        [id]="identifier + '-year'"
+        [name]="identifier + '-year'"
+        class="govuk-input govuk-date-input__input govuk-input--width-4"
+        formControlName="year"
+        inputmode="numeric"
+        type="text"
+      />
+    </div>
+  </div>
+</fieldset>

@@ -1,0 +1,48 @@
+<div class="moj-multi-file-upload moj-multi-file-upload--enhanced">
+  <app-file-upload-list
+    [listTitle]="listTitle"
+    (fileDelete)="onFileDeleteClick($event)"
+    [files]="uploadedFiles$ | async"
+    [isDisabled]="isDisabled"
+  ></app-file-upload-list>
+
+  <div class="moj-multi-file-upload__upload">
+    <div class="govuk-form-group">
+      <label [for]="id" class="govuk-label govuk-label--m" id="{{ 'l.' + id }}">{{ label }}</label>
+      <span *ngIf="hint" [id]="id + '-hint'" class="govuk-hint">{{ hint }}</span>
+      <div
+        (dragleave)="onDragLeave()"
+        (dragover)="onDragOver($event)"
+        (drop)="onDrop($event)"
+        [class.moj-multi-file-upload--dragover]="isDraggedOver"
+        class="moj-multi-file-upload__dropzone"
+      >
+        <input
+          #input
+          (blur)="onFileBlur()"
+          (change)="onFileChange($event)"
+          (focus)="onFileFocus()"
+          [accept]="accepted"
+          [class.moj-multi-file-upload--focused]="isFocused"
+          [disabled]="isDisabled"
+          [id]="id"
+          [name]="id"
+          [attr.aria-labelledby]="'l.' + id + ' ld.' + id"
+          class="govuk-file-upload moj-multi-file-upload__input"
+          multiple
+          type="file"
+        />
+        <p class="govuk-body">{{ dropzoneHintText }}</p>
+        <label
+          [class.govuk-button--disabled]="isDisabled"
+          [for]="id"
+          id="{{ 'ld.' + id }}"
+          class="govuk-button govuk-button--secondary"
+        >
+          {{ dropzoneButtonText }}
+        </label>
+        <div aria-live="polite" class="govuk-visually-hidden" role="status">{{ uploadStatusText$ | async }}</div>
+      </div>
+    </div>
+  </div>
+</div>

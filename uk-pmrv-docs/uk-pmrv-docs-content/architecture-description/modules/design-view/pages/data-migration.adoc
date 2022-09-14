@@ -1,0 +1,42 @@
+= Data Migration
+
+When PMRV goes live several data from ETSWAP need to be present so as users can continue their business in the new application without problems. Migration of data from ETSWAP to PMRV database will be needed, a task that turned out to be quite challenging as the data model between the 2 systems is completely different.
+
+For this reason it has been decided not to perform the migration with palin Sql queries but rather implement a solution in code, a decision that made the process easier and allowed us to use existing services of PMRV, perform business validations and produce reports during the period that the migration was being tested. Those reports were used from Regulators to make necessary updates in ETSWAP in order for the data to be able to be migrated.
+
+== Approach
+
+Actuator has been chosen for performing data-migration through a new custom API, an approach that has the following advantages:
+
+* can be exposed on different port/address than the rest of the application endpoints and so to be isolated and not exposed in public.
+* can be easily used as it is just another web API
+* can be activated/deactivated with the use of application properties out of the box (redeploy needed):
+management.endpoints.web.exposure.include=migration
+management.endpoint.migration.enabled=true
+* can be integrated with the rest of application in order for the existing services to be used and so all field and business validations to be performed during migration
+* data migration can be performed in steps by choosing the resource and optionally the sub resource to be migrated
+* easy to use and read responses which contain the errors occurred during migration (totally customizable per case) and produce migration reports out of them.
+
+== Migration Endpoint
+
+POST  /api/actuator/migration/{resource-type}/{mode} with the following body:
+
+        {
+           "ids": ""
+        }
+
+where ids is a comma separated list of ids and id represents different kind of resource which is defined per case.
+
+- resource-type  (order of endpoints is important):
+* account-id (migrate max emitterId)
+* verification-bodies(id=fldVerifierID)
+* legal-entities(id=fldOperatorID)
+* installation-accounts(id=fldEmitterID) (migrates also appointed verification bodies)
+* permits(id=fldEmitterID)
+* permit-attachments(id=file_attachment_uuid)
+* workflow(id=fldEmitterID)
+
+- mode
+
+* DRY: performs the migration procedure but does not commit any changes to the PMRV database. Useful to see if and what errors would occur if actual migration is performed
+* COMMIT: performs the migration procedure and commits the data

@@ -1,0 +1,110 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    submitText="Continue"
+    caption="Transferred CO2"
+    heading="Accounting for emissions from transferred CO2"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-body">
+      <p>
+        Include emissions monitors, flow measurement devices and continuous measurement systems used at the points of
+        transfer into or out of the installation.
+      </p>
+      <p>Get help with <a [routerLink]="" govukLink>measured emissions</a>.</p>
+    </div>
+
+    <div
+      app-multi-select
+      formControlName="measurementDevicesOrMethods"
+      label="Select the measurement devices which will monitor transferred CO2"
+      hint="Measurement devices are created in the ‘Fuels and equipment inventory’ section of the application"
+    >
+      <div
+        *ngFor="let measurementDeviceOrMethod of 'measurementDevicesOrMethods' | task | async"
+        [itemValue]="measurementDeviceOrMethod.id"
+        [label]="
+          measurementDeviceOrMethod.reference +
+          ', ' +
+          (measurementDeviceOrMethod.type | measurementDevicesType) +
+          (measurementDeviceOrMethod.uncertaintySpecified
+            ? ', Specified uncertainty ±' + measurementDeviceOrMethod.specifiedUncertaintyPercentage + '%'
+            : '')
+        "
+        app-multi-select-item
+        itemName="emissionSources"
+      ></div>
+    </div>
+
+    <div
+      formControlName="samplingFrequency"
+      govuk-radio
+      legend="What is the sampling frequency for these devices?"
+      hint="A continuous sampling frequency is expected when a measurement approach is being used."
+    >
+      <govuk-radio-option *ngFor="let option of typeOptions" [label]="option.label" [value]="option.value">
+      </govuk-radio-option>
+      <govuk-radio-option value="OTHER" label="Other">
+        <ng-container govukConditionalContent>
+          <div formControlName="otherSamplingFrequency" govuk-text-input label="Provide details"></div>
+        </ng-container>
+      </govuk-radio-option>
+    </div>
+
+    <div formControlName="tier" govuk-radio legend="What tier are you applying?">
+      <govuk-radio-option value="TIER_4" label="Tier 4"></govuk-radio-option>
+      <govuk-radio-option value="TIER_3" label="Tier 3">
+        <ng-container govukConditionalContent>
+          <div
+            formControlName="isHighestRequiredTierT3"
+            govuk-radio
+            legend="Are you applying the highest required tier?"
+          >
+            <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+            <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option value="TIER_2" label="Tier 2">
+        <ng-container govukConditionalContent>
+          <div
+            formControlName="isHighestRequiredTierT2"
+            govuk-radio
+            legend="Are you applying the highest required tier?"
+          >
+            <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+            <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option value="TIER_1" label="Tier 1">
+        <ng-container govukConditionalContent>
+          <div
+            formControlName="isHighestRequiredTierT1"
+            govuk-radio
+            legend="Are you applying the highest required tier?"
+          >
+            <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+            <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option value="NO_TIER" label="No tier">
+        <ng-container govukConditionalContent>
+          <div
+            formControlName="noTierJustification"
+            govuk-text-input
+            label="How are emissions from transferred CO2 will be estimated?"
+          ></div>
+        </ng-container>
+      </govuk-radio-option>
+    </div>
+  </app-wizard-step>
+
+  <app-approach-return-link
+    parentTitle="Transferred CO2"
+    reviewGroupUrl="transferred-co2"
+    [isNested]="true"
+  ></app-approach-return-link>
+</app-permit-task>

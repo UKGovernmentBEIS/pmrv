@@ -1,0 +1,17 @@
+<app-permit-task>
+  <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading caption="Transferred CO2">Confirm your answers</app-page-heading>
+  <app-accounting-summary-template
+    [accounting]="('TRANSFERRED_CO2' | monitoringApproachTask | async).accountingEmissions"
+    [changePerStage]="true"
+    [missingMeasurementDevice]="isSummaryDisplayed$ | async"
+    cssClass="summary-list--edge-border"
+  >
+  </app-accounting-summary-template>
+  <div class="govuk-button-group">
+    <button appPendingButton govukButton type="button" (click)="confirm()" *ngIf="(store.isEditable$ | async) === true">
+      Confirm and complete
+    </button>
+  </div>
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

@@ -1,0 +1,47 @@
+<app-permit-task
+  [breadcrumb]="
+    (cannotStartYet$ | async)
+      ? [
+          {
+            text: 'Measurement',
+            link: ['measurement']
+          },
+          {
+            text: index$ | async | sourceStreamCategoryName: 'MEASUREMENT' | async,
+            link: ['measurement', 'category-tier', index$ | async]
+          }
+        ]
+      : undefined
+  "
+>
+  <ng-container *ngIf="cannotStartYet$ | async; else edit">
+    <app-page-heading caption="Monitoring approach, Measurement"> Applied standard </app-page-heading>
+    <p class="govuk-body">Get help with <a [routerLink]="" govukLink>Applied standard</a>.</p>
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Source stream category</li>
+    </ul>
+    <a govukLink routerLink="..">Return to: {{ index$ | async | sourceStreamCategoryName: 'MEASUREMENT' | async }}</a>
+  </ng-container>
+
+  <ng-template #edit>
+    <ng-container
+      *ngIf="('MEASUREMENT' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+    >
+      <app-wizard-step
+        (formSubmit)="onSubmit()"
+        [formGroup]="form"
+        caption="Measurement, {{ tier | sourceStreamCategoryName | async }}"
+        heading="Applied standard"
+        submitText="Confirm and complete"
+        [hideSubmit]="(store.isEditable$ | async) === false"
+      >
+        <p class="govuk-body">Get help with <a [routerLink]="" govukLink>Applied standard</a>.</p>
+
+        <app-applied-standard-form> </app-applied-standard-form>
+      </app-wizard-step>
+
+      <a govukLink routerLink="..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+    </ng-container>
+  </ng-template>
+</app-permit-task>

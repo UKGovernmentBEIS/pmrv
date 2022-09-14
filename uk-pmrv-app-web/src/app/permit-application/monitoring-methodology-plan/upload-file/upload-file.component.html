@@ -1,0 +1,39 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    caption="Monitoring Methodology Plan"
+    heading="Download and complete the Monitoring Methodology Plan"
+    submitText="Save and continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">
+      Download the Monitoring Methodology Plan and complete it with details of your installation. When it is complete
+      upload it here.
+      <br />
+      Get help <a govukLink href="#">filling in the MMP</a>
+    </p>
+
+    <div class="govuk-!-margin-bottom-6">
+      <app-attachment
+        size="588 KB"
+        title="Monitoring Methodology Plan template"
+        type="CSV"
+        url="assets/files/{{ 'MMP' | templateFile }}"
+      ></app-attachment>
+    </div>
+
+    <app-multiple-file-input
+      [baseDownloadUrl]="getDownloadUrl()"
+      [label]="(isFileUploaded$ | async) ? 'Upload another file' : 'Upload a file'"
+      formControlName="files"
+      hint="The file must be smaller than 20MB"
+      listTitle="Uploaded files"
+    ></app-multiple-file-input>
+  </app-wizard-step>
+
+  <app-list-return-link
+    reviewGroupTitle="Monitoring Methodology Plan"
+    reviewGroupUrl="monitoring-methodology-plan"
+  ></app-list-return-link>
+</app-permit-task>

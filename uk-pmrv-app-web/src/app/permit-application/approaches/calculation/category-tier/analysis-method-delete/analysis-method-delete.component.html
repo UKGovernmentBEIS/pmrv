@@ -1,0 +1,13 @@
+<app-permit-task
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-page-heading [caption]="tier | sourceStreamCategoryName | async">
+    Are you sure you want to delete the Analysis method?</app-page-heading
+  >
+  <div class="govuk-hint">All information for this Analysis method will be removed</div>
+  <div class="govuk-button-group govuk-!-margin-bottom-9" *ngIf="(store.isEditable$ | async) === true">
+    <button appPendingButton (click)="delete()" govukWarnButton>Yes, delete</button>
+    <a routerLink=".." govukLink>Cancel</a>
+  </div>
+  <a govukLink routerLink="../../../..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+</app-permit-task>

@@ -1,0 +1,235 @@
+= Technologies
+
+In this section we describe technology related selections along with their rationale. Where possible (and sensible
+given the project's goals, timeline and criticality of choice) a separate analysis and comparison of competing choices
+has been made and will be cross-linked.
+
+== Backend
+All services developed as part of the UK PMRV system are written in Java and in particular JDK version 11. In order to
+facilitate rapid development, the team is using the Spring Boot 2 framework. Instead of making JDBC calls we are
+utilising an Object relational Mapping Framework, JPA/Hibernate. Each application has the responsibility to create
+and maintain its schema. This is done using Liquibase.
+|===
+|Type| Technology |Version
+
+|Programming Language
+|Java Open JDK
+|11
+
+|Development Framework
+|Spring Boot
+|2.7.1
+
+|Unit Testing
+|JUnit
+|5
+
+|Building / Dependency management
+|Maven
+|3.x
+
+|Database Migrations
+|Liquibase
+|4.11.0
+
+|Bpmn engine
+|Camunda
+|7.17.0
+
+|Object Relational Mapping
+|JPA/Hibernate/QueryDSL
+|Default provided by Spring Boot
+|===
+
+== User Interface
+The user interface is built using the Angular framework.
+|===
+|Role |Technology |Version
+
+|Framework
+|Angular
+|12
+
+|Language
+|Typescript
+|4.2.4
+
+|Unit Testing
+|Jest
+|26.0.1
+
+|State Management
+|RxJS
+|7.3.0
+
+|Building / Dependency management
+|Node Package Manager (npm) / Node.js
+|6.14.9 / 14.17.0
+|===
+
+== Database
+In every situation where a database is necessary, PostgreSQL database is used. In the AWS environment
+this translates into using the RDS backed by a PostgreSQL engine.
+
+|===
+|Environment |Technology |Version
+
+|Development
+|PostgreSQL
+|13.3
+
+|Cloud (AWS)
+|RDS (PostgreSQL)
+|(managed by infrastructure provider)
+|===
+
+== Service Orchestration
+Elastic Container Service (ECS), the native container orchestrator in AWS is used. Locally the team works using
+classic Docker Swarm.
+|===
+|Environment |Technology |Version
+
+|Development Cloud (AWS)
+|Docker Swarm
+|19.03.8
+
+|Cloud (AWS)
+|ECS
+|(managed by infrastructure provider)
+|===
+
+== Authentication/authorization Server
+Handling authentication and authorization in a complex project,
+begs for a dedicated solution rather than a custom-made approach. As such an extensive research on using external
+identity management and access control platforms and a number of potential candidates were evaluated.
+The first decision point was whether to build a custom system or rely on an external one that can be
+properly integrated. The decision taken was that an external platform will save both time and provide a preset level
+of security. Of the potential external platforms, Redhat's Keycloak was selected as the best candidate.
+Details are available under Investigation on usage of an external Identity Management and Access Control System.
+Authorization in PMRV is customly implemented in order to be able to have more fine-grained control taken under consideration the needs of the project.
+Therefore the overall architecture now comprises 2 separate systems, the PMRV and the
+IDentity Management (IDM) platform.
+|===
+|Technology |Version
+
+|Keycloak
+|16.1.0
+
+|===
+
+== CI / CD
+The CI/CD process follows a hybrid process in order to support the separation of the development vs
+infrastructure teams. Development teams is using Jenkins to create docker images that are eventually
+pushed the AWS Elastic Container Registry (ECR).
+
+From there, Github Actions take over, and they are responsible for deploying this image ot the correct
+AWS environment.
+
+|===
+|Environment |Technology |Version
+
+|Development
+|Jenkins
+|2.348
+
+|Development
+|Groovy for scripting pipelines
+|Provided by Jenkins
+
+|Cloud (AWS)
+|Scripting with Terraform
+|(managed by infrastructure provider)
+|===
+
+
+== Log management and aggregation
+|===
+|Environment |Technology |Version
+
+|Cloud (AWS)
+|Cloudwatch
+|(managed by infrastructure provider)
+
+|===
+
+== End to end tests
+End to end tests are implemented using Selenium and are written in Java.
+There are various tools that are used for suporting the execution of end to end tests:
+
+* Jenkins server for building and running the scripts
+* Mailhog, a service that is used to simulate the SMTP server
+* JMeter for performance and automation testing
+
+|===
+|Role |Technology |Version
+
+|User/browser emulation
+|Selenium / Web Driver
+|104
+
+|Web browser automation framework
+|Stevia
+|4.0.0
+
+|Testing framework
+|TestNg
+|6.14.3
+
+|Test report tool
+|Allure
+|2.10.0
+
+|SMTP server emulation
+|Mailhog
+|1.0
+
+|Test automation and execution
+|Jenkins
+|2.348
+
+|Test Data automation
+|JMeter
+|5.4.3
+|===
+
+== Code quality
+|===
+|Role |Technology |Version
+
+|Static Code Analysis
+|Sonarqube
+|8.9.8
+|===
+
+== Security testing
+|===
+|Role |Technology |Version
+
+|Dependency Tracking
+|OWASP Dependency Track
+|4.5.0
+
+|PEN Testing
+|Burp Suite
+|2020.x
+
+|===
+
+== Performance testing
+|===
+|Role |Technology |Version
+
+|Metrics Aggregator
+|Cloudwatch
+|(Managed by infrastructure provider)
+
+|Metrics Visualization
+|Cloudwatch
+|(Managed by infrastructure provider)
+
+|Test Data automation
+|JMeter
+|5.4.3
+|===
+
+For a detailed list of all used libraries and versions please refer link:{attachmentsdir}/dependencies.zip[here].

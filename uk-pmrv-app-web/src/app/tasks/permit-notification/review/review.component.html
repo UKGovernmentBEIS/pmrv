@@ -1,0 +1,41 @@
+<app-base-task-container-component
+  header="Review notification of a change"
+  [daysRemaining]="daysRemaining$ | async"
+  [customContentTemplate]="customContentTemplate"
+  expectedTaskType="PERMIT_NOTIFICATION_APPLICATION_REVIEW"
+>
+</app-base-task-container-component>
+
+<ng-template #customContentTemplate>
+  <ng-container>
+    <div class="govuk-button-group">
+      <button
+        *ngIf="allowNotifyOperator$ | async"
+        (click)="notifyOperator()"
+        govukButton
+        title="Notify Operator for decision"
+        type="button"
+      >
+        Notify Operator of decision
+      </button>
+      <button
+        *ngIf="allowSendPeerReview$ | async"
+        (click)="sendPeerReview()"
+        govukButton
+        title="Send for peer review"
+        type="button"
+      >
+        Send for peer review
+      </button>
+    </div>
+  </ng-container>
+
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="./decision"
+      linkText="Details of the Change"
+      [status]="'DETAILS_CHANGE' | reviewNotificationStatus | async"
+    ></li>
+  </ul>
+</ng-template>

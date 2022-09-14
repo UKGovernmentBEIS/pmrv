@@ -1,0 +1,29 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Transferred CO2"
+    heading="Add a receiving or transferring installation"
+    submitText="Save and continue"
+  >
+    <p class="govuk-body">Get help with receiving and transferring installations (link TBD).</p>
+    <div formControlName="type" govuk-radio legend="What type of installation are you adding?">
+      <govuk-radio-option
+        *ngFor="let option of typeOptions"
+        [label]="option.label"
+        [value]="option.value"
+      ></govuk-radio-option>
+    </div>
+    <div
+      formControlName="installationIdentificationCode"
+      govuk-text-input
+      hint="TBD"
+      label="Installation identification code"
+    ></div>
+    <div formControlName="operator" govuk-text-input hint="TBD" label="Operator"></div>
+    <div formControlName="installationName" govuk-text-input label="Installation name"></div>
+    <div formControlName="co2source" govuk-text-input hint="TBD" label="Source of CO2"></div>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

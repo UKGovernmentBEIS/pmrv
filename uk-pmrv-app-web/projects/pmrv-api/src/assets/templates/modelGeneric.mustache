@@ -1,0 +1,28 @@
+export interface {{classname}}{{#allParents}}{{#-first}} extends {{/-first}}{{{.}}}{{^-last}}, {{/-last}}{{/allParents}} { {{>modelGenericAdditionalProperties}}
+{{#vars}}
+    {{#description}}
+    /**
+     * {{{description}}}
+     */
+    {{/description}}
+    {{#isReadOnly}}readonly {{/isReadOnly}}{{{name}}}{{^required}}?{{/required}}:
+    {{#isEnum}}
+      {{#isString}}
+        {{#allowableValues}}{{#enumVars}}{{{value}}}{{^-last}} | {{/-last}}{{/enumVars}}{{/allowableValues}}
+      {{/isString}}
+      {{^isString}}
+        {{#isArray}}
+          Array<{{#allowableValues}}{{#enumVars}}{{{value}}}{{^-last}} | {{/-last}}{{/enumVars}}{{/allowableValues}}>
+        {{/isArray}}
+        {{^isArray}}
+          { [key: string]:  {{#allowableValues}}{{#enumVars}}{{{value}}}{{^-last}} | {{/-last}}{{/enumVars}}{{/allowableValues}} }
+        {{/isArray}}
+      {{/isString}}
+    {{/isEnum}}
+    {{^isEnum}}
+      {{#uniqueItems}}Array<{{#items}}{{datatype}}{{/items}}>{{/uniqueItems}}
+      {{^uniqueItems}}{{{dataType}}}{{/uniqueItems}}
+    {{/isEnum}}{{#isNullable}} | null{{/isNullable}};
+{{/vars}}
+}
+

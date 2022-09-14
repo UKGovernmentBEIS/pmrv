@@ -1,0 +1,11 @@
+<app-page-heading size="xl">
+  Are you sure you want to delete
+  <span class="nowrap"> ‘{{ index$ | async | sourceStreamCategoryName: 'PFC' | async }}’? </span>
+</app-page-heading>
+
+<p class="govuk-body">All the information within this source stream category will be deleted.</p>
+
+<div class="govuk-button-group">
+  <button appPendingButton (click)="delete()" govukWarnButton>Yes, delete</button>
+  <a routerLink=".." govukLink>Cancel</a>
+</div>

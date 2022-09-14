@@ -1,0 +1,25 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <ng-container *ngIf="(isfollowUpReturnForAmendsSubmitted$ | async) !== true; else followUpReturnForAmendsSubmitted">
+      <app-follow-up-summary
+        class="govuk-!-margin-bottom-8 govuk-!-display-block"
+        [data]="data$ | async"
+        sectionHeading="Check your information before sending"
+        [summaryListMapper]="followUpDecisionSummaryListMapper"
+        [allowChange]="isEditable$ | async"
+      ></app-follow-up-summary>
+      <div class="govuk-button-group">
+        <button class="submitButton" (click)="onSubmit()" appPendingButton govukButton type="button">
+          Confirm and complete
+        </button>
+      </div>
+    </ng-container>
+    <ng-template #followUpReturnForAmendsSubmitted>
+      <govuk-panel title="Returned to operator for amends"></govuk-panel>
+      <span class="govuk-caption-l govuk-!-margin-bottom-8">Notification text if needed (TBD)</span>
+      <h3 class="govuk-heading-m">What happens next</h3>
+      <p class="govuk-body">Explanation text (TBD)</p>
+      <a govukLink routerLink="/dashboard">Return to: Dashboard</a>
+    </ng-template>
+  </div>
+</div>

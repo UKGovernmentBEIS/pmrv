@@ -1,0 +1,90 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Fall-back approach">
+  <app-site-emissions></app-site-emissions>
+
+  <h2 class="govuk-heading-m">Fall-back emission sources</h2>
+  <ul app-task-item-list>
+    <div class="overflow-auto">
+      <ng-container *ngIf="(sourceStreamCategoryAppliedTiers$ | async)?.length > 0; else addNew">
+        <govuk-table [columns]="columns" [data]="sourceStreamCategoryAppliedTiers$ | async">
+          <ng-template let-column="column" let-row="row" let-index="index">
+            <ng-container [ngSwitch]="column.field">
+              <ng-container *ngSwitchCase="'category'">
+                <a govukLink [routerLink]="['../../fall-back/category-tier', index]">
+                  <ng-container
+                    *ngIf="
+                      row?.sourceStreamCategory?.sourceStream | findSourceStream | async as sourceStream;
+                      else noSourceStream
+                    "
+                  >
+                    {{ row | sourceStreamCategoryName | async }}
+                  </ng-container>
+                  <ng-template #noSourceStream>
+                    UNDEFINED: {{ row?.sourceStreamCategory?.categoryType | categoryTypeName }}
+                  </ng-template>
+                </a>
+              </ng-container>
+              <ng-container *ngSwitchCase="'emissions'">
+                {{ row?.sourceStreamCategory?.annualEmittedCO2Tonnes | number }} t
+              </ng-container>
+              <ng-container *ngSwitchCase="'status'">
+                <govuk-tag
+                  [color]="'FALLBACK_Category_Tier' | taskStatus: index | async | tagColor"
+                  class="app-task-list__tag"
+                >
+                  {{ 'FALLBACK_Category_Tier' | taskStatus: index | async | i18nSelect: statusMap }}
+                </govuk-tag>
+              </ng-container>
+            </ng-container>
+          </ng-template>
+        </govuk-table>
+        <a
+          *ngIf="(store.isEditable$ | async) === true"
+          govukLink
+          [routerLink]="['../../fall-back/category-tier', (sourceStreamCategoryAppliedTiers$ | async)?.length]"
+        >
+          Add a source stream category
+        </a>
+      </ng-container>
+
+      <ng-template #addNew>
+        <li
+          *ngIf="(store.isEditable$ | async) === true"
+          app-task-item
+          link="../../fall-back/category-tier/0"
+          linkText="Add a source stream category"
+          [status]="sourceStreamCategoriesStatus$ | async"
+        ></li>
+      </ng-template>
+    </div>
+  </ul>
+
+  <h2 class="govuk-heading-m">Fall-back details</h2>
+
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="../../fall-back/description/summary"
+      linkText="Approach description and justification"
+      [status]="'FALLBACK_Description' | taskStatus | async"
+    >
+      <app-fallback-description-summary-template [hasBottomBorder]="false"></app-fallback-description-summary-template>
+    </li>
+    <li
+      app-task-item
+      link="../../fall-back/uncertainty/summary"
+      linkText="Annual uncertainty analysis"
+      [status]="'FALLBACK_Uncertainty' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.FALLBACK.annualUncertaintyAnalysis' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

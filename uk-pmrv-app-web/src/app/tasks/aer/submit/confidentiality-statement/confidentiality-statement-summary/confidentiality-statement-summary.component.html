@@ -1,0 +1,16 @@
+<app-aer-task [notification]="notification" [breadcrumb]="true">
+  <app-page-heading>Confidentiality statement</app-page-heading>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(aerService.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span [class.govuk-visually-hidden]="(hasConfidentialSections$ | async) === false"
+      >Commercially confidential sections</span
+    >
+  </h2>
+
+  <app-confidentiality-statement-summary-template></app-confidentiality-statement-summary-template>
+  <app-return-link></app-return-link>
+</app-aer-task>

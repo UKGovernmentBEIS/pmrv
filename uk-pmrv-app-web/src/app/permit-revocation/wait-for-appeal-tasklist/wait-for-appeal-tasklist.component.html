@@ -1,0 +1,61 @@
+<div class="govuk-grid-row">
+  <div [class]="(hasRelatedActions$ | async) === true ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+    <ng-container *ngIf="requestTaskItem$ | async as requestTaskItem">
+      <app-page-heading size="xl">
+        {{ (route.data | async)?.pageTitle }}
+        <app-task-header-info
+            [assignee]="requestTaskItem.requestTask.assigneeFullName"
+            [daysRemaining]="requestTaskItem.requestTask.daysRemaining"
+        ></app-task-header-info>
+      </app-page-heading>
+
+      <!--Action buttons-->
+      <div class="govuk-button-group">
+        <button
+          *ngIf="
+            ('REVOCATION_WITHDRAW' | taskStatus | async) === 'complete' &&
+            checkAllowedActions(requestTaskItem.allowedRequestTaskActions)
+          "
+          (click)="notifyOperator()"
+          govukButton
+          title="Notify Operator for decision"
+          type="button"
+        >
+          Notify Operator of decision
+        </button>
+      </div>
+
+      <!-- Sections -->
+      <ul app-task-item-list>
+        <li
+          app-task-item
+          link="./summary"
+          linkText="Reason for withdrawing the revocation"
+          [status]="'REVOCATION_WITHDRAW' | taskStatus | async"
+        ></li>
+      </ul>
+    </ng-container>
+
+    <!-- Timeline events -->
+    <div class="govuk-grid-row" *ngIf="timelineActions$ | async as actions">
+      <app-timeline class="govuk-grid-column-full">
+        <app-timeline-item
+          *ngFor="let action of actions"
+          [action]="action"
+          [link]="action | timelineItemLink"
+          [state]="navigationState"
+        ></app-timeline-item>
+        <p class="govuk-body" *ngIf="actions?.length === 0">No timeline events</p>
+      </app-timeline>
+    </div>
+
+    <a govukLink routerLink="/dashboard">Return to: Dashboard</a>
+  </div>
+  <div class="govuk-grid-column-one-third" *ngIf="(hasRelatedActions$ | async) === true">
+    <app-related-actions
+        [isAssignable]="store.select('assignable') | async"
+        [taskId]="taskId$ | async"
+        [allowedActions]="store.select('allowedRequestTaskActions') | async"
+    ></app-related-actions>
+  </div>
+</div>

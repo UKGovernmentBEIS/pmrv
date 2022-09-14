@@ -1,0 +1,9 @@
+= Evolution (Maintainability)
+
+== Definitions
+By evolution, we mean all the possible types of changes that a system may experience during its lifetime.
+
+== Characterize evolution needs
+* Number of accounts
+* Number of users
+* Number of open workflows

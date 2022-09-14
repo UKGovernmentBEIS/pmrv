@@ -1,0 +1,99 @@
+<div *ngIf="(isTemplateGenerationErrorDisplayed$ | async) === true; else answers" class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h2 class="govuk-heading-m">
+      Sorry, there was a problem when evaluating the document template: {{ templateFailed }}
+    </h2>
+  </div>
+</div>
+
+<ng-template #answers>
+  <app-page-heading *ngIf="(store.isEditable$ | async) === true; else action"
+    >Check your information before sending</app-page-heading
+  >
+  <ng-template #action>
+    <app-page-heading>Request for information</app-page-heading>
+  </ng-template>
+
+  <h2
+    *ngIf="(store.isEditable$ | async) === true"
+    app-summary-header
+    (changeClick)="changeClick('questions')"
+    [changeRoute]="'..'"
+    class="govuk-heading-m"
+  >
+    <span>Request details</span>
+  </h2>
+  <dl govuk-summary-list>
+    <ng-container *ngFor="let question of questions$ | async; index as i">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>{{ 'Question ' + (i + 1) }}</dt>
+        <dd govukSummaryListRowValue>
+          {{ question }}
+        </dd>
+      </div>
+    </ng-container>
+    <div govukSummaryListRow *ngIf="(store | async).rfiSubmitPayload?.files.length">
+      <dt govukSummaryListRowKey>Uploaded files</dt>
+      <dd govukSummaryListRowValue>
+        <app-summary-download-files [files]="store.getDownloadUrlFiles((store | async).rfiSubmitPayload?.files)">
+        </app-summary-download-files>
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Response deadline</dt>
+      <dd govukSummaryListRowValue>
+        {{ deadline$ | async | govukDate }}
+      </dd>
+    </div>
+  </dl>
+
+  <h2
+    *ngIf="(store.isEditable$ | async) === true"
+    app-summary-header
+    (changeClick)="changeClick('notify')"
+    [changeRoute]="'..'"
+    class="govuk-heading-m"
+  >
+    <span>Recipients</span>
+  </h2>
+
+  <dl govuk-summary-list>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Users</dt>
+      <dd govukSummaryListRowValue>
+        <div *ngFor="let user of operators$ | async">
+          {{ user | userInfoResolver: (usersInfo$ | async) }}
+        </div>
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Name and signature on the official notice</dt>
+      <dd govukSummaryListRowValue>
+        <div>
+          {{ signatory$ | async | userInfoResolver: (usersInfo$ | async) }}
+        </div>
+      </dd>
+    </div>
+    <div govukSummaryListRow *ngIf="(store | async)?.officialDocument">
+      <dt govukSummaryListRowKey>Official notice</dt>
+      <dd govukSummaryListRowValue>
+        <a
+          [routerLink]="[
+            '/rfi/action',
+            store.select('actionId') | async,
+            'file-download',
+            'document',
+            (store | async)?.officialDocument?.uuid
+          ]"
+          govukLink
+          target="_blank"
+          >{{ (store | async)?.officialDocument?.name }}</a
+        >
+      </dd>
+    </div>
+  </dl>
+
+  <div *ngIf="(store.isEditable$ | async) === true" class="govuk-button-group">
+    <button appPendingButton govukButton type="button" (click)="onConfirm()">Confirm and complete</button>
+  </div>
+</ng-template>

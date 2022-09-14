@@ -1,0 +1,35 @@
+<div class="govuk-grid-row">
+  <div [class]="(hasRelatedActions$ | async) === true ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+    <app-page-heading size="xl">
+      Surrender your permit
+      <app-task-header-info
+          [assignee]="(store.select('assignee') | async).assigneeFullName"
+          [daysRemaining]="store.select('daysRemaining') | async"
+      ></app-task-header-info>
+    </app-page-heading>
+
+    <p class="govuk-body">You can only submit this request once the regulated activities have stopped.</p>
+
+    <ul app-task-item-list>
+      <li
+        app-task-item
+        link="./apply/summary"
+        linkText="Surrender permit request"
+        [status]="'SURRENDER_APPLY' | taskStatus | async"
+      ></li>
+      <li
+        app-task-item
+        link="./submit"
+        linkText="Submit application"
+        [status]="'SURRENDER_SUBMIT' | taskStatus | async"
+      ></li>
+    </ul>
+  </div>
+  <div class="govuk-grid-column-one-third" *ngIf="(hasRelatedActions$ | async) === true">
+    <app-related-actions
+        [isAssignable]="store.select('assignable') | async"
+        [taskId]="taskId$ | async"
+        [allowedActions]="store.select('allowedRequestTaskActions') | async"
+    ></app-related-actions>
+  </div>
+</div>

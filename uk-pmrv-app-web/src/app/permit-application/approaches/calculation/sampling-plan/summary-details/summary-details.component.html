@@ -1,0 +1,132 @@
+<ng-container *ngIf="('CALCULATION' | monitoringApproachTask | async).samplingPlan as samplingPlan">
+  <ng-container *ngIf="changePerStage; else plainSamplingAnalysis">
+    <h2
+      app-summary-header
+      (changeClick)="changeClick('')"
+      [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+      class="govuk-heading-m"
+    >
+      Sampling analysis
+    </h2>
+  </ng-container>
+  <ng-template #plainSamplingAnalysis>
+    <br />
+    <div class="govuk-!-margin-top-3">
+      <h3 class="govuk-heading-s">Sampling analysis</h3>
+    </div>
+  </ng-template>
+
+  <ng-container *ngIf="samplingPlan?.exist === true; else noPlan">
+    <dl govuk-summary-list class="govuk-!-margin-bottom-0 govuk-summary-list--no-border">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Do you undertake sampling and analysis?</dt>
+        <dd govukSummaryListRowValue>Yes</dd>
+      </div>
+    </dl>
+    <app-procedure-form-summary
+      cssClass="summary-list--edge-border"
+      [details]="('CALCULATION' | monitoringApproachTask | async).samplingPlan?.details?.analysis"
+    ></app-procedure-form-summary>
+
+    <ng-container *ngIf="changePerStage; else plainSamplingPlan">
+      <h2
+        *ngIf="changePerStage"
+        app-summary-header
+        (changeClick)="changeClick('plan')"
+        [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+        class="govuk-heading-m"
+      >
+        Sampling plan
+      </h2>
+    </ng-container>
+    <ng-template #plainSamplingPlan>
+      <h3 app-summary-header class="govuk-heading-s">Sampling plan</h3>
+    </ng-template>
+
+    <app-procedure-form-summary
+      [details]="('CALCULATION' | monitoringApproachTask | async).samplingPlan?.details?.procedurePlan"
+      cssClass="govuk-!-margin-bottom-0 summary-list--edge-border"
+    ></app-procedure-form-summary>
+
+    <dl govuk-summary-list>
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Sampling plan procedure</dt>
+        <dd govukSummaryListRowValue *ngIf="(planAttachments$ | async).length === 0; else attachments">No</dd>
+        <ng-template #attachments>
+          <dd govukSummaryListRowValue>
+            <app-summary-download-files
+              [files]="store.getDownloadUrlFiles(planAttachments$ | async)"
+            >
+            </app-summary-download-files>
+          </dd>
+        </ng-template>
+      </div>
+    </dl>
+
+    <ng-container *ngIf="changePerStage; else plainSPAppropriateness">
+      <h2
+        app-summary-header
+        (changeClick)="changeClick('appropriateness')"
+        [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+        class="govuk-heading-m"
+      >
+        Sampling plan appropriateness
+      </h2>
+    </ng-container>
+    <ng-template #plainSPAppropriateness>
+      <h3 app-summary-header class="govuk-heading-s">Sampling plan appropriateness</h3>
+    </ng-template>
+    <app-procedure-form-summary
+      [details]="('CALCULATION' | monitoringApproachTask | async).samplingPlan?.details?.appropriateness"
+      cssClass="summary-list--edge-border"
+    ></app-procedure-form-summary>
+
+    <ng-container *ngIf="changePerStage; else plainYearReconciliation">
+      <h2
+        *ngIf="changePerStage"
+        app-summary-header
+        (changeClick)="changeClick('reconciliation')"
+        [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+        class="govuk-heading-m"
+      >
+        Year end reconciliation
+      </h2>
+    </ng-container>
+    <ng-template #plainYearReconciliation>
+      <h3 app-summary-header class="govuk-heading-s">Year end reconciliation</h3>
+    </ng-template>
+
+    <ng-container
+      *ngIf="samplingPlan?.details?.yearEndReconciliation?.exist === true; else noReconciliationProcedureForm"
+    >
+      <dl govuk-summary-list class="govuk-!-margin-bottom-0 govuk-summary-list--no-border">
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Are stock estimates carried out as part of the emission calculations?</dt>
+          <dd govukSummaryListRowValue>Yes</dd>
+        </div>
+      </dl>
+      <app-procedure-form-summary
+        [details]="samplingPlan?.details?.yearEndReconciliation.procedureForm"
+        [hasBottomBorder]="hasBottomBorder"
+      ></app-procedure-form-summary>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #noPlan>
+    <dl govuk-summary-list [hasBorders]="false" [class.summary-list--edge-border]="hasBottomBorder">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Do you undertake sampling and analysis?</dt>
+        <dd govukSummaryListRowValue>No</dd>
+      </div>
+    </dl>
+  </ng-template>
+
+  <ng-template #noReconciliationProcedureForm>
+    <dl govuk-summary-list [hasBorders]="false" [class.summary-list--edge-border]="hasBottomBorder">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Are stock estimates carried out as part of the emission calculations?</dt>
+        <dd govukSummaryListRowValue>No</dd>
+      </div>
+    </dl>
+  </ng-template>
+</ng-container>

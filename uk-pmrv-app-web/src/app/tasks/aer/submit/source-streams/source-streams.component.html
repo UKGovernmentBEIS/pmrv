@@ -1,0 +1,42 @@
+<app-aer-task [breadcrumb]="true">
+  <app-page-heading>Source streams (fuels and materials)</app-page-heading>
+
+  <p class="govuk-body">List the sources that have been used during the reporting year.</p>
+  <p class="govuk-body">The table is pre-populated with source streams currently in the approved permit.</p>
+
+  <ng-container *ngIf="'sourceStreams' | task | async as sourceStreams; else startAdding">
+    <ng-container *ngIf="sourceStreams.length > 0; else startAdding">
+      <govuk-table [columns]="columns" [data]="'sourceStreams' | task | async" [class.no-bottom-border]="false">
+        <ng-template let-column="column" let-row="row">
+          <ng-container [ngSwitch]="column.field">
+            <ng-container *ngSwitchCase="'reference'">{{ row.reference }}</ng-container>
+            <ng-container *ngSwitchCase="'description'">{{ row.description | sourceStreamDescription }} </ng-container>
+            <ng-container *ngSwitchCase="'type'">{{ row.type | sourceStreamType }}</ng-container>
+            <ng-container *ngIf="(aerService.isEditable$ | async) === true">
+              <ng-container *ngSwitchCase="'change'"><a [routerLink]="row.id" govukLink>Change</a></ng-container>
+              <ng-container *ngSwitchCase="'delete'"
+                ><a [routerLink]="['delete', row.id]" govukLink>Delete</a></ng-container
+              >
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+
+      <ng-container *ngIf="(aerService.isEditable$ | async) === true">
+        <button govukSecondaryButton routerLink="add" type="button">Add another source stream</button>
+
+        <div class="govuk-button-group">
+          <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #startAdding>
+    <div class="govuk-button-group" *ngIf="(aerService.isEditable$ | async) === true">
+      <button govukButton routerLink="add" type="button">Add a source stream</button>
+    </div>
+  </ng-template>
+
+  <app-return-link></app-return-link>
+</app-aer-task>

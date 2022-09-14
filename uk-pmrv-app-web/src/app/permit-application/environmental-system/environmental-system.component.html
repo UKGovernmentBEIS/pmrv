@@ -1,0 +1,37 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Management procedures"
+    heading="Environmental management system"
+    submitText="Confirm and complete"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-boolean-radio-group
+      controlName="exist"
+      legend="Does the organisation have a documented environmental management system?"
+      [isEditable]="store.isEditable$ | async"
+    >
+      <div govukConditionalContent>
+        <div formControlName="certified" govuk-radio legend="Is the system externally certified?">
+          <govuk-radio-option [value]="true" label="Yes">
+            <ng-container govukConditionalContent>
+              <div
+                formControlName="certificationStandard"
+                govuk-text-input
+                hint="For example, ‘BS EN ISO14001: 2014’"
+                label="Standard to which the system is certified"
+              ></div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+        </div>
+      </div>
+    </app-boolean-radio-group>
+  </app-wizard-step>
+
+  <app-list-return-link
+    reviewGroupTitle="Management procedures"
+    reviewGroupUrl="management-procedures"
+  ></app-list-return-link>
+</app-permit-task>

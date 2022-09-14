@@ -1,0 +1,21 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    submitText="Continue"
+    caption="Perfluorocarbons"
+    heading="Provide details about the procedure used to determine the emission factors for CF4 and C2F6"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">
+      Include that measurements have been, and will be, carried out for a long enough time for the measured values to
+      converge, at least for 72 hours.
+    </p>
+    <app-procedure-form></app-procedure-form>
+  </app-wizard-step>
+  <app-approach-return-link
+    parentTitle="Perfluorocarbons"
+    reviewGroupUrl="pfc"
+    [isNested]="true"
+  ></app-approach-return-link>
+</app-permit-task>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+		logicalFilePath="v0.1.0/changelog_table_terms.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_TABLE_TERMS" author="p70366" context="migrate">
+
+		<comment>Initial creation of Terms</comment>
+		<sql>
+			--------------------------------------------------------
+			--  Table TERMS
+			--------------------------------------------------------
+
+			CREATE SEQUENCE terms_seq MINVALUE 0 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 1 NO CYCLE;
+
+			CREATE TABLE terms (
+			id bigint,
+			url VARCHAR(40) NOT NULL,
+			version SMALLINT NOT NULL);
+
+			ALTER TABLE terms ADD CONSTRAINT pk_terms PRIMARY KEY (id);
+			ALTER TABLE terms ADD CONSTRAINT uc_version UNIQUE (version);
+
+			COMMENT ON TABLE terms IS 'Stores the basic information about terms';
+			COMMENT ON COLUMN terms.url IS 'The terms and conditions url';
+			COMMENT ON COLUMN terms.version IS 'The version of terms and conditions';
+
+		</sql>
+
+		<rollback>
+			<sql>
+				DROP TABLE IF EXISTS terms CASCADE;
+				DROP SEQUENCE IF EXISTS terms_seq;
+			</sql>
+		</rollback>
+
+	</changeSet>
+
+</databaseChangeLog>

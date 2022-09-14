@@ -1,0 +1,45 @@
+<app-permit-task [breadcrumb]="true" reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels">
+  <app-page-heading caption="Fuels and equipment inventory">Emission sources</app-page-heading>
+  <p class="govuk-body">Add all the emission sources that relate to regulated activities at the installation.</p>
+  <govuk-details summary="What is an emission source"
+    >An emission source is a part of an installation, or a process within the installation, that generates greenhouse
+    gases. For example a boiler or diesel generator.</govuk-details
+  >
+
+  <ng-container *ngIf="'emissionSources' | task | async as emissionSources; else startAdding">
+    <ng-container *ngIf="emissionSources.length > 0; else startAdding">
+      <h2 app-summary-header class="govuk-heading-m">
+        You have added {{ emissionSources.length }} emission {{ emissionSources.length > 1 ? 'sources' : 'source' }}
+      </h2>
+
+      <ng-container *ngFor="let emissionSource of emissionSources">
+        <dl appGroupedSummaryList govuk-summary-list>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Emission source</dt>
+            <dd govukSummaryListRowValue>{{ emissionSource.reference }} {{ emissionSource.description }}</dd>
+            <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+              <a [routerLink]="emissionSource.id" govukLink>Change</a> |
+              <a [routerLink]="['delete', emissionSource.id]" govukLink>Delete</a>
+            </dd>
+          </div>
+        </dl>
+      </ng-container>
+
+      <ng-container *ngIf="(store.isEditable$ | async) === true">
+        <button govukSecondaryButton routerLink="add" type="button">Add another emission source</button>
+
+        <div class="govuk-button-group">
+          <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #startAdding>
+    <div class="govuk-button-group" *ngIf="(store.isEditable$ | async) === true">
+      <button govukButton routerLink="add" type="button">Add an emission source</button>
+    </div>
+  </ng-template>
+
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

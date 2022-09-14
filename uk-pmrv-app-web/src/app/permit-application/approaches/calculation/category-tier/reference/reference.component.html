@@ -1,0 +1,27 @@
+<app-permit-task
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+    heading="Which standard reference source you are using for {{ statusKey | subtaskName | lowercase }}?"
+    submitText="Continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div formControlName="type" govuk-radio>
+      <govuk-radio-option
+        *ngFor="let option of referenceMap | keyvalue: originalOrder"
+        [value]="option.key"
+        [label]="option.value"
+      ></govuk-radio-option>
+      <govuk-radio-option [divider]="true" value="OTHER" label="None of the above">
+        <ng-container govukConditionalContent>
+          <div formControlName="otherTypeDetails" govuk-text-input label="Provide details"></div>
+        </ng-container>
+      </govuk-radio-option>
+    </div>
+    <div formControlName="defaultValue" govuk-text-input label="Provide a default value (optional)"></div>
+  </app-wizard-step>
+  <a govukLink routerLink="../..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+</app-permit-task>

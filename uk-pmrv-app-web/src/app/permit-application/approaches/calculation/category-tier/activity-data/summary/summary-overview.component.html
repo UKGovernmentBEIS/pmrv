@@ -1,0 +1,99 @@
+<ng-container
+  *ngIf="
+    ('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async]
+      .activityData as activityData
+  "
+>
+  <h2
+    *ngIf="isChangeLinkAvailable"
+    app-summary-header
+    (changeClick)="changeClick('')"
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Activity Data</span>
+  </h2>
+  <dl
+    govuk-summary-list
+    class="govuk-summary-list--no-border"
+    [class.govuk-!-margin-bottom-0]="!isChangeLinkAvailable"
+    [class.summary-list--edge-border]="activityDataSectionHasBottomBorder"
+  >
+    <div govukSummaryListRow>
+      <ng-container *ngIf="!validMeasurementDevicesOrMethodsError; else invalidMeasurementDevice">
+        <dt govukSummaryListRowKey>Measurement Devices Or Methods</dt>
+        <dd govukSummaryListRowValue class="pre-line">
+          <ng-container *ngFor="let deviceId of activityData.measurementDevicesOrMethods; let isLast = last">
+            <ng-container
+              *ngIf="'measurementDevicesOrMethods' | task | async | measurementDeviceOrMethod: deviceId as device"
+            >
+              {{ device | measurementDeviceOrMethodName }} {{ !isLast ? '\n' : '' }}
+            </ng-container>
+          </ng-container>
+        </dd>
+      </ng-container>
+      <ng-template #invalidMeasurementDevice>
+        <dt class="missing-row-key"><span>Measurement devices</span></dt>
+        <dd govukSummaryListRowValue>
+          <span class="error">{{ validMeasurementDevicesOrMethodsError }}</span>
+        </dd>
+      </ng-template>
+    </div>
+    <div govukSummaryListRow *ngIf="activityData.uncertainty">
+      <dt govukSummaryListRowKey>Overall metering uncertainty</dt>
+      <dd govukSummaryListRowValue>{{ activityData.uncertainty | meteringUncertaintyName }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Tier</dt>
+      <dd govukSummaryListRowValue>{{ activityData.tier | appliedTier }}</dd>
+    </div>
+    <ng-container *ngIf="activityData.isHighestRequiredTier !== undefined">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Highest required tier</dt>
+        <dd govukSummaryListRowValue>{{ activityData.isHighestRequiredTier ? 'Yes' : 'No' }}</dd>
+      </div>
+    </ng-container>
+  </dl>
+
+  <ng-container *ngIf="activityData.isHighestRequiredTier === false">
+    <h2
+      *ngIf="isChangeLinkAvailable"
+      app-summary-header
+      (changeClick)="changeClick('justification')"
+      [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+      class="govuk-heading-m"
+    >
+      <span class="govuk-visually-hidden">Activity Data Justification</span>
+    </h2>
+    <dl
+      govuk-summary-list
+      class="govuk-summary-list--no-border"
+      [class.govuk-!-margin-bottom-0]="!isChangeLinkAvailable"
+      [class.summary-list--edge-border]="justificationSectionHasBottomBorder"
+    >
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Reasons for not applying the highest required tier</dt>
+        <dd govukSummaryListRowValue>
+          <ng-container *ngIf="activityData?.noHighestRequiredTierJustification?.isCostUnreasonable"
+            >Unreasonable cost<br
+          /></ng-container>
+          <ng-container *ngIf="activityData?.noHighestRequiredTierJustification?.isTechnicallyInfeasible"
+            >Technical infeasibility</ng-container
+          >
+        </dd>
+      </div>
+      <div govukSummaryListRow *ngIf="activityData?.noHighestRequiredTierJustification?.isTechnicallyInfeasible">
+        <dt govukSummaryListRowKey>Explanation of technical infeasibility</dt>
+        <dd govukSummaryListRowValue class="pre-wrap">
+          {{ activityData.noHighestRequiredTierJustification.technicalInfeasibilityExplanation }}
+        </dd>
+      </div>
+      <div govukSummaryListRow *ngIf="(files$ | async)?.length">
+        <dt govukSummaryListRowKey>Supporting files</dt>
+        <dd govukSummaryListRowValue>
+          <app-summary-download-files [files]="store.getDownloadUrlFiles(files$ | async)"> </app-summary-download-files>
+        </dd>
+      </div>
+    </dl>
+  </ng-container>
+</ng-container>

@@ -1,0 +1,25 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    caption="Monitoring Methodology Plan"
+    heading="Are you providing a Monitoring Methodology Plan as part of your permit application?"
+    submitText="Save and continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <govuk-warning-text>
+      A Monitoring and Methodology Plan is optional if you are applying for a Hospital and small emitter (HSE) permit,
+      or a Greenhouse gas emissions (GHGE) permit as a Category A low emitter
+    </govuk-warning-text>
+
+    <div formControlName="exist" govuk-radio legendSize="medium">
+      <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+      <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+    </div>
+  </app-wizard-step>
+
+  <app-list-return-link
+    reviewGroupTitle="Monitoring Methodology Plan"
+    reviewGroupUrl="monitoring-methodology-plan"
+  ></app-list-return-link>
+</app-permit-task>

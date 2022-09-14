@@ -1,0 +1,21 @@
+<app-permit-task
+  [breadcrumb]="true"
+  [notification]="notification"
+  reviewGroupTitle="Installation details"
+  reviewGroupUrl="details"
+>
+  <app-page-heading caption="Installation details">Estimated annual CO2e</app-page-heading>
+  <div class="govuk-body">
+    <p>
+      Input the installation’s estimated annual
+      <a [routerLink]="" govukLink>carbon dioxide equivalent (CO2e)</a> emissions. Do not include any transferred CO2 in
+      your calculations.
+    </p>
+    <p>Get help with <a [routerLink]="" govukLink>calculating CO2 and CO2e</a>.</p>
+  </div>
+  <h2 app-summary-header class="govuk-heading-m">
+    <span class="govuk-visually-hidden">List of installation categories</span>
+  </h2>
+  <app-emissions-summary-template [isPreview]="false"></app-emissions-summary-template>
+  <app-list-return-link reviewGroupTitle="Installation details" reviewGroupUrl="details"></app-list-return-link>
+</app-permit-task>

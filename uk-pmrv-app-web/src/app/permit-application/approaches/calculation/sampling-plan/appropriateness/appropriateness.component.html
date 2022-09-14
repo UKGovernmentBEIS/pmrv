@@ -1,0 +1,21 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    submitText="Continue"
+    caption="Calculation"
+    heading="Sampling plan appropriateness"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-procedure-form>
+      <div class="govuk-body">
+        <p>Provide details of how the organisation checks the appropriateness of the sampling plan.</p>
+      </div>
+    </app-procedure-form>
+  </app-wizard-step>
+  <app-approach-return-link
+    parentTitle="Calculation approach"
+    reviewGroupUrl="calculation"
+    [isNested]="true"
+  ></app-approach-return-link>
+</app-permit-task>

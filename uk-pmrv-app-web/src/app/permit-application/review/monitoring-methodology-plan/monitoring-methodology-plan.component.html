@@ -1,0 +1,20 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Monitoring methodology plan">
+  <ul app-task-item-list>
+    <li
+      *ngIf="'monitoringMethodologyPlans' | taskStatus | async as status"
+      app-task-item
+      link="../../monitoring-methodology-plan/summary"
+      linkText="Monitoring methodology plan"
+      [status]="status"
+      [hasContent]="true"
+    >
+      <app-monitoring-methodology-summary-details [hasBottomBorder]="false" [isPreview]="true">
+      </app-monitoring-methodology-summary-details>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

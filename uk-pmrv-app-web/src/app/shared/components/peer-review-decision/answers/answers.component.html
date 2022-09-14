@@ -1,0 +1,19 @@
+<app-page-heading>Check your information before sending</app-page-heading>
+<h2 app-summary-header (changeClick)="changeClick()" [changeRoute]="'..'" class="govuk-heading-m">
+  <span class="govuk-visually-hidden">Check your information before sending</span>
+</h2>
+<dl govuk-summary-list class="govuk-summary-list--no-border summary-list--edge-border">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Decision</dt>
+    <dd govukSummaryListRowValue>{{ type | determinationAssessment }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Supporting notes</dt>
+    <dd govukSummaryListRowValue>{{ notes }}</dd>
+  </div>
+</dl>
+<div class="govuk-button-group">
+  <button appPendingButton govukButton type="button" (click)="onSubmit()">Confirm and complete</button>
+</div>
+
+<a govukLink routerLink="../.."> Return to: {{ previousPage }}</a>

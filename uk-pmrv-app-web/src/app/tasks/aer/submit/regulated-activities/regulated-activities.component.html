@@ -1,0 +1,94 @@
+<app-aer-task [breadcrumb]="true">
+  <govuk-error-summary *ngIf="displayErrorSummary$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading> Regulated activities</app-page-heading>
+  <p class="govuk-body">
+    Guidance explaining that a user must account for the regulated activities and add the CRF codes for each selected
+    regulated activity.
+  </p>
+
+  <ng-container *ngIf="'regulatedActivities' | task | async as regulatedActivities; else startAdding">
+    <ng-container *ngIf="regulatedActivities.length > 0; else startAdding">
+      <ng-container *ngFor="let activity of regulatedActivities | regulatedActivitiesSort">
+        <h2 class="govuk-heading-m">
+          <a
+            *ngIf="(aerService.isEditable$ | async) === true"
+            (click)="delete(activity.id)"
+            [routerLink]=""
+            govukLink
+            class="govuk-!-font-size-19 govuk-!-font-weight-regular float-right"
+          >
+            Delete
+          </a>
+          <span>{{ activity.type | regulatedActivityType }}</span>
+        </h2>
+        <dl govuk-summary-list>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Regulated activity</dt>
+            <dd govukSummaryListRowValue>{{ activity.type | regulatedActivityType }} ({{ activity.type | gas }})</dd>
+            <dd govukSummaryListRowActions *ngIf="(aerService.isEditable$ | async) === true">
+              <a govukLink [routerLink]="[activity.id]" [state]="{ changing: true }">Change</a>
+            </dd>
+          </div>
+          <div govukSummaryListRow>
+            <ng-container *ngIf="(displayErrorSummary$ | async) && !activity.capacity; else capacity">
+              <dt class="missing-row-key" govukSummaryListRowKey><span>Capacity</span></dt>
+              <dd govukSummaryListRowValue>
+                <span class="error">{{ form.errors.missingCapacity }}</span>
+              </dd>
+              <dd govukSummaryListRowActions *ngIf="(aerService.isEditable$ | async) === true">
+                <a govukLink [routerLink]="[activity.id, 'capacity']" [state]="{ changing: true }">Change</a>
+              </dd>
+            </ng-container>
+            <ng-template #capacity>
+              <dt govukSummaryListRowKey>Capacity</dt>
+              <dd govukSummaryListRowValue>
+                {{ activity.capacity | number }} {{ activity.capacityUnit | capacityUnit }}
+              </dd>
+              <dd govukSummaryListRowActions *ngIf="(aerService.isEditable$ | async) === true">
+                <a govukLink [routerLink]="[activity.id, 'capacity']" [state]="{ changing: true }">Change</a>
+              </dd>
+            </ng-template>
+          </div>
+          <div govukSummaryListRow>
+            <ng-container *ngIf="(displayErrorSummary$ | async) && missingCrfCode(activity); else crfCodes">
+              <dt class="missing-row-key" govukSummaryListRowKey><span>CRF codes</span></dt>
+              <dd govukSummaryListRowValue>
+                <div *ngIf="activity.energyCrf">{{ activity.energyCrf | activityItemName }}</div>
+                <span class="error">{{ form.errors.missingCrf ?? form.errors.missingIndustrialCrf }}</span>
+              </dd>
+              <dd govukSummaryListRowActions *ngIf="(aerService.isEditable$ | async) === true">
+                <a govukLink [routerLink]="[activity.id, 'crf-codes']" [state]="{ changing: true }">Change</a>
+              </dd>
+            </ng-container>
+            <ng-template #crfCodes>
+              <dt govukSummaryListRowKey>CRF codes</dt>
+              <dd govukSummaryListRowValue>
+                <ng-container>
+                  <div *ngIf="activity.energyCrf">{{ activity.energyCrf | activityItemName }}</div>
+                  <div *ngIf="activity.industrialCrf">{{ activity.industrialCrf | activityItemName }}</div>
+                </ng-container>
+              </dd>
+              <dd govukSummaryListRowActions *ngIf="(aerService.isEditable$ | async) === true">
+                <a govukLink [routerLink]="[activity.id, 'crf-codes']" [state]="{ changing: true }">Change</a>
+              </dd>
+            </ng-template>
+          </div>
+        </dl>
+      </ng-container>
+      <ng-container *ngIf="(aerService.isEditable$ | async) === true">
+        <button govukSecondaryButton routerLink="add" type="button">Add another regulated activity</button>
+        <div class="govuk-button-group">
+          <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #startAdding>
+    <div class="govuk-button-group" *ngIf="(aerService.isEditable$ | async) === true">
+      <button govukButton routerLink="add" type="button">Add a regulated activity</button>
+    </div>
+  </ng-template>
+
+  <app-return-link></app-return-link>
+</app-aer-task>

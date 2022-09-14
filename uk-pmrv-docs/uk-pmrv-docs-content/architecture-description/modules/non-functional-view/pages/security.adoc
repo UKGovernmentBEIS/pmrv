@@ -1,0 +1,113 @@
+= Security
+== Definitions
+
+We define security as the set of processes and technologies that allow the owners of resources in the system to control
+who can perform what actions on particular resources.
+
+The _who_ refers to the people, pieces of software and so on that form the set of actors in the system who have a
+security identity. They are also known as _principals_. The _resources_ are parts of the system that are considered
+sensitive. The _actions_ are the operations that the principals will want to perform on specific resources.
+
+== Sensitive resources
+
+In the following table we identify the set of sensitive resources applicable to UK PMRV.
+|===
+|Resource |Sensitivity |Owner |Access Control
+
+|User personal information
+|Personal information that can be used for identity theft or invasion of privacy
+|Environment Agency, User
+|Access to authenticated principal (authorised representative or the registry administrator)
+
+|Installation/Aviation Operator Account
+|Information about the organization
+|Environment Agency
+|Access to authenticated principal (authorised representative or the registry administrator)
+
+|Workflow related records
+|Information about the workflows, tasks related to a user that is not considered sensitive.
+|Environment Agency
+|Access to authenticated principal (authorised representative or the registry administrator)
+
+|Notifications and official documents related records
+|Information about the notification and official documents templates.
+|Environment Agency
+|Access to authenticated principal (registry administrator)
+
+|Installation/Aviation Operator Account related operations (view, update)
+|Access to sensitive operations that either retrieve or update account information.
+|Environment Agency
+|Access to authenticated principal (registry administrator)
+
+|Workflows related operations (View, Claim task, assign task, approve, reject, complete)
+|Access to sensitive operations that act on workflows.
+|Environment Agency
+|Access to authenticated principal (authorized representative, registry administrator, authority)
+
+|Notifications and official documents related operations
+|Access to sensitive operations that act on templates.
+|Environment Agency
+|Access to authenticated principal (registry administrator)
+|===
+
+== Security policy
+=== Resource classes
+We identify the following resource classes:
+
+* User personal information
+* Installation/Aviation Operator Account related records
+* Workflows related records
+* Notifications and official documents related records
+* User related operations (view, update, invite)
+* Installation/Aviation Operator Account related operations (view, update)
+* Workflows related operations (View, Claim task, assign task, approve, reject, complete)
+* Notifications and official documents related operations
+
+=== Principal classes
+We identify the following classes of principals:
+
+* Users
+** _Pending_. A user has been invited in PMRV, obtained a
+User ID but has not yet verified his email and has not obtained authentication credentials (password/2-factor authentication)
+** _Registered_. A registered user is a user who has registered his personal and work contact details and obtained a
+User ID but has limited access to PMRV. Such a user has already verified his/her email address and set up the
+2-factor authentication. The user record has not been activated yet by an administrator. The user will
+remain in this state, until an administrator validates the user details in which case the user moves to the
+Active state. A registered user has limited access to PMRV.
+** _Active_. An administrator has activated the user. In this state the user has full access to PMRV based on his permissions.
+** _Disabled_. A user that has been temporarily disabled. Has limited access to PMRV. His permissions have been suspended.
+** _Deleted_. A user has been deleted. User data are kept in IDM for tracing and audit purposes but the user has no access to PMRV.
+
+
+=== Access policies
+An access policy is _why_ a specific principal has access to a specific resource.
+
+Access policy in PMRV is based entirely on permissions users have on: +
+
+* Installation/Aviation Accounts for users that are Installation/Aviation Operator Account users (Operators)
+* Competent Authority for Competent Authority users (Regulators)
+* Verification Body for users that belong to a verification body (Verifiers)
+
+_Rule based access policy_: +
+The principal has specific permissions on an Installation/Aviation Account, Competent Authority, Verification Body.
+In this policy type we follow the Resource Based Access Control approach where our resource is the Installation/Aviation Account, Competent Authority, Verification Body record.
+Authorization rules are configured for all APIs that need authorization based on the resource and action the API needs access to.
+
+=== Access control sets
+For each resource class we define the access of each principal class.
+
+=== Authentication and authorization
+Keycloak is used for authentication, customized solution inside PMRV application used for authorization.
+
+=== Enforcing better passwords
+Although 2FA is used in the solution, encouraging users to create and maintain good passwords is of paramount importance. Checks against a compromised password list are implemented in the system in accordance with ASVS guidelines. Details on the approach can be found under xref:ensuring-secure-passwords.adoc[Ensuring secure passwords]
+
+=== Allowed file types
+As per security team advice, a white list of allowed file-types should be supported in PMRV.
+Details on the approach can be found under
+ xref:allowed_file_types.adoc[Allowed File types]
+
+=== CSV formula injection mitigation
+PMRV users that download an Excel file uploaded by another malicious user of the system, can possibly be exposed to formula injection attack through xls files.
+Details on the approach can be found under
+xref:CSV_formula_injection_mitigation.adoc[CSV formula injection mitigation]

@@ -1,0 +1,30 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <form (ngSubmit)="onSubmit()" *ngIf="form$ | async as form" [formGroup]="form">
+      <govuk-error-summary *ngIf="isSummaryDisplayed | async" [form]="form"></govuk-error-summary>
+      <app-page-heading size="xl">User details</app-page-heading>
+      <app-user-input phoneType="full"></app-user-input>
+
+      <ng-container [formGroup]="sendNoticesForm">
+        <div formControlName="sendNotices" govuk-checkboxes>
+          <ng-container govukLegend>
+            <span class="govuk-visually-hidden">User address</span>
+          </ng-container>
+          <govuk-checkbox [value]="true" label="Send me notices and official communications by post as well">
+            <ng-container govukConditionalContent>
+              <ng-container *ngTemplateOutlet="address"></ng-container>
+            </ng-container>
+          </govuk-checkbox>
+        </div>
+      </ng-container>
+
+      <ng-template #address>
+        <app-address-input formGroupName="address"></app-address-input>
+      </ng-template>
+
+      <app-two-fa-link *ngIf="isLoggedUser$ | async"></app-two-fa-link>
+
+      <button appPendingButton govukButton type="submit">Save</button>
+    </form>
+  </div>
+</div>

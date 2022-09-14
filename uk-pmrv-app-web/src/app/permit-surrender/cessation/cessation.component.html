@@ -1,0 +1,48 @@
+<div class="govuk-grid-row">
+  <div [class]="(hasRelatedActions$ | async) === true ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+    <ng-container *ngIf="requestTaskItem$ | async as requestTaskItem">
+      <app-page-heading size="xl">
+        Surrender cessation
+        <app-task-header-info
+            [assignee]="requestTaskItem.requestTask.assigneeFullName"
+            [daysRemaining]="requestTaskItem.requestTask.daysRemaining"
+        ></app-task-header-info>
+      </app-page-heading>
+
+      <div class="govuk-button-group" *ngIf="isNotifyOperatorActionEnabled$ | async">
+        <button (click)="notifyOperator()" govukButton title="Notify Operator for decision" type="button">
+          Notify Operator of decision
+        </button>
+      </div>
+
+      <ul app-task-item-list>
+        <li
+          app-task-item
+          link="confirm/summary"
+          linkText="Confirm cessation of regulated activities"
+          [status]="confirmSectionStatus$ | async"
+        ></li>
+      </ul>
+
+      <ng-container *ngIf="relatedTasks$ | async as relatedTasks">
+        <app-related-tasks *ngIf="relatedTasks.length > 0" [items]="relatedTasks"></app-related-tasks>
+      </ng-container>
+
+      <app-timeline>
+        <app-timeline-item
+          *ngFor="let action of actions$ | async"
+          [action]="action"
+          [link]="action | timelineItemLink"
+          [state]="navigationState"
+        ></app-timeline-item>
+      </app-timeline>
+    </ng-container>
+  </div>
+  <div class="govuk-grid-column-one-third" *ngIf="(hasRelatedActions$ | async) === true">
+    <app-related-actions
+        [isAssignable]="store.select('assignable') | async"
+        [taskId]="taskId$ | async"
+        [allowedActions]="store.select('allowedRequestTaskActions') | async"
+    ></app-related-actions>
+  </div>
+</div>

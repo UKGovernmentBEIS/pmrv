@@ -1,0 +1,35 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Nitrous oxide"
+    heading="Approach description"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-body">
+      <p>Include:</p>
+      <ul>
+        <li>the types of instruments used</li>
+        <li>if measurements are taken during wet or dry conditions</li>
+        <li>the formulae used for applying correction factors (PtO2 and H2O)</li>
+        <li>calibration factors required for QAL2 procedures if EN 14181 is applied</li>
+        <li>the method used to determine the stoichiometric flue gas volume if flue gas volume is calculated</li>
+        <li>
+          how annual emissions are determined based on concentration and flue gas flow data, taking time units into
+          account
+        </li>
+      </ul>
+      <p>Get help with <a [routerLink]="" govukLink>nitrous oxide</a>.</p>
+    </div>
+
+    <div
+      formControlName="approachDescription"
+      govuk-textarea
+      [maxLength]="30000"
+      label="Describe the approach used to determine nitrous oxide (N2O) emissions and to convert these to annual carbon dioxide equivalent (CO2e) emissions"
+    ></div>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Nitrous oxide" reviewGroupUrl="nitrous-oxide"></app-approach-return-link>
+</app-permit-task>

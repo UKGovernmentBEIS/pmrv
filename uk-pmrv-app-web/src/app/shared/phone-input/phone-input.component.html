@@ -1,0 +1,37 @@
+<fieldset govukFieldset>
+  <span govukFieldsetHint>{{ hint }}</span>
+  <govuk-error-message *ngIf="shouldDisplayErrors" [errors]="control.errors"></govuk-error-message>
+  <div [formGroup]="formGroup" class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+      <div class="govuk-form-group">
+        <label [for]="id + '.countryCode'" [id]="'l.' + id" class="govuk-label">Country code</label>
+        <select
+          (blur)="onInputBlur()"
+          [class.govuk-select--error]="shouldDisplayErrors"
+          [id]="id + '.countryCode'"
+          [name]="id + '.countryCode'"
+          autocomplete="tel-country-code"
+          class="govuk-select"
+          formControlName="countryCode"
+        >
+          <option *ngFor="let option of phoneCodes$ | async" [value]="option.value">{{ option.text }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="govuk-grid-column-one-half">
+      <div class="govuk-form-group">
+        <label [for]="id" class="govuk-label">{{ label }}</label>
+        <input
+          (blur)="onInputBlur()"
+          [class.govuk-input--error]="shouldDisplayErrors"
+          [id]="id"
+          [name]="id"
+          autocomplete="tel-national"
+          class="govuk-input govuk-!-width-full"
+          formControlName="number"
+          type="tel"
+        />
+      </div>
+    </div>
+  </div>
+</fieldset>

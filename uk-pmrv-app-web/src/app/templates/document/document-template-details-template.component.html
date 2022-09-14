@@ -1,0 +1,26 @@
+<h1 class="govuk-heading-m">Details</h1>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Emails sending this document</dt>
+    <dd govukSummaryListRowValue>
+      <ng-container *ngFor="let notifTemplate of documentTemplate.notificationTemplates">
+        <a routerLink="." govukLink (click)="navigateToEmailTemplate(notifTemplate.id)"
+          >View {{ notifTemplate.name }} template</a
+        >
+        <br />
+      </ng-container>
+    </dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Operator</dt>
+    <dd govukSummaryListRowValue>{{ documentTemplate.operatorType | operatorType }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Workflow</dt>
+    <dd govukSummaryListRowValue>{{ documentTemplate.workflow }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Last changed</dt>
+    <dd govukSummaryListRowValue>{{ documentTemplate.lastUpdatedDate | govukDate }}</dd>
+  </div>
+</dl>

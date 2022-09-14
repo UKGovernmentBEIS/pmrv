@@ -1,0 +1,212 @@
+<app-aer-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    [caption]="caption$ | async | regulatedActivityType"
+    heading="Add an industrial process CRF code"
+    submitText="Continue"
+    [hideSubmit]="(aerService.isEditable$ | async) === false"
+  >
+    <div formControlName="industrialCrfCategory" govuk-radio>
+      <govuk-radio-option [label]="'_2_A' | i18nSelect: activityItemName" [value]="'_2_A'">
+        <ng-container govukConditionalContent>
+          <div formControlName="industrialCrf" govuk-radio>
+            <govuk-radio-option
+              [value]="'_2_A_1_CEMENT_PRODUCTION'"
+              [label]="'_2_A_1' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_A_2_LIME_PRODUCTION'"
+              [label]="'_2_A_2' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_A_3_GLASS_PRODUCTION'"
+              [label]="'_2_A_3' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_A_4_OTHER_PROCESS_USES_OF_CARBONATES'"
+              [label]="'_2_A_4' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option [label]="'_2_B' | i18nSelect: activityItemName" [value]="'_2_B'">
+        <ng-container govukConditionalContent>
+          <div formControlName="industrialCrf" govuk-radio>
+            <govuk-radio-option
+              [value]="'_2_B_1_AMMONIA_PRODUCTION'"
+              [label]="'_2_B_1' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_B_2_NITRIC_ACID_PRODUCTION'"
+              [label]="'_2_B_2' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_B_3_ADIPIC_ACID_PRODUCTION'"
+              [label]="'_2_B_3' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_B_4_CAPROLACTAM_GLYOXAL_AND_GLYOXYLIC_ACID_PRODUCTION'"
+              [label]="'_2_B_4' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_B_5_CARBIDE_PRODUCTION'"
+              [label]="'_2_B_5' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_B_6_TITANIUM_DIOXIDE_PRODUCTION'"
+              [label]="'_2_B_6' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_B_7_SODA_ASH_PRODUCTION'"
+              [label]="'_2_B_7' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_B_8_PETROCHEMICAL_AND_CARBON_BLACK_PRODUCTION'"
+              [label]="'_2_B_8' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_B_9_FLUOROCHEMICAL_PRODUCTION'"
+              [label]="'_2_B_9' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_B_10_OTHER'"
+              [label]="'_2_B_10' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option [label]="'_2_C' | i18nSelect: activityItemName" [value]="'_2_C'">
+        <ng-container govukConditionalContent>
+          <div formControlName="industrialCrf" govuk-radio>
+            <govuk-radio-option
+              [value]="'_2_C_1_IRON_AND_STEEL_PRODUCTION'"
+              [label]="'_2_C_1' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_C_2_FERROALLOYS_PRODUCTION'"
+              [label]="'_2_C_2' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_C_3_ALUMINIUM_PRODUCTION'"
+              [label]="'_2_C_3' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_C_4_MAGNESIUM_PRODUCTION'"
+              [label]="'_2_C_4' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_C_5_LEAD_PRODUCTION'"
+              [label]="'_2_C_5' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_C_6_ZINC_PRODUCTION'"
+              [label]="'_2_C_6' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_C_7_OTHER_METAL_PRODUCTION'"
+              [label]="'_2_C_7' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option [label]="'_2_D' | i18nSelect: activityItemName" [value]="'_2_D'">
+        <ng-container govukConditionalContent>
+          <div formControlName="industrialCrf" govuk-radio>
+            <govuk-radio-option
+              [value]="'_2_D_1_LUBRICANT_USE'"
+              [label]="'_2_D_1' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_D_2_PARAFFIN_WAX_USE'"
+              [label]="'_2_D_2' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_D_3_OTHER'"
+              [label]="'_2_D_3' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option [label]="'_2_E' | i18nSelect: activityItemName" [value]="'_2_E'">
+        <ng-container govukConditionalContent>
+          <div formControlName="industrialCrf" govuk-radio>
+            <govuk-radio-option
+              [value]="'_2_E_1_INTEGRATED_CIRCUIT_OR_SEMICONDUCTOR'"
+              [label]="'_2_E_1' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_E_2_TFT_FLAT_PANEL_DISPLAY'"
+              [label]="'_2_E_2' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_E_3_PHOTOVOLTAICS'"
+              [label]="'_2_E_3' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_E_4_HEAT_TRANSFER_FLUID'"
+              [label]="'_2_E_4' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_E_5_OTHER'"
+              [label]="'_2_E_5' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option [label]="'_2_F' | i18nSelect: activityItemName" [value]="'_2_F'">
+        <ng-container govukConditionalContent>
+          <div formControlName="industrialCrf" govuk-radio>
+            <govuk-radio-option
+              [value]="'_2_F_1_REFRIGERATION_AND_AIR_CONDITIONING_EQUIPMENT'"
+              [label]="'_2_F_1' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_F_2_FOAM_BLOWING_AGENTS'"
+              [label]="'_2_F_2' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_F_3_FIRE_EXTINGUISHERS'"
+              [label]="'_2_F_3' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_F_4_AEROSOLS'"
+              [label]="'_2_F_4' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_F_5_SOLVENTS'"
+              [label]="'_2_F_5' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_F_6_OTHER'"
+              [label]="'_2_F_6' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option [label]="'_2_G' | i18nSelect: activityItemName" [value]="'_2_G'">
+        <ng-container govukConditionalContent>
+          <div formControlName="industrialCrf" govuk-radio>
+            <govuk-radio-option
+              [value]="'_2_G_1_ELECTRICAL_EQUIPMENT'"
+              [label]="'_2_G_1' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_G_2_SF6_AND_PFCS_FROM_OTHER_PRODUCT_USE'"
+              [label]="'_2_G_2' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_G_3_N2O_FROM_PRODUCT_USES'"
+              [label]="'_2_G_3' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+            <govuk-radio-option
+              [value]="'_2_G_4_OTHER'"
+              [label]="'_2_G_4' | i18nSelect: activityItemName"
+            ></govuk-radio-option>
+          </div>
+        </ng-container>
+      </govuk-radio-option>
+    </div>
+  </app-wizard-step>
+  <a govukLink routerLink="../..">Return to: Regulated activities</a>
+</app-aer-task>

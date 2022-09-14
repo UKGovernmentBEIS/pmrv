@@ -1,0 +1,21 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Perfluorocarbons"
+    heading="Collection efficiency for fugitive emissions"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-procedure-form>
+      <div class="govuk-body">
+        <p>
+          Provide details about the procedures detailing the methods used to determine the collection efficiency for
+          fugitive emissions.
+        </p>
+      </div>
+    </app-procedure-form>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Perfluorocarbons" reviewGroupUrl="pfc"></app-approach-return-link>
+</app-permit-task>

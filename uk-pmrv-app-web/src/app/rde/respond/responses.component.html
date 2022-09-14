@@ -1,0 +1,59 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  heading="Deadline extension request"
+  submitText="Confirm and complete"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <app-page-heading size="xl">
+    <app-task-header-info
+        [assignee]="(store | async).assignee.assigneeFullName"
+        [daysRemaining]="(store | async).daysRemaining"
+    ></app-task-header-info>
+  </app-page-heading>
+
+  <p class="govuk-body">
+    The regulator has requested more time to complete the permit determination. <br />
+    The consequence of not approving an extension is that the Regulator may not have enough time to complete their
+    review and make a decision.
+  </p>
+
+  <h2 app-summary-header class="govuk-heading-m">Request details</h2>
+  <dl govuk-summary-list class="govuk-summary-list--no-border summary-list--edge-border">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Current due date</dt>
+      <dd govukSummaryListRowValue>{{ (store | async)?.rdeResponsePayload?.currentDueDate | govukDate }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Proposed due date</dt>
+      <dd govukSummaryListRowValue>{{ (store | async)?.rdeResponsePayload?.proposedDueDate | govukDate }}</dd>
+    </div>
+  </dl>
+
+  <div class="govuk-!-margin-top-6" *ngIf="(store.isEditable$ | async) === true">
+    <h2 class="govuk-heading-m">What is your decision?</h2>
+    <div formControlName="decision" govuk-radio>
+      <govuk-radio-option value="ACCEPTED" label="Accept new due date"> </govuk-radio-option>
+      <govuk-radio-option value="REJECTED" label="Reject new due date">
+        <div govukConditionalContent>
+          <div govuk-textarea [maxLength]="10000" formControlName="reason" label="Provide a reason"></div>
+        </div>
+      </govuk-radio-option>
+    </div>
+  </div>
+</app-wizard-step>
+
+<ng-container *ngIf="relatedTasks$ | async as relatedTasks">
+  <app-related-tasks *ngIf="relatedTasks.length > 0" [items]="relatedTasks"></app-related-tasks>
+</ng-container>
+
+<div class="govuk-!-margin-top-6">
+  <app-timeline>
+    <app-timeline-item
+      *ngFor="let action of actions$ | async"
+      [action]="action"
+      [link]="action | timelineItemLink"
+      [state]="navigationState"
+    ></app-timeline-item>
+  </app-timeline>
+</div>

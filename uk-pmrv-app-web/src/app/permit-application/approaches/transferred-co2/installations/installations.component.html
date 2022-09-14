@@ -1,0 +1,33 @@
+<app-permit-task [breadcrumb]="[{ text: 'Transferred CO2', link: ['transferred-co2'] }]">
+  <app-page-heading caption="Transferred CO2">Receiving and transferring installations</app-page-heading>
+  <p class="govuk-body">List all the receiving and transferring installations.</p>
+  <p class="govuk-body">Get help with receiving and transferring installations (link TBD).</p>
+
+  <ng-container
+    *ngIf="
+      ('TRANSFERRED_CO2' | monitoringApproachTask | async).receivingTransferringInstallations as installations;
+      else startAdding
+    "
+  >
+    <ng-container *ngIf="installations.length > 0; else startAdding">
+      <h2 app-summary-header class="govuk-heading-m">
+        You have added {{ installations.length }} {{ installations.length > 1 ? 'installations' : 'installation' }}
+      </h2>
+      <app-installations-summary-template [preview]="false"></app-installations-summary-template>
+
+      <ng-container *ngIf="(store.isEditable$ | async) === true">
+        <button govukSecondaryButton routerLink="add" type="button">Add another installation</button>
+
+        <div class="govuk-button-group">
+          <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <ng-template #startAdding>
+    <div class="govuk-button-group" *ngIf="(store.isEditable$ | async) === true">
+      <button govukButton routerLink="add" type="button">Add an installation</button>
+    </div>
+  </ng-template>
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

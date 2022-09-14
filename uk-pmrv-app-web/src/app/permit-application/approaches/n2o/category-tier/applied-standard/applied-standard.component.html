@@ -1,0 +1,46 @@
+<app-permit-task
+  [breadcrumb]="
+    (cannotStartYet$ | async)
+      ? [
+          {
+            text: 'Nitrous oxide',
+            link: ['nitrous-oxide']
+          },
+          {
+            text: index$ | async | sourceStreamCategoryName: 'N2O' | async,
+            link: ['nitrous-oxide', 'category-tier', index$ | async]
+          }
+        ]
+      : undefined
+  "
+>
+  <ng-container *ngIf="cannotStartYet$ | async; else edit">
+    <app-page-heading caption="Nitrous oxide"> Applied standard </app-page-heading>
+    <p class="govuk-body">Get help with <a [routerLink]="" govukLink>Applied standard</a>.</p>
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Source stream category</li>
+    </ul>
+    <a govukLink routerLink="..">Return to: {{ index$ | async | sourceStreamCategoryName: 'N2O' | async }}</a>
+  </ng-container>
+
+  <ng-template #edit>
+    <ng-container
+      *ngIf="('N2O' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+    >
+      <app-wizard-step
+        (formSubmit)="onSubmit()"
+        [formGroup]="form"
+        caption="Nitrous oxide, {{ tier | sourceStreamCategoryName | async }}"
+        heading="Applied standard"
+        submitText="Confirm and complete"
+      >
+        <p class="govuk-body">Get help with <a [routerLink]="" govukLink>Applied standard</a>.</p>
+
+        <app-applied-standard-form></app-applied-standard-form>
+      </app-wizard-step>
+
+      <a govukLink routerLink="..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+    </ng-container>
+  </ng-template>
+</app-permit-task>

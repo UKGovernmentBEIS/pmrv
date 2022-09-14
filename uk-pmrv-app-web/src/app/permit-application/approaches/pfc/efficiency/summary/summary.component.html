@@ -1,0 +1,25 @@
+<app-permit-task [notification]="notification" [breadcrumb]="[{ text: 'Perfluorocarbons', link: ['pfc'] }]">
+  <app-page-heading caption="Perfluorocarbons">Collection efficiency for fugitive emissions</app-page-heading>
+
+  <div class="govuk-body">
+    <p>
+      Provide details about the procedures detailing the methods used to determine the collection efficiency for
+      fugitive emissions.
+    </p>
+  </div>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Collection efficiency for fugitive emissions</span>
+  </h2>
+
+  <app-procedure-form-summary
+    [details]="('PFC' | monitoringApproachTask | async).collectionEfficiency"
+    cssClass="summary-list--edge-border"
+  ></app-procedure-form-summary>
+
+  <app-approach-return-link parentTitle="Perfluorocarbons" reviewGroupUrl="pfc"></app-approach-return-link>
+</app-permit-task>

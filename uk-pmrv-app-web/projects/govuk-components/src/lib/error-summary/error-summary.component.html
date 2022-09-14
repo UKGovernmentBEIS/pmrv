@@ -1,0 +1,34 @@
+<div
+  #container
+  *ngIf="errorList$ | async as errorList"
+  aria-labelledby="error-summary-title"
+  class="govuk-error-summary"
+  role="alert"
+  tabindex="-1"
+>
+  <h2 class="govuk-error-summary__title" id="error-summary-title">There is a problem</h2>
+  <div class="govuk-error-summary__body">
+    <ul class="govuk-list govuk-error-summary__list">
+      <ng-container *ngTemplateOutlet="subControlErrors; context: { controlError: errorList }"></ng-container>
+    </ul>
+  </div>
+</div>
+
+<ng-template #subControlErrors let-controlError="controlError">
+  <li *ngFor="let selfError of controlError.self | keyvalue">
+    <a
+      #anchor
+      (click)="errorClick(controlError.path)"
+      [fragment]="controlError.path ? 'l.' + controlError.path : ''"
+      [state]="{ scrollSkip: true }"
+      [replaceUrl]="true"
+      queryParamsHandling="preserve"
+      routerLink="."
+    >
+      {{ selfError.value }}
+    </a>
+  </li>
+  <ng-container *ngFor="let subControl of controlError.controls | keyvalue: sortByPosition">
+    <ng-container *ngTemplateOutlet="subControlErrors; context: { controlError: subControl.value }"></ng-container>
+  </ng-container>
+</ng-template>

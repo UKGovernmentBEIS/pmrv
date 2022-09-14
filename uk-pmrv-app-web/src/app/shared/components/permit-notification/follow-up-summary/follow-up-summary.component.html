@@ -1,0 +1,53 @@
+<h2
+  (changeClick)="changeClick(changeLink)"
+  [changeRoute]="allowChange && changeLink ? '../' + changeLink : undefined"
+  app-summary-header
+  class="govuk-heading-m"
+>
+  <span *ngIf="sectionHeading">{{ sectionHeading }}</span>
+  <span *ngIf="!sectionHeading" class="govuk-visually-hidden">edit {{ (route.data | async).pageTitle }}</span>
+</h2>
+<hr *ngIf="allowChange && changeLink" />
+<dl
+  *ngFor="let item of data | keyvalue: keysByOrder"
+  govuk-summary-list
+  [hasBorders]="true"
+  [class.govuk-!-margin-bottom-0]="true"
+>
+  <div govukSummaryListRow *ngIf="hasValue(item?.key, item?.value)">
+    <dt govukSummaryListRowKey [id]="item?.key" [ngClass]="summaryListMapper[item?.key]?.styleClassLabel">
+      {{ summaryListMapper[item?.key]?.label }}
+    </dt>
+    <dd govukSummaryListRowValue>
+      <div
+        [attr.aria-labelledby]="item?.key"
+        [ngSwitch]="summaryListMapper[item?.key]?.type"
+        [ngClass]="summaryListMapper[item?.key]?.styleClass"
+      >
+        <ng-container *ngSwitchCase="'string'">
+          <div>{{ item?.value }}</div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'date'">
+          <div>{{ $any(item?.value) | govukDate }}</div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'files'">
+          <app-summary-download-files [files]="item?.value"> </app-summary-download-files>
+        </ng-container>
+        <ng-container *ngSwitchCase="'boolean'">
+          <div>{{ item?.value[summaryListMapper[item?.key]?.statusKey] ? 'Yes' : null }}</div>
+        </ng-container>
+      </div>
+    </dd>
+    <dd govukSummaryListRowActions *ngIf="allowChange && summaryListMapper[item?.key]?.url">
+      <a govukLink [routerLink]="[summaryListMapper[item?.key]?.url]" [state]="{ changing: true }"> Change </a>
+    </dd>
+  </div>
+</dl>
+<dl govuk-summary-list [hasBorders]="true" *ngIf="files?.length > 0">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Supporting documents</dt>
+    <dd govukSummaryListRowValue>
+      <app-summary-download-files [files]="files"> </app-summary-download-files>
+    </dd>
+  </div>
+</dl>

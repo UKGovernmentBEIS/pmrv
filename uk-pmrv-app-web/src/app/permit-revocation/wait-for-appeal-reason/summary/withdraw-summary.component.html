@@ -1,0 +1,31 @@
+<ng-container *ngIf="data | async as data">
+  <h2
+    (changeClick)="changeClick('reason')"
+    [changeRoute]="data.isEditable === true ? '../reason' : undefined"
+    app-summary-header
+    class="govuk-heading-m"
+  >
+    <span *ngIf="sectionHeading">{{ sectionHeading }}</span>
+    <span *ngIf="!sectionHeading" class="govuk-visually-hidden">Reason for withdrawing a revocation</span>
+  </h2>
+  <hr *ngIf="data.isEditable === true" />
+  <dl
+    govuk-summary-list
+    [hasBorders]="true"
+    [class.summary-list--edge-border]="false"
+    [class.govuk-!-margin-bottom-0]="false"
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Provide a reason</dt>
+      <dd govukSummaryListRowValue>{{ data.reason }}</dd>
+    </div>
+    <div govukSummaryListRow *ngIf="data?.withdrawFiles?.length > 0">
+      <dt govukSummaryListRowKey>Upload additional evidence (optional)</dt>
+      <dd govukSummaryListRowValue>
+        <app-summary-download-files
+          [files]="store.getDownloadUrlFiles(data?.withdrawFiles)">
+        </app-summary-download-files>
+      </dd>
+    </div>
+  </dl>
+</ng-container>

@@ -1,0 +1,23 @@
+<ng-container *ngIf="(confirmed$ | async) === false; else paymentConfirmed">
+  <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading size="l">Cancel payment task</app-page-heading>
+  <p class="govuk-body">Explain what happens once the payment task is cancelled.</p>
+  <form (ngSubmit)="submitForm()" [formGroup]="form">
+    <div
+      formControlName="reason"
+      govuk-textarea
+      [maxLength]="10000"
+      hint="Provide a reason why payment is no longer required"
+    ></div>
+    <button *ngIf="(store.isEditable$ | async) === true" appPendingButton govukButton type="submit">
+      Confirm and complete
+    </button>
+  </form>
+  <app-return-link [state]="store | async" returnLink=".."></app-return-link>
+</ng-container>
+<ng-template #paymentConfirmed>
+  <govuk-panel title="Payment task cancelled"></govuk-panel>
+  <h2 class="govuk-heading-m">What happens next</h2>
+  <p class="govuk-body">At this point the regulator can continue with the review of the application.</p>
+  <a govukLink routerLink="/dashboard">Return to: Dashboard</a>
+</ng-template>

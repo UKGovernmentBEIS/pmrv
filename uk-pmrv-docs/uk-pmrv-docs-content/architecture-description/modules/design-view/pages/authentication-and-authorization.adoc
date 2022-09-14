@@ -1,0 +1,83 @@
+= Authentication and authorization
+
+== Authentication
+
+One of the first needs (and functionalities) needed in the UK PMRV systems is user and role management, authentication
+and authorization (access control). It has been decided that system-wise these functionalities will be separated
+and delivered by a third system (an Identity Management and Access Control Platform. More information can be found at xref:using_an_external_Identity_Management_and_Access_Control_Platform_(IdM).adoc[Using an external IdM].), in order to isolate all user
+details (typically sensitive personal data) and complex authentication algorithms.
+
+Given the decision to use a separate system to manage user profiles and handle authentication and authorization,
+we already have a benefit of separating user sensitive data from the main system's stores.
+
+== Authorization
+
+As authorization in PMRV is quite complex, having multiple resources/sub-resources, types of users, permissions and rules it has been decided to implement a custom authorization mechanism. This allowed to have full control on the authorization process, be able to enhance and customize the solution in order to satisfy business needs.
+
+=== Core Resources
+In PMRV 3 core business entities have been identified as resources and all other business entities are connected to them:
+
+* Competent Authorities (CAs)
+* Installation/Aviation Operator Accounts (accounts)
+* Verification bodies (VBs)
+
+Accounts belong to one (and only one) CA and this relationship cannot change throughout the lifetime of the account.
+Accounts can be assigned a VB. Only one VB can be assigned to an account and this can be updated.
+
+=== User Role types
+
+Based on the 3 core resources mentioned above, 3 User Role types have been identified respectively:
+
+* Regulators: Users that have permissions on a CA. A Regulator can have access on only one CA.
+* Operators: Users that have permissions on accounts. An Operator can have access on multiple accounts.
+* Verifiers: Users that have permission on a VB. A verifier can have access on only one VB.
+
+Each user can have only one Role type. (A user in PMRV is identified by a userId, which is the id of the user in keycloak and is bound to an email which is used as username and is unique)
+
+=== Other resources
+
+Based on the 3 core resources mentioned above, the below additional resources have been identified so far:
+
+* PERMIT: The Permit object managed by the permit domain.
+* AER: The AER object managed by reporting domain.
+* REQUEST: Requests represent a workflow and can belong to one (and only one) account, one CA (The CA of the account) and to a VB if one is assigned to an account, managed by request domain.
+* REQUEST_TASK: Tasks represent user tasks that are active in the context of workflow and inherit their relationship to the basic resources from the request they belong to. Tasks have multiple subtypes (RequestTaskType) each one representing a unique task in the system, managed by request domain.
+* REQUEST_ACTION: RequestActions are events that have happened in the past in the context of a workflow (usually as a result of a task). They also inherit their relationship to the basic resources from the request they belong to and have multiple subtypes (RequestActionType) each one representing a unique action in the system, managed by request domain.
+* NOTIFICATION_TEMPLATE: Email templates that are used for official notices and are managed by Regulators, managed by request domain
+* DOCUMENT_TEMPLATE: Word document templates that are used as templates for official letters and are managed by Regulators
+
+=== Authorization rules
+Authorization rules are rules that describe the conditions under which a resource can be accessed.
+They contain the resource (and subresource if applicable) that needs to be accessed, the role-type of the user that is permitted to access the specific resource and an optional scope that is related to a permission if the resource is permission protected.
+
+An example of a rule is:
+
+|===
+|resource type |resource subtype |role-type |scope
+|REQUEST_TASK  |INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW	 |REGULATOR	|REQUEST_TASK_EXECUTE
+|===
+
+where scope is represented by the following information:
+|===
+|resource type |resource subtype |role-type |scope |permission
+|REQUEST_TASK  |INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW	 |REGULATOR |REQUEST_TASK_EXECUTE	|PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_EXECUTE_TASK
+|===
+
+The above rule as implied defines that in order for a user to execute a request task of type INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW should have the PERM_INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_EXECUTE_TASK permission and be of role-type Regulator
+
+=== Authorization mechanism
+
+* Authorization is performed on controller layer as a cross-cutting concern and is activated by using @Authorized/@AuthorizedRole custom annotation.
+* @AuthorizedRole is for authorizing an API based on the user's role-type only and is not related to any rule.
+* @Authorized is for authorizing an API based on resource by evaluating the rules related to this API.
+** If resource is not specified, user's core resource is considered the one to grant access to (CA, account, VB) with or without a permission based on the rules that apply to a specific API.
+** If resource is specified then it should represent one of the above-mentioned resources.
+* @Authorized annotation calls the Authorization service which is responsible to:
+** Extract the API method being authorized.
+** Extract authorization info from the user making the authorization request: role-type of the user and permissions.
+** Find the rules that relate to this API.
+**  Extract authorization info from the resource being authorized (If the resource is not one of the basic resources then authorization info (CA, account, VB) must be resolved. For that reason authorization domain asks the managing domain of the resource for authorization information (e.g the CA, account, VB of a request)).
+** Run the authorization rules
+
+* If multiple rules apply then all should be satisfied.
+* If an error occurs an Authorization exception is thrown returning http status code 403 to the client.

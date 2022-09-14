@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!-- TODO Add any suppress rule(s) you want (i.e. a CPE was identified that is incorrect) -->
+</suppressions>

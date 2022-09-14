@@ -1,0 +1,48 @@
+<app-permit-task [notification]="notification" [breadcrumb]="[{ text: 'Transferred CO2', link: ['transferred-co2'] }]">
+  <app-page-heading caption="Transferred CO2">{{ taskKey$ | async | i18nSelect: headingMap }}</app-page-heading>
+
+  <ng-container [ngSwitch]="taskKey$ | async">
+    <ng-container *ngSwitchCase="'monitoringApproaches.TRANSFERRED_CO2.deductionsToAmountOfTransferredCO2'">
+      <div class="govuk-body">
+        <p>Text explaining this task and any additional information needed to complete the task.</p>
+        <p>Get help with <a [routerLink]="" govukLink>deductions to amount of transferred co2</a>.</p>
+      </div>
+    </ng-container>
+    <ng-container *ngSwitchCase="'monitoringApproaches.TRANSFERRED_CO2.procedureForLeakageEvents'">
+      <div class="govuk-body">
+        <p>Text explaining this task and any additional information needed to complete the task.</p>
+        <p>Get help with <a [routerLink]="" govukLink>procedure of leakage events</a>.</p>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">{{ taskKey$ | async | i18nSelect: headingMap }}</span>
+  </h2>
+
+  <dl *ngIf="(procedure$ | async)?.exist === false; else procedureForm" govuk-summary-list>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>
+        {{
+          (taskKey$ | async) === 'monitoringApproaches.TRANSFERRED_CO2.deductionsToAmountOfTransferredCO2'
+            ? 'Is any part of the transferred CO2 generated from biomass?'
+            : 'Is there a procedure for preventing, detecting and quantifying leakage events from the transport network?'
+        }}
+      </dt>
+      <dd govukSummaryListRowValue>No</dd>
+    </div>
+  </dl>
+
+  <ng-template #procedureForm>
+    <app-procedure-form-summary
+      [details]="(procedure$ | async)?.procedureForm"
+      cssClass="summary-list--edge-border"
+    ></app-procedure-form-summary>
+  </ng-template>
+
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

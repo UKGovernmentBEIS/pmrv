@@ -1,0 +1,67 @@
+<ng-container [ngSwitch]="taskKey">
+  <ng-container *ngSwitchCase="'monitoringApproaches.N2O.emissionDetermination'">
+    <div class="govuk-body">
+      <p>
+        Provide details about the procedures describing the calculation formulae used to determine the annual nitrous
+        oxide emissions and the method of data aggregation.
+      </p>
+      <p>Get help with <a [routerLink]="" govukLink>emission determination procedure</a>.</p>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'monitoringApproaches.N2O.referenceDetermination'">
+    <div class="govuk-body">
+      <p>Provide details about the procedures describing the methods used to:</p>
+      <ul>
+        <li>determine if valid hours or shorter reference periods for each parameter can be provided</li>
+        <li>substitute missing data</li>
+      </ul>
+      <p>Get help with <a [routerLink]="" govukLink>determination of reference period</a>.</p>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'monitoringApproaches.N2O.operationalManagement'">
+    <div class="govuk-body">
+      <p>
+        Provide details about the procedures describing the installation operates with variable loads and how the
+        operational management is carried out.
+      </p>
+      <p>Get help with <a [routerLink]="" govukLink>operational management</a>.</p>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'monitoringApproaches.N2O.nitrousOxideEmissionsDetermination'">
+    <div class="govuk-body">
+      <p>
+        Provide details about the procedures describing the calculation method used to determine nitrous oxide emissions
+        from periodic, unabated sources in nitric acid, adipic acid, caprolactam, glyoxal and glyoxylic acid production.
+      </p>
+      <p>Get help with <a [routerLink]="" govukLink>determination of nitrous oxide emissions</a>.</p>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'monitoringApproaches.N2O.nitrousOxideConcentrationDetermination'">
+    <div class="govuk-body">
+      <p>
+        Provide details about the method and parameters used to determine the N2O concentration in the flue gas from
+        each emission source, its operating range and uncertainty and any alternative methods applied if concentrations
+        fall outside the operating range and the situations when this may occur.
+      </p>
+      <p>Get help with <a [routerLink]="" govukLink>determination of nitrous oxide concentration</a>.</p>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'monitoringApproaches.N2O.quantityProductDetermination'">
+    <div class="govuk-body">
+      <p>
+        Provide details about the method and parameters used to determine the quantity of product produced as an hourly
+        load expressed as nitric acid (100%), glyoxal and glyoxylic acid and caprolactam per hour.
+      </p>
+      <p>Get help with <a [routerLink]="" govukLink>determination of the quantity of product produced</a>.</p>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'monitoringApproaches.N2O.quantityMaterials'">
+    <div class="govuk-body">
+      <p>
+        Provide details about the method and parameters used to determine the quantity of materials used in the
+        production process and the maximum quantity of material use at full capacity.
+      </p>
+      <p>Get help with <a [routerLink]="" govukLink>quantity of materials</a>.</p>
+    </div>
+  </ng-container>
+</ng-container>

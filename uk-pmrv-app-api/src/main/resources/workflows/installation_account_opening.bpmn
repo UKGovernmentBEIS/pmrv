@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_16t4lk0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1">
+  <bpmn:process id="PROCESS_INSTALLATION_ACCOUNT_OPENING" name="Installation account opening process" isExecutable="true">
+    <bpmn:startEvent id="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_START_EVENT" name="Start Event">
+      <bpmn:outgoing>Flow_08hj9qm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_08hj9qm" sourceRef="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_START_EVENT" targetRef="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW" />
+    <bpmn:endEvent id="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_END_EVENT" name="End Event">
+      <bpmn:incoming>Flow_0a2q5ld</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW" name="Review application">
+      <bpmn:incoming>Flow_08hj9qm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0j52gz5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0j52gz5" sourceRef="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW" targetRef="INSTALLATION_ACCOUNT_OPENING_DECISION_GATEWAY" />
+    <bpmn:exclusiveGateway id="INSTALLATION_ACCOUNT_OPENING_DECISION_GATEWAY" name="Application Accepted?">
+      <bpmn:incoming>Flow_0j52gz5</bpmn:incoming>
+      <bpmn:outgoing>INSTALLATION_ACCOUNT_OPENING_DECISION_ACCEPTED</bpmn:outgoing>
+      <bpmn:outgoing>INSTALLATION_ACCOUNT_OPENING_DECISION_REJECTED</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="INSTALLATION_ACCOUNT_OPENING_DECISION_ACCEPTED" name="Yes" sourceRef="INSTALLATION_ACCOUNT_OPENING_DECISION_GATEWAY" targetRef="INSTALLATION_ACCOUNT_OPENING_ACTIVATE_ACCOUNT">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{applicationAccepted}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="INSTALLATION_ACCOUNT_OPENING_ACTIVATE_ACCOUNT" name="Activate account" camunda:delegateExpression="#{installationAccountOpeningActivateAccountHandler}">
+      <bpmn:incoming>INSTALLATION_ACCOUNT_OPENING_DECISION_ACCEPTED</bpmn:incoming>
+      <bpmn:outgoing>Flow_0almhnu</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="INSTALLATION_ACCOUNT_OPENING_DECISION_REJECTED" name="No" sourceRef="INSTALLATION_ACCOUNT_OPENING_DECISION_GATEWAY" targetRef="INSTALLATION_ACCOUNT_OPENING_REJECT_ACCOUNT">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{!applicationAccepted}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="INSTALLATION_ACCOUNT_OPENING_SEND_REJECTION_EMAIL" name="Notify operator" camunda:delegateExpression="#{installationAccountOpeningNotifyOperatorHandler}">
+      <bpmn:incoming>Flow_0gm1dpb</bpmn:incoming>
+      <bpmn:outgoing>Flow_038yns6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="INSTALLATION_ACCOUNT_OPENING_REJECT_ACCOUNT" name="Reject account" camunda:delegateExpression="#{installationAccountOpeningRejectAccountHandler}">
+      <bpmn:incoming>INSTALLATION_ACCOUNT_OPENING_DECISION_REJECTED</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jyfr7l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:parallelGateway id="Gateway_19p7asy">
+      <bpmn:incoming>Flow_17y925x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mbpxzn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1prv82m</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:parallelGateway id="Gateway_1qwx38k">
+      <bpmn:incoming>Flow_1di6xve</bpmn:incoming>
+      <bpmn:incoming>Flow_0wa9qhs</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qjblc2</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="INSTALLATION_ACCOUNT_OPENING_ARCHIVE" name="Archive">
+      <bpmn:incoming>Flow_1prv82m</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wa9qhs</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="INSTALLATION_ACCOUNT_OPENING_SEND_ACCEPTANCE_EMAIL" name="Notify operator" camunda:asyncBefore="true" camunda:delegateExpression="#{installationAccountOpeningNotifyOperatorHandler}">
+      <bpmn:incoming>Flow_0mbpxzn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1di6xve</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1jyfr7l" sourceRef="INSTALLATION_ACCOUNT_OPENING_REJECT_ACCOUNT" targetRef="Activity_0wmaq6k" />
+    <bpmn:sequenceFlow id="Flow_0mbpxzn" sourceRef="Gateway_19p7asy" targetRef="INSTALLATION_ACCOUNT_OPENING_SEND_ACCEPTANCE_EMAIL" />
+    <bpmn:sequenceFlow id="Flow_1prv82m" sourceRef="Gateway_19p7asy" targetRef="INSTALLATION_ACCOUNT_OPENING_ARCHIVE" />
+    <bpmn:sequenceFlow id="Flow_1di6xve" sourceRef="INSTALLATION_ACCOUNT_OPENING_SEND_ACCEPTANCE_EMAIL" targetRef="Gateway_1qwx38k" />
+    <bpmn:sequenceFlow id="Flow_0wa9qhs" sourceRef="INSTALLATION_ACCOUNT_OPENING_ARCHIVE" targetRef="Gateway_1qwx38k" />
+    <bpmn:exclusiveGateway id="Gateway_1rxssd7">
+      <bpmn:incoming>Flow_1qjblc2</bpmn:incoming>
+      <bpmn:incoming>Flow_038yns6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a2q5ld</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1qjblc2" sourceRef="Gateway_1qwx38k" targetRef="Gateway_1rxssd7" />
+    <bpmn:sequenceFlow id="Flow_038yns6" sourceRef="INSTALLATION_ACCOUNT_OPENING_SEND_REJECTION_EMAIL" targetRef="Gateway_1rxssd7" />
+    <bpmn:sequenceFlow id="Flow_0a2q5ld" sourceRef="Gateway_1rxssd7" targetRef="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_END_EVENT" />
+    <bpmn:serviceTask id="ACCOUNT_USERS_SETUP_SYSTEM_MESSAGE_NOTIFICATION" name="Initialize Account Users Setup System Message Notification WF" camunda:delegateExpression="#{installationAccountMessageAccountUsersSetupHandler}">
+      <bpmn:incoming>Flow_0z5jf5l</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i4rzdr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1i4rzdr" sourceRef="ACCOUNT_USERS_SETUP_SYSTEM_MESSAGE_NOTIFICATION" targetRef="PERMIT_ISSUANCE_APPLICATION_SUBMIT" />
+    <bpmn:sequenceFlow id="Flow_17y925x" sourceRef="PERMIT_ISSUANCE_APPLICATION_SUBMIT" targetRef="Gateway_19p7asy" />
+    <bpmn:serviceTask id="PERMIT_ISSUANCE_APPLICATION_SUBMIT" name="Initialize Permit issuance WF" camunda:delegateExpression="#{installationAccountPermitIssuanceHandler}">
+      <bpmn:incoming>Flow_1i4rzdr</bpmn:incoming>
+      <bpmn:outgoing>Flow_17y925x</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0d377x9" name="Update Workflow status to APPROVED" camunda:delegateExpression="#{requestUpdateStatusHandler}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="requestStatus">APPROVED</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0almhnu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z5jf5l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0almhnu" sourceRef="INSTALLATION_ACCOUNT_OPENING_ACTIVATE_ACCOUNT" targetRef="Activity_0d377x9" />
+    <bpmn:sequenceFlow id="Flow_0z5jf5l" sourceRef="Activity_0d377x9" targetRef="ACCOUNT_USERS_SETUP_SYSTEM_MESSAGE_NOTIFICATION" />
+    <bpmn:serviceTask id="Activity_0wmaq6k" name="Update Workflow status to REJECTED" camunda:delegateExpression="#{requestUpdateStatusHandler}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="requestStatus">REJECTED</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jyfr7l</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gm1dpb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0gm1dpb" sourceRef="Activity_0wmaq6k" targetRef="INSTALLATION_ACCOUNT_OPENING_SEND_REJECTION_EMAIL" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PROCESS_INSTALLATION_ACCOUNT_OPENING">
+      <bpmndi:BPMNEdge id="Flow_17y925x_di" bpmnElement="Flow_17y925x">
+        <di:waypoint x="1140" y="207" />
+        <di:waypoint x="1195" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i4rzdr_di" bpmnElement="Flow_1i4rzdr">
+        <di:waypoint x="970" y="207" />
+        <di:waypoint x="1040" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0a2q5ld_di" bpmnElement="Flow_0a2q5ld">
+        <di:waypoint x="1615" y="207" />
+        <di:waypoint x="1662" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_038yns6_di" bpmnElement="Flow_038yns6">
+        <di:waypoint x="1240" y="400" />
+        <di:waypoint x="1590" y="400" />
+        <di:waypoint x="1590" y="232" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qjblc2_di" bpmnElement="Flow_1qjblc2">
+        <di:waypoint x="1505" y="207" />
+        <di:waypoint x="1565" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wa9qhs_di" bpmnElement="Flow_0wa9qhs">
+        <di:waypoint x="1420" y="290" />
+        <di:waypoint x="1480" y="290" />
+        <di:waypoint x="1480" y="232" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1di6xve_di" bpmnElement="Flow_1di6xve">
+        <di:waypoint x="1410" y="120" />
+        <di:waypoint x="1480" y="120" />
+        <di:waypoint x="1480" y="182" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1prv82m_di" bpmnElement="Flow_1prv82m">
+        <di:waypoint x="1220" y="232" />
+        <di:waypoint x="1220" y="290" />
+        <di:waypoint x="1320" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mbpxzn_di" bpmnElement="Flow_0mbpxzn">
+        <di:waypoint x="1220" y="182" />
+        <di:waypoint x="1220" y="120" />
+        <di:waypoint x="1310" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jyfr7l_di" bpmnElement="Flow_1jyfr7l">
+        <di:waypoint x="660" y="400" />
+        <di:waypoint x="830" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lpse0u_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_DECISION_REJECTED">
+        <di:waypoint x="460" y="232" />
+        <di:waypoint x="460" y="400" />
+        <di:waypoint x="560" y="400" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="472" y="243" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01r8n2d_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_DECISION_ACCEPTED">
+        <di:waypoint x="485" y="207" />
+        <di:waypoint x="560" y="207" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="491" y="183" width="18" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j52gz5_di" bpmnElement="Flow_0j52gz5">
+        <di:waypoint x="350" y="207" />
+        <di:waypoint x="435" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08hj9qm_di" bpmnElement="Flow_08hj9qm">
+        <di:waypoint x="188" y="207" />
+        <di:waypoint x="250" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0almhnu_di" bpmnElement="Flow_0almhnu">
+        <di:waypoint x="660" y="207" />
+        <di:waypoint x="710" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z5jf5l_di" bpmnElement="Flow_0z5jf5l">
+        <di:waypoint x="810" y="207" />
+        <di:waypoint x="870" y="207" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gm1dpb_di" bpmnElement="Flow_0gm1dpb">
+        <di:waypoint x="930" y="400" />
+        <di:waypoint x="1140" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_START_EVENT">
+        <dc:Bounds x="152" y="189" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="143" y="232" width="56" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0sh5gve_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW">
+        <dc:Bounds x="250" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0jm3bij_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_DECISION_GATEWAY" isMarkerVisible="true">
+        <dc:Bounds x="435" y="182" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="393" y="166" width="53" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0e4bnut_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_ACTIVATE_ACCOUNT">
+        <dc:Bounds x="560" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m1nyz0_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_SEND_REJECTION_EMAIL">
+        <dc:Bounds x="1140" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h7ab9f_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_REJECT_ACCOUNT">
+        <dc:Bounds x="560" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1n17ic1_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_APPLICATION_REVIEW_END_EVENT">
+        <dc:Bounds x="1662" y="189" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1655" y="232" width="52" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1rxssd7_di" bpmnElement="Gateway_1rxssd7" isMarkerVisible="true">
+        <dc:Bounds x="1565" y="182" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1qwx38k_di" bpmnElement="Gateway_1qwx38k">
+        <dc:Bounds x="1455" y="182" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_184j7nx_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_ARCHIVE">
+        <dc:Bounds x="1320" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h4t17f_di" bpmnElement="INSTALLATION_ACCOUNT_OPENING_SEND_ACCEPTANCE_EMAIL">
+        <dc:Bounds x="1310" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0yjluo5_di" bpmnElement="Gateway_19p7asy">
+        <dc:Bounds x="1195" y="182" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zea610_di" bpmnElement="PERMIT_ISSUANCE_APPLICATION_SUBMIT">
+        <dc:Bounds x="1040" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03v6xzs_di" bpmnElement="ACCOUNT_USERS_SETUP_SYSTEM_MESSAGE_NOTIFICATION">
+        <dc:Bounds x="870" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0d377x9_di" bpmnElement="Activity_0d377x9">
+        <dc:Bounds x="710" y="167" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wmaq6k_di" bpmnElement="Activity_0wmaq6k">
+        <dc:Bounds x="830" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

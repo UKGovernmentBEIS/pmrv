@@ -1,0 +1,22 @@
+<ng-container *ngIf="store.permitType as permitType">
+  <dl
+    *ngIf="'estimatedAnnualEmissions' | task | async as estimatedAnnualEmissions"
+    [hasBorders]="hasBorders"
+    govuk-summary-list
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>What is the installation’s estimated annual CO2e?</dt>
+      <dd govukSummaryListRowValue>{{ estimatedAnnualEmissions?.quantity | number }} tonnes</dd>
+      <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true && !isPreview">
+        <a govukLink [routerLink]="['..']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+    <div *ngIf="permitType === 'GHGE'" govukSummaryListRow>
+      <dt govukSummaryListRowKey>Installation Category</dt>
+      <dd govukSummaryListRowValue>
+        {{ estimatedAnnualEmissions?.quantity | installationCategoryType | installationCategory }}
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true && !isPreview"></dd>
+    </div>
+  </dl>
+</ng-container>

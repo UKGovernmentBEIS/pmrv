@@ -1,0 +1,26 @@
+<app-page-heading>Amends needed for {{ section$ | async | i18nSelect: heading }}</app-page-heading>
+
+<p class="govuk-body">
+  The following notes are from the regulator explaining the things you need to change in this section.
+</p>
+
+<div *ngFor="let decision of reviewGroupDecisions$ | async">
+  <h2 app-summary-header class="govuk-heading-m">
+    {{ decision.groupKey | i18nSelect: groupHeading }}
+  </h2>
+  <dl govuk-summary-list class="govuk-summary-list--no-border summary-list--edge-border">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Changes required</dt>
+      <dd govukSummaryListRowValue class="pre-wrap">{{ decision.data.changesRequired }}</dd>
+    </div>
+    <div govukSummaryListRow *ngIf="decision.data.files?.length > 0">
+      <dt govukSummaryListRowKey>Uploaded files</dt>
+      <dd govukSummaryListRowValue>
+        <ng-container *ngFor="let file of decision.groupKey | decisionFiles: (store | async); let isLast = last">
+          <a [routerLink]="file.downloadUrl" govukLink target="_blank">{{ file.fileName }}</a>
+          <br *ngIf="!isLast && decision.data.files.length !== 1" />
+        </ng-container>
+      </dd>
+    </div>
+  </dl>
+</div>

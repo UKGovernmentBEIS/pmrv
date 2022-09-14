@@ -1,0 +1,162 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Management procedures">
+  <ul app-task-item-list>
+    <li
+      *ngIf="'managementProceduresExist' | taskStatus | async as status"
+      app-task-item
+      link="../../management-procedures-exist/summary"
+      linkText="Confirm if management procedures will be provided"
+      [status]="status"
+    >
+      <app-management-procedures-exist-summary-template
+        [hasBottomBorder]="false"
+      ></app-management-procedures-exist-summary-template>
+    </li>
+    <ng-container *ngIf="(managementProceduresExist$ | async) === true">
+      <li
+        *ngIf="'monitoringReporting' | taskStatus | async as status"
+        app-task-item
+        link="../../monitoring-roles/summary"
+        linkText="Monitoring and reporting roles"
+        [status]="status"
+      >
+        <app-monitoring-roles-summary-template [hasBottomBorder]="false"></app-monitoring-roles-summary-template>
+      </li>
+      <li
+        *ngIf="'assignmentOfResponsibilities' | taskStatus | async as status"
+        app-task-item
+        link="../../responsibilities/summary"
+        linkText="Assignment of responsibilities"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="assignmentOfResponsibilities"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'monitoringPlanAppropriateness' | taskStatus | async as status"
+        app-task-item
+        link="../../appropriateness/summary"
+        linkText="Monitoring plan appropriateness"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="monitoringPlanAppropriateness"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'dataFlowActivities' | taskStatus | async as status"
+        app-task-item
+        link="../../data-flow-activities/summary"
+        linkText="Data flow activities"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="dataFlowActivities"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'qaDataFlowActivities' | taskStatus | async as status"
+        app-task-item
+        link="../../qa-activities/summary"
+        linkText="Quality assurance of IT used for data flow activities"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="qaDataFlowActivities"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'reviewAndValidationOfData' | taskStatus | async as status"
+        app-task-item
+        link="../../review-validation/summary"
+        linkText="Review and validation of data"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="reviewAndValidationOfData"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'assessAndControlRisk' | taskStatus | async as status"
+        app-task-item
+        link="../../assess-control-risk/summary"
+        linkText="Assessing and controlling risks"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="assessAndControlRisk"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'qaMeteringAndMeasuringEquipment' | taskStatus | async as status"
+        app-task-item
+        link="../../qa-metering-measuring/summary"
+        linkText="Quality assurance of metering and measuring equipment"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="qaMeteringAndMeasuringEquipment"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'correctionsAndCorrectiveActions' | taskStatus | async as status"
+        app-task-item
+        link="../../corrections/summary"
+        linkText="Corrections and corrective actions"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="correctionsAndCorrectiveActions"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'controlOfOutsourcedActivities' | taskStatus | async as status"
+        app-task-item
+        link="../../outsourced-activities/summary"
+        linkText="Control of outsourced activities"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="controlOfOutsourcedActivities"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'recordKeepingAndDocumentation' | taskStatus | async as status"
+        app-task-item
+        link="../../record-keeping/summary"
+        linkText="Record keeping and documentation"
+        [status]="status"
+      >
+        <app-management-procedures-summary-template
+          taskKey="recordKeepingAndDocumentation"
+          [hasBottomBorder]="false"
+        ></app-management-procedures-summary-template>
+      </li>
+      <li
+        *ngIf="'environmentalManagementSystem' | taskStatus | async as status"
+        app-task-item
+        link="../../environmental-system/summary"
+        linkText="Environmental management system"
+        [status]="status"
+      >
+        <app-environmental-system-summary-template
+          [hasBottomBorder]="false"
+        ></app-environmental-system-summary-template>
+      </li>
+    </ng-container>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

@@ -1,0 +1,6 @@
+= Mail API
+
+PMRV communicates with mail server to send mails needed in the context of user-management/registration as well as official emails in the context of a business process.
+https://docs.aws.amazon.com/ses/latest/dg/send-email-smtp.html[SES SMTP interface] is used in production environments and https://docs.spring.io/spring-framework/docs/current/reference/html/integration.html#mail[JavaMail] library of spring is used as a mail client.
+
+

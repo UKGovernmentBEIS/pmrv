@@ -1,0 +1,27 @@
+<govuk-error-summary *ngIf="isSummaryDisplayed" [form]="form"></govuk-error-summary>
+<app-page-heading size="xl">
+  {{ (userLoaded$ | async) ? 'External contact details' : 'Add an external contact' }}
+</app-page-heading>
+
+<form (ngSubmit)="addExternalContact()" [formGroup]="form" id="add-external-contact">
+  <div
+    autoComplete="name"
+    formControlName="name"
+    govuk-text-input
+    label="Displayed name"
+    widthClass="govuk-!-width-one-third"
+  ></div>
+  <div
+    autoComplete="email"
+    formControlName="email"
+    govuk-text-input
+    inputType="email"
+    label="Email address"
+    widthClass="govuk-!-width-one-third"
+  ></div>
+  <div formControlName="description" govuk-text-input label="Description" widthClass="govuk-!-width-one-third"></div>
+
+  <button appPendingButton govukButton type="submit">
+    {{ userLoaded$ | async | submitIfEmpty }}
+  </button>
+</form>

@@ -1,0 +1,20 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  caption="Additional information"
+  heading="Do you want to upload any additional documents or information?"
+  submitText="Confirm and complete"
+  [hideSubmit]="!isEditable"
+>
+  <app-boolean-radio-group controlName="exist">
+    <div govukConditionalContent>
+      <app-multiple-file-input
+        [baseDownloadUrl]="downloadUrl"
+        label="Upload a file"
+        listTitle="Files added"
+        formControlName="documents"
+        hint="The file must be smaller than 20MB"
+      ></app-multiple-file-input>
+    </div>
+  </app-boolean-radio-group>
+</app-wizard-step>

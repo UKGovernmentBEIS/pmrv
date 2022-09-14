@@ -1,0 +1,6 @@
+FROM eclipse-temurin:11-jre-focal
+RUN apt-get update
+RUN apt-get install -y openssh-client
+COPY target/uk-pmrv-app-admin-env_version.jar /opt/applications/uk-pmrv-app-admin/
+WORKDIR /opt/applications/uk-pmrv-app-admin/
+CMD ["java", "-XX:+PrintFlagsFinal", "-Xmx500m", "-jar", "uk-pmrv-app-admin-env_version.jar"]

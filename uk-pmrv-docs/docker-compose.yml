@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  antora:
+    image: docs-pmrv
+    ports:
+      - 8090:80

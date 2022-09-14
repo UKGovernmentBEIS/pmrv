@@ -1,0 +1,59 @@
+{
+  "extends": "../../.eslintrc.json",
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["projects/govuk-components/tsconfig.lib.json", "projects/govuk-components/tsconfig.spec.json"],
+        "createDefaultProgram": true
+      },
+      "rules": {
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": ["element", "attribute"],
+            "prefix": "govuk",
+            "style": "kebab-case"
+          }
+        ],
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "govuk",
+            "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/component-max-inline-declarations": [
+          "error",
+          {
+            "template": 15,
+            "styles": 10
+          }
+        ],
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off"
+      }
+    },
+    {
+      "files": ["*.spec.ts"],
+      "rules": {
+        "@angular-eslint/component-max-inline-declarations": "off",
+        "@angular-eslint/prefer-on-push-component-change-detection": "off",
+        "@angular-eslint/use-component-selector": "off",
+        "@typescript-eslint/no-empty-function": "off"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/all"],
+      "rules": {
+        "@angular-eslint/template/i18n": "off",
+        "@angular-eslint/template/cyclomatic-complexity": "off",
+        "@angular-eslint/template/no-call-expression": "off",
+        "@angular-eslint/template/use-track-by-function": "off"
+      }
+    }
+  ]
+}

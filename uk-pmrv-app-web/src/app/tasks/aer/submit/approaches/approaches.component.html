@@ -1,0 +1,47 @@
+<app-aer-task [breadcrumb]="true">
+  <app-page-heading>Monitoring approaches used during the reporting year</app-page-heading>
+
+  <ng-container *ngIf="(monitoringApproaches$ | async).length === 0; else addAnother">
+    <app-approaches-template></app-approaches-template>
+    <div class="govuk-button-group" *ngIf="(aerService.isEditable$ | async) === true">
+      <button *ngIf="(aerService.isEditable$ | async) === true" govukButton routerLink="add" type="button">
+        Add monitoring approaches
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-template #addAnother>
+    <p class="govuk-body">List the monitoring approaches that have been used during the reporting year.</p>
+    <p class="govuk-body">The table is pre-populated with approaches currently in the approved permit.</p>
+    <h2 app-summary-header class="govuk-heading-m">
+      You have added {{ (monitoringApproaches$ | async).length }} monitoring
+      {{ (monitoringApproaches$ | async).length > 1 ? 'approaches' : 'approach' }}
+    </h2>
+    <ng-container *ngFor="let monitoringApproach of monitoringApproaches$ | async">
+      <dl appGroupedSummaryList govuk-summary-list>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>{{ monitoringApproach | monitoringApproachDescription }} approach</dt>
+          <dd govukSummaryListRowActions *ngIf="(aerService.isEditable$ | async) === true">
+            <a [routerLink]="['delete', monitoringApproach]" govukLink>Delete</a>
+          </dd>
+        </div>
+      </dl>
+    </ng-container>
+
+    <ng-container *ngIf="(aerService.isEditable$ | async) === true">
+      <button
+        *ngIf="(isEveryMonitoringApproachDefined$ | async) === false"
+        govukSecondaryButton
+        routerLink="add"
+        type="button"
+      >
+        Add another monitoring approach
+      </button>
+
+      <div class="govuk-button-group">
+        <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+      </div>
+    </ng-container>
+  </ng-template>
+  <app-return-link></app-return-link>
+</app-aer-task>

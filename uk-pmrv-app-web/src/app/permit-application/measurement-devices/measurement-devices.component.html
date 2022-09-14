@@ -1,0 +1,92 @@
+<app-permit-task [breadcrumb]="true" reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels">
+  <app-page-heading caption="Fuels and equipment inventory">Measurement devices or methods 2</app-page-heading>
+  <p class="govuk-body">
+    Add a description and location of all measurement devices that will be used for each source and source
+    stream, including sub-meters and meters used to deduct non-Annex I activities.
+  </p>
+  <govuk-details summary="What is a measurement device?">
+    A measurement device is a tool for measuring the use of fuels or materials, for example, a meter or scale. It can
+    also be a measurement method, such as using invoices from a supplier as evidence of the amount of fuel used.
+  </govuk-details>
+  <p class="govuk-body">
+    You should use a consistent reference format for all measurement devices, for example MD1, MD2, MD3.
+  </p>
+
+  <p class="govuk-body">
+    For gas flow meters where p/T compensation is integral to the instrument, use Nm<sup class="govuk-!-font-size-14"
+      >3</sup
+    >
+    >/h. Use m<sup class="govuk-!-font-size-14">3</sup> measurement units if the p/T compensation is done by a separate
+    instrument, and list those separate instruments
+  </p>
+
+  <ng-container *ngIf="'measurementDevicesOrMethods' | task | async as measurementDevices; else startAdding">
+    <ng-container *ngIf="measurementDevices.length > 0; else startAdding">
+      <h2 app-summary-header class="govuk-heading-m">
+        You have added {{ measurementDevices.length }} measurement
+        {{ measurementDevices.length > 1 ? 'devices' : 'device' }}
+      </h2>
+
+      <ng-container *ngFor="let measurementDevice of measurementDevices">
+        <dl appGroupedSummaryList govuk-summary-list>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Reference</dt>
+            <dd govukSummaryListRowValue>{{ measurementDevice.reference }}</dd>
+            <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+              <a [routerLink]="measurementDevice.id" govukLink>Change</a> |
+              <a [routerLink]="['delete', measurementDevice.id]" govukLink>Delete</a>
+            </dd>
+          </div>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Type of measurement device or method</dt>
+            <dd govukSummaryListRowValue>
+              {{
+                measurementDevice.type === 'OTHER'
+                  ? measurementDevice.otherTypeName
+                  : (measurementDevice.type | measurementDevicesType)
+              }}
+            </dd>
+          </div>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Measurement range</dt>
+            <dd govukSummaryListRowValue>{{ measurementDevice.measurementRange }}</dd>
+          </div>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Metering range units</dt>
+            <dd govukSummaryListRowValue>{{ measurementDevice.meteringRangeUnits }}</dd>
+          </div>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Specified uncertainty</dt>
+            <dd govukSummaryListRowValue>
+              {{
+                measurementDevice.uncertaintySpecified
+                  ? '&#177; ' + measurementDevice.specifiedUncertaintyPercentage + ' %'
+                  : 'None'
+              }}
+            </dd>
+          </div>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Location</dt>
+            <dd govukSummaryListRowValue>{{ measurementDevice.location }}</dd>
+          </div>
+        </dl>
+      </ng-container>
+
+      <ng-container *ngIf="(store.isEditable$ | async) === true">
+        <button govukSecondaryButton routerLink="add" type="button">Add another measurement device</button>
+
+        <div class="govuk-button-group">
+          <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #startAdding>
+    <div class="govuk-button-group" *ngIf="(store.isEditable$ | async) === true">
+      <button govukButton routerLink="add" type="button">Add a measurement device</button>
+    </div>
+  </ng-template>
+
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

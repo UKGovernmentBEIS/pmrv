@@ -1,0 +1,21 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <app-wizard-step
+      (formSubmit)="onContinue()"
+      [formGroup]="form"
+      submitText="Continue"
+      [hideSubmit]="(store.isEditable$ | async) === false"
+    >
+      <span class="govuk-caption-l">Surrender your permit</span>
+      <app-page-heading>Upload supporting documents</app-page-heading>
+
+      <app-multiple-file-input
+        [baseDownloadUrl]="getDownloadUrl()"
+        [label]="(isFileUploaded$ | async) ? 'Upload another file' : 'Upload a file'"
+        formControlName="documents"
+        hint="The file must be smaller than 20MB"
+        listTitle="Uploaded files"
+      ></app-multiple-file-input>
+    </app-wizard-step>
+  </div>
+</div>

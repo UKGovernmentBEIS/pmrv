@@ -1,0 +1,40 @@
+<app-permit-task [notification]="notification" [breadcrumb]="[{ text: 'Transferred CO2', link: ['transferred-co2'] }]">
+  <app-page-heading caption="Transferred CO2">{{ taskKey$ | async | i18nSelect: headingMap }}</app-page-heading>
+
+  <ng-container [ngSwitch]="taskKey$ | async">
+    <ng-container *ngSwitchCase="'monitoringApproaches.TRANSFERRED_CO2.transferOfCO2'">
+      <div class="govuk-body">
+        <p>
+          Provide details of the procedure that ensures CO2 is transferred to an installation that has a greenhouse gas
+          emissions permit, or where emitted CO2 is effectively monitored and accounted for.
+        </p>
+        <p>Get help with <a [routerLink]="" govukLink>transfer of CO2</a>.</p>
+      </div>
+    </ng-container>
+    <ng-container *ngSwitchCase="'monitoringApproaches.TRANSFERRED_CO2.quantificationMethodologies'">
+      <div class="govuk-body">
+        <p>Provide details of the procedure that describes the quantification methodologies for:</p>
+        <ul>
+          <li>actual emissions of CO2 released to the water column from leakages</li>
+          <li>emissions of CO2 released to the water column from potential leakages</li>
+        </ul>
+        <p>Get help with <a [routerLink]="" govukLink>quantification methodologies</a>.</p>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">{{ taskKey$ | async | i18nSelect: headingMap }}</span>
+  </h2>
+
+  <app-procedure-form-summary
+    [details]="procedure$ | async"
+    cssClass="summary-list--edge-border"
+  ></app-procedure-form-summary>
+
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

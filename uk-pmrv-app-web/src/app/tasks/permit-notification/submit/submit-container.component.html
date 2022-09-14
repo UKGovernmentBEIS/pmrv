@@ -1,0 +1,18 @@
+<app-base-task-container-component
+  header="Notify the regulator of a change"
+  [customContentTemplate]="customContentTemplate"
+  expectedTaskType="PERMIT_NOTIFICATION_APPLICATION_SUBMIT"
+>
+</app-base-task-container-component>
+
+<ng-template #customContentTemplate>
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="./details-of-change"
+      linkText="Details of the Change"
+      [status]="'DETAILS_CHANGE' | sectionStatus | async"
+    ></li>
+    <li app-task-item link="./submit" linkText="Submit" [status]="'SUBMIT' | sectionStatus | async"></li>
+  </ul>
+</ng-template>

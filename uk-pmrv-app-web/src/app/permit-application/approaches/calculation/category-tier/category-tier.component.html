@@ -1,0 +1,182 @@
+<app-permit-task [breadcrumb]="[{ text: 'Calculation', link: ['calculation'] }]">
+  <ng-container *ngIf="(isEditable$ | async) === false; else start">
+    <app-page-heading caption="Calculation"> Add a source stream category </app-page-heading>
+    <p class="govuk-body">
+      Get help with
+      <a routerLink="help-with-source-stream-categories" target="_blank" govukLink>source stream categories</a>.
+    </p>
+    <p class="govuk-body">
+      Get help with
+      <a routerLink="help-with-calculation-approach" target="_blank"> calculation approach and calculation parameters</a
+      >.
+    </p>
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Source streams (fuels and materials)</li>
+      <li>Emission sources</li>
+    </ul>
+  </ng-container>
+
+  <ng-template #start>
+    <app-page-heading caption="Calculation">
+      <ng-container
+        *ngIf="
+          ('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers as tiers;
+          else addStream
+        "
+      >
+        <ng-container *ngIf="tiers && tiers[index$ | async]; else addStream">
+          {{ tiers[index$ | async] | sourceStreamCategoryName | async }}
+          <button *ngIf="(store.isEditable$ | async) === true" routerLink="delete" govukSecondaryButton type="button">
+            Delete
+          </button>
+        </ng-container>
+      </ng-container>
+      <ng-template #addStream>
+        <ng-container *ngIf="(store.isEditable$ | async) === true">Add a source stream category</ng-container>
+      </ng-template>
+    </app-page-heading>
+    <p class="govuk-body">
+      Get help with
+      <a routerLink="help-with-source-stream-categories" target="_blank" govukLink>source stream categories</a>.
+    </p>
+    <p class="govuk-body">
+      Get help with
+      <a routerLink="help-with-calculation-approach" target="_blank"> calculation approach and calculation parameters</a
+      >.
+    </p>
+    <h2 class="govuk-heading-m">Define the source stream category</h2>
+    <ul app-task-item-list>
+      <li
+        app-task-item
+        link="./category/summary"
+        linkText="Source stream category"
+        [status]="'CALCULATION_Category' | taskStatus: (index$ | async) | async"
+      >
+        <app-category-summary-overview
+          *ngIf="('CALCULATION_Category' | taskStatus: (index$ | async) | async) === 'complete'"
+          [sourceStreamCategory]="
+            ('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async]
+              .sourceStreamCategory
+          "
+          cssClass="govuk-!-margin-bottom-0"
+        >
+        </app-category-summary-overview>
+      </li>
+    </ul>
+
+    <h2 class="govuk-heading-m">Select calculation parameters and apply monitoring tiers</h2>
+    <ul app-task-item-list>
+      <li
+        app-task-item
+        link="activity-data/summary"
+        linkText="Activity data"
+        [status]="'CALCULATION_Activity_Data' | taskStatus: (index$ | async) | async"
+      >
+        <ng-container *ngIf="('CALCULATION_Activity_Data' | taskStatus: (index$ | async) | async) === 'complete'">
+          <ng-container
+            *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers?.[index$ | async]?.activityData as activityData"
+          >
+            <app-activity-data-summary-overview
+              [isChangeLinkAvailable]="false"
+              [activityDataSectionHasBottomBorder]="false"
+              [justificationSectionHasBottomBorder]="false"
+            ></app-activity-data-summary-overview>
+          </ng-container>
+        </ng-container>
+      </li>
+
+      <li
+        app-task-item
+        *ngIf="'CALCULATION_Calorific' | taskStatus: (index$ | async) | async as status"
+        link="calorific-value/summary"
+        linkText="Net calorific value"
+        [status]="status"
+      >
+        <app-calculation-category-tier-subtasks-summary-template
+          *ngIf="status === 'complete'"
+          [isPreview]="true"
+          [statusKey]="'CALCULATION_Calorific'"
+          cssClass="govuk-!-margin-bottom-0"
+        ></app-calculation-category-tier-subtasks-summary-template>
+      </li>
+
+      <li
+        app-task-item
+        *ngIf="'CALCULATION_Emission_Factor' | taskStatus: (index$ | async) | async as status"
+        link="emission-factor/summary"
+        linkText="Emission factor"
+        [status]="status"
+      >
+        <app-calculation-category-tier-subtasks-summary-template
+          *ngIf="status === 'complete'"
+          [isPreview]="true"
+          [statusKey]="'CALCULATION_Emission_Factor'"
+          cssClass="govuk-!-margin-bottom-0"
+        ></app-calculation-category-tier-subtasks-summary-template>
+      </li>
+
+      <li
+        app-task-item
+        *ngIf="'CALCULATION_Oxidation_Factor' | taskStatus: (index$ | async) | async as status"
+        link="oxidation-factor/summary"
+        linkText="Oxidation factor"
+        [status]="status"
+      >
+        <app-calculation-category-tier-subtasks-summary-template
+          *ngIf="status === 'complete'"
+          [isPreview]="true"
+          [statusKey]="'CALCULATION_Oxidation_Factor'"
+          cssClass="govuk-!-margin-bottom-0"
+        ></app-calculation-category-tier-subtasks-summary-template>
+      </li>
+
+      <li
+        app-task-item
+        *ngIf="'CALCULATION_Carbon_Content' | taskStatus: (index$ | async) | async as status"
+        link="carbon-content/summary"
+        linkText="Carbon content"
+        [status]="status"
+      >
+        <app-calculation-category-tier-subtasks-summary-template
+          *ngIf="status === 'complete'"
+          [isPreview]="true"
+          [statusKey]="'CALCULATION_Carbon_Content'"
+          cssClass="govuk-!-margin-bottom-0"
+        ></app-calculation-category-tier-subtasks-summary-template>
+      </li>
+
+      <li
+        app-task-item
+        *ngIf="'CALCULATION_Conversion_Factor' | taskStatus: (index$ | async) | async as status"
+        link="conversion-factor/summary"
+        linkText="Conversion factor"
+        [status]="status"
+      >
+        <app-calculation-category-tier-subtasks-summary-template
+          *ngIf="status === 'complete'"
+          [isPreview]="true"
+          [statusKey]="'CALCULATION_Conversion_Factor'"
+          cssClass="govuk-!-margin-bottom-0"
+        ></app-calculation-category-tier-subtasks-summary-template>
+      </li>
+
+      <li
+        app-task-item
+        *ngIf="'CALCULATION_Biomass_Fraction' | taskStatus: (index$ | async) | async as status"
+        link="biomass-fraction/summary"
+        linkText="Biomass fraction"
+        [status]="status"
+      >
+        <app-calculation-category-tier-subtasks-summary-template
+          *ngIf="status === 'complete'"
+          [isPreview]="true"
+          [statusKey]="'CALCULATION_Biomass_Fraction'"
+          cssClass="govuk-!-margin-bottom-0"
+        ></app-calculation-category-tier-subtasks-summary-template>
+      </li>
+    </ul>
+  </ng-template>
+
+  <app-approach-return-link parentTitle="Calculation approach" reviewGroupUrl="calculation"></app-approach-return-link>
+</app-permit-task>

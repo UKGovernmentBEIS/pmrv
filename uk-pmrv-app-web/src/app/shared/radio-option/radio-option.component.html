@@ -1,0 +1,19 @@
+<!--
+  https://github.com/angular/angular/issues/11757
+  set both name and attr.name for accessibility issues
+-->
+<!-- eslint-disable @angular-eslint/template/no-duplicate-attributes -->
+<input
+  class="govuk-radios__input"
+  [formControl]="control"
+  [id]="identifier + '-option' + index"
+  [name]="identifier"
+  [attr.name]="identifier"
+  type="radio"
+  [value]="value"
+  [attr.disabled]="isDisabled === true || null"
+/>
+<label class="govuk-label govuk-radios__label" [for]="identifier + '-option' + index">
+  {{ label }}
+  <ng-content select="[label]"></ng-content>
+</label>

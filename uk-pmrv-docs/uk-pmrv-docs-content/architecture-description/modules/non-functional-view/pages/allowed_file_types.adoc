@@ -1,0 +1,62 @@
+= 04 Allowed File types
+
+== Context
+As per security team advice, a white list of allowed file-types should be supported in PMRV.
+
+
+
+== Recommendation
+Taken under consideration the existing files and their volume in ETSWAP as well as the security requirements it has been proposed to allow the following files in PMRV
+
+|===
+|File extension |Content Type
+
+|.doc
+|application/msword
+
+|.docx
+|application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+|.xls
+|application/vnd.ms-excel
+
+|.xlsx
+|application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+
+|.ppt
+|application/vnd.ms-powerpoint
+
+|.pptx
+|application/vnd.openxmlformats-officedocument.presentationml.presentation
+
+|.vsd
+|application/vnd.visio
+
+|.vsdx
+|application/vnd.ms-visio.viewer
+
+|.jpg
+|image/jpg
+
+|.jpeg
+|image/jpeg
+
+|.pdf
+|application/pdf
+
+|.png
+|image/png
+
+|.tif
+|image/tiff
+
+|.txt
+|text/plain
+
+|.dib, .bmp
+|image/bmp,image/x-ms-bmp
+|===
+
+
+== Decision
+The above filetypes will be the only ones allowed in PMRV. Only the above types will be migrated from ETSWAP. The list of allowed filetypes should be configurable in order to be able to support new filetypes easily in the future, without the need of redeployment.

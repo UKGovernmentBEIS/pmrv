@@ -1,0 +1,48 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  heading="Select who you want to notify about this request"
+  submitText="Continue"
+>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div *ngIf="accountPrimaryContactUsersInfo$ | async as accountPrimaryContactUsersInfo" class="govuk-heading-m">
+        Users automatically notified
+        <p *ngFor="let primaryContactUsersInfo of accountPrimaryContactUsersInfo | keyvalue" class="govuk-body">
+          {{ primaryContactUsersInfo.key | userInfoResolver: accountPrimaryContactUsersInfo }}
+        </p>
+      </div>
+
+      <ng-container *ngIf="otherOperatorUsersInfo$ | async as usersInfo">
+        <ng-container *ngIf="objectKeys(usersInfo).length > 0; else noUsers">
+          <div
+            govuk-checkboxes
+            formControlName="users"
+            legend="Select the users you want to notify"
+            legendSize="medium"
+          >
+            <govuk-checkbox
+              *ngFor="let userInfo of usersInfo | keyvalue"
+              [value]="userInfo.key"
+              [label]="userInfo.key | userInfoResolver: usersInfo"
+            ></govuk-checkbox>
+          </div>
+        </ng-container>
+        <ng-template #noUsers>
+          <div class="govuk-heading-m">
+            Select the users you want to notify
+            <p class="govuk-body">No additional users exist</p>
+          </div>
+        </ng-template>
+      </ng-container>
+
+      <div
+        [options]="assignees$ | async"
+        formControlName="assignees"
+        govuk-select
+        label="Select the name and signature that will be shown on the official notice document?"
+      ></div>
+    </div>
+  </div>
+</app-wizard-step>
+<app-return-link></app-return-link>

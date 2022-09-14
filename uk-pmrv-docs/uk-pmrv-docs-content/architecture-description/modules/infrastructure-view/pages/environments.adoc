@@ -1,0 +1,227 @@
+= UK PMRV IT Systems Environments
+
+== Introduction
+This document describes the various environments that are needed to fully operate the UK PMRV overall solution, including the purpose, lifecycle and important characteristics of each environment.
+
+== Important considerations
+BEIS has made available four AWS accounts, namely:
+
+* Production
+* Pre-production
+* Testing
+* Sandbox
+
+These four accounts will be used to host all the needed environments, using one or more regions to isolate the environments from each other where possible.
+
+Any environment that contains (or could contain) live data should be hosted only on eu-west-2 (London) region and be under the control of Operations/Application Management team.
+
+Environments with non-live data can remain under the development contractors control.
+
+== Production Environment
+
+This is the actual live environment and as such it is expected to be always on, although strictly speaking its SLA, 99% during core working hours (9:00 - 17:00 UK time on working days), allows enough downtime for maintenance, support, incident resolution, etc.
+This environment should be fully configured for high availability and disaster recovery (data stores regularly backed up) on all aspects (all artefacts of the solution must be highly available and/or backed up).
+
+All data in this environment should be properly secured. Also, data will need to remain within UK ground, therefore only eu-west-2 (London) region should be used in AWS.
+
+Any infrastructure on this environment should be completely dedicated.
+
+This environment should be controlled by Operations/Application Management team and as such it should be deployed on the production AWS account.
+
+=== Summary of characteristics
+The following table summarizes the characteristics previously mentioned:
+
+.Production Environment
+|===
+|Usage|Availability|Infrastructure
+
+a| 
+* *Actual Live Environment*
+* Always on
+a| 
+* Contract SLA applies
+* High Availability configuration on all components
+* Disaster Recovery enabled (full backup policy)
+a| 
+* Dedicated infrastructure required
+* *Live Data*
+* Operations/Application Management controlled
+* AWS Production Account
+* eu-west-2(London) region only
+|===
+
+== Preproduction Environment
+There is a need to have an environment replicating production (potentially even with live data snapshots) for a number of reasons:
+
+* For conducting performance testing (on an environment with the same specs as production)
+* For conducting security/penetration testing (on an environment configured in the same way as production)
+* For testing configuration changes if needed (before applying them to production)
+* As a last resort for troubleshooting issues on production (usually data specific related issues)
+
+Using one environment for all the reasons mentioned above can be problematic, since some of them require exclusivity and strict control (playing around in the application while performance testing is ongoing may arbitrarily affect results). Either careful planning will be needed to coordinate activities or launching of a temporary spin off environment.
+
+This environment is an exact replica of production environment (same alerts, backups, HA, scalability, instance types, etc.). High availability configuration is expected but in general this environment is not required to be always on, it can be switched on/off as needed.
+
+Data wise we need to maintain a full security control particularly if we allow live data. Similarly to production, data will need to remain on UK ground, therefore only eu-west-2 (London) region in AWS should be used. 
+
+NOTE: If synthetic (not live) data are used, the restriction on eu-west-2 usage is lifted.
+
+This environment should be controlled by Operations/Application Management team and as such it should be deployed on the pre-production AWS account.
+
+=== Summary of characteristics
+The following table summarizes the characteristics previously mentioned:
+
+.Preproduction Environment
+|===
+|Usage|Availability|Infrastructure
+
+a|
+* Performance testing
+* Security testing
+* Configuration testing
+* Production troubleshooting
+* Deactivated/Activated on demand
+a| 
+* Contract SLA does not apply
+* High Availability configuration on all components
+* Disaster Recovery enabled (same backup policy as prod)
+a| 
+* *Live data snapshots*
+* Operations/Application Management controlled
+* AWS Pre-production Account
+* eu-west-2(London) region (only when live data snapshots are used)
+|===
+
+== UAT1&2 (Customer)
+These are the environments where BEIS and EA conduct their UAT or where user research is performed. These environments typically hold the current sprint release (so normally this would be ahead of production) but can be deployed on demand with the current state of code. Normally these environments are always on (but perhaps could be scheduled to activate on demand or on working days schedule).
+
+These environments are not setup for high availability or disaster recovery and typically all external services will be emulated.
+
+These environments are not meant to have live data, therefore any region can be used for its hosting under the Testing AWS account.
+
+Infrastructure services could be shared if needed.
+
+This environment can remain under the control of the development contractor.
+
+=== Summary of characteristics
+The following table summarizes the characteristics previously mentioned:
+
+.QA Environment
+|===
+|Usage|Availability|Infrastructure
+
+a|
+* Latest sprint release code running or on demand
+* *Always on* (but could be on demand or on schedule)
+a| 
+* Contract SLA does not apply
+* High Availability not enabled
+* Disaster Recovery not enabled (no backup policy)
+a| 
+* Infrastructure could be shared
+* *No Live Data*
+* Development contractor controlled
+* AWS Testing Account
+* Any region
+|===
+
+== Integration (Development)
+This is the environment used for QA internally by TU. This holds the latest build and is updated automatically when PRs are merged. This environment is always on.
+
+It is not configured for disaster recovery or high availability, and all external services are emulated.
+
+This environment is not meant to have live data, therefore any region can be used for its hosting under the Sandbox account.
+
+Infrastructure services could be shared if needed.
+
+This environment is under the control of the development contractor.
+
+=== Summary of characteristics
+The following table summarizes the characteristics previously mentioned:
+
+.Integration Environment
+|===
+|Usage|Availability|Infrastructure
+
+a|
+* Latest code from master running
+* *Always on*
+a| 
+* Contract SLA does not apply
+* High Availability not enabled
+* Disaster Recovery not enabled (no backup policy)
+a| 
+* Infrastructure could be shared
+* *No Live Data*
+* Development contractor controlled
+* AWS Sandbox Account
+* Any region
+|===
+
+== E2E (Development)
+This is the environment used for end-to-end testing internally by TU. This holds a build on demand and is used for running UI and BDD tests (which are rather slow and require a controlled deployment). This environment is always on (or alternatively can be rebuilt each time as needed by the tests).
+
+It is not configured for disaster recovery or high availability, and all external services are emulated.
+
+This environment is not meant to have live data, therefore any region can be used for its hosting under the Sandbox account.
+
+Infrastructure services could be shared if needed.
+
+This environment is under the control of the development contractor.
+
+=== Summary of characteristics
+The following table summarizes the characteristics previously mentioned:
+
+.E2E Environment
+|===
+|Usage|Availability|Infrastructure
+
+a|
+* Code deployed on demand
+* End-to-end UI/BDD automated testing
+* *Always on*
+a| 
+* Contract SLA does not apply
+* High Availability not enabled
+* Disaster Recovery not enabled (no backup policy)
+a| 
+* Infrastructure could be shared
+* *No Live Data*
+* Development contractor controlled
+* AWS Sandbox Account
+* Any region
+|===
+
+== Development Local (Development laptops)
+This is the environment that each developer uses (practically setup on each development laptop). This holds a development build on demand and is used for development. This environment is completely controlled by the corresponding developer.
+
+It is not configured for disaster recovery or high availability, and all external services are emulated.
+
+No live data are handled in this environment and its infrastructure dedicated (everything runs on the laptop).
+
+=== Summary of characteristics
+The following table summarizes the characteristics previously mentioned:
+
+.Dev Local Environment
+|===
+|Usage|Availability|Infrastructure
+
+a|
+* Code built and deployed on demand
+* Day-to-day development
+* *Controlled by the developer*
+a| 
+* Contract SLA does not apply
+* High Availability not enabled
+* Disaster Recovery not enabled (no backup policy)
+a| 
+* Infrastructure is dedicated (developer has full control)
+* *No Live Data*
+|===
+
+== Spin off AdHoc environments
+There is also an occasional need for adhoc environments for customized deployments (e.g. a third UAT or a second Preproduction environment for running some activities in parallel) or a plan for higher scale of automation (e.g. a per PR environment).
+
+Since our environments are implemented using IaC techniques (coded in Terraform/Ansible), spinning up new temporary environments is not really considered an issue (other than billing costs).
+
+Typically, such environments are using the template of the UAT environments (as a general purpose basic environment) but any other template could be used as needed. Notice that the segregation rules defined under <<Important Considerations>> around data handling always apply.

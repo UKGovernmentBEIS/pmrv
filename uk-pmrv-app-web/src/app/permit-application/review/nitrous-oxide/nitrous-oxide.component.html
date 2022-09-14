@@ -1,0 +1,175 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Nitrous oxide approach">
+  <app-site-emissions></app-site-emissions>
+
+  <h2 class="govuk-heading-m">Nitrous oxide emission sources</h2>
+
+  <ul app-task-item-list>
+    <div class="overflow-auto">
+      <ng-container *ngIf="(sourceStreamCategoryAppliedTiers$ | async)?.length > 0; else addNew">
+        <govuk-table [columns]="columns" [data]="sourceStreamCategoryAppliedTiers$ | async">
+          <ng-template let-column="column" let-row="row" let-index="index">
+            <ng-container [ngSwitch]="column.field">
+              <ng-container *ngSwitchCase="'category'">
+                <a govukLink [routerLink]="['../../nitrous-oxide/category-tier', index]">
+                  <ng-container
+                    *ngIf="
+                      row?.sourceStreamCategory?.sourceStream | findSourceStream | async as sourceStream;
+                      else noSourceStream
+                    "
+                  >
+                    {{ row | sourceStreamCategoryName | async }}
+                  </ng-container>
+                  <ng-template #noSourceStream>
+                    UNDEFINED: {{ row?.sourceStreamCategory?.categoryType | categoryTypeName }}
+                  </ng-template>
+                </a>
+              </ng-container>
+              <ng-container *ngSwitchCase="'emissions'">
+                {{ row?.sourceStreamCategory?.annualEmittedCO2Tonnes | number }} t
+              </ng-container>
+              <ng-container *ngSwitchCase="'measuredEmissions'">
+                {{ row?.measuredEmissions?.tier | appliedTier }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'status'">
+                <govuk-tag
+                  [color]="'N2O_Category_Tier' | taskStatus: index | async | tagColor"
+                  class="app-task-list__tag"
+                >
+                  {{ 'N2O_Category_Tier' | taskStatus: index | async | i18nSelect: statusMap }}
+                </govuk-tag>
+              </ng-container>
+            </ng-container>
+          </ng-template>
+        </govuk-table>
+        <a
+          *ngIf="(store.isEditable$ | async) === true"
+          govukLink
+          [routerLink]="['../../nitrous-oxide/category-tier', (sourceStreamCategoryAppliedTiers$ | async)?.length]"
+        >
+          Add a source stream category
+        </a>
+      </ng-container>
+      <ng-template #addNew>
+        <li
+          *ngIf="(store.isEditable$ | async) === true"
+          app-task-item
+          link="../../nitrous-oxide/category-tier/0"
+          linkText="Add a source stream category"
+          [status]="sourceStreamCategoriesStatus$ | async"
+        ></li>
+      </ng-template>
+    </div>
+  </ul>
+
+  <h2 class="govuk-heading-m">Nitrous oxide details</h2>
+
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="../../nitrous-oxide/description/summary"
+      linkText="Approach description"
+      [status]="'N2O_Description' | taskStatus | async"
+    >
+      <app-n2o-approach-description-summary-template
+        [hasBottomBorder]="false"
+      ></app-n2o-approach-description-summary-template>
+    </li>
+    <li
+      app-task-item
+      link="../../nitrous-oxide/emission/summary"
+      linkText="Emission determination procedure"
+      [status]="'N2O_Emission' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.N2O.emissionDetermination' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../nitrous-oxide/reference/summary"
+      linkText="Determination of reference period"
+      [status]="'N2O_Reference' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.N2O.referenceDetermination' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../nitrous-oxide/operational/summary"
+      linkText="Operational management"
+      [status]="'N2O_Operational' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.N2O.operationalManagement' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../nitrous-oxide/emissions/summary"
+      linkText="Determination of nitrous oxide emissions"
+      [status]="'N2O_Emissions' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.N2O.nitrousOxideEmissionsDetermination' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../nitrous-oxide/concentration/summary"
+      linkText="Determination of nitrous oxide concentration"
+      [status]="'N2O_Concentration' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.N2O.nitrousOxideConcentrationDetermination' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../nitrous-oxide/product/summary"
+      linkText="Determination of the quantity of product produced"
+      [status]="'N2O_Product' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.N2O.quantityProductDetermination' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../nitrous-oxide/materials/summary"
+      linkText="Quantity of materials"
+      [status]="'N2O_Materials' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.N2O.quantityMaterials' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../nitrous-oxide/gas/summary"
+      linkText="Calculation of gas flow"
+      [status]="'N2O_Gas' | taskStatus | async"
+    >
+      <app-n2o-approach-gas-summary-template [hasBottomBorder]="false"></app-n2o-approach-gas-summary-template>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

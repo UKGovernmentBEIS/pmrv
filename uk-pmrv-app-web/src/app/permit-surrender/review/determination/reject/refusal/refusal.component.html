@@ -1,0 +1,14 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <span class="govuk-caption-l">Reject permit surrender</span>
+
+  <app-page-heading>Provide text to be included in the official refusal letter</app-page-heading>
+
+  <div class="govuk-hint">The operator will see this in the official notice letter</div>
+  <div formControlName="officialRefusalLetter" govuk-textarea [maxLength]="10000"></div>
+</app-wizard-step>
+<a govukLink routerLink="../../..">Return to: Permit surrender review</a>

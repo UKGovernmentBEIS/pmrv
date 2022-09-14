@@ -1,0 +1,32 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    submitText="Continue"
+    caption="Calculation"
+    heading="Sampling plan"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-procedure-form formGroupName="procedurePlan">
+      <div class="govuk-body">
+        <p>
+          Provide details about the procedure covering the sampling plan. If there's more than one sampling method, give
+          details of the overarching procedure that covers all the methods and what links them together.
+        </p>
+      </div>
+    </app-procedure-form>
+    <app-multiple-file-input
+      [baseDownloadUrl]="getDownloadUrl()"
+      [label]="(isFileUploaded$ | async) ? 'Upload a different file' : 'Upload a file (optional)'"
+      formControlName="planIds"
+      hint="Explain what needs to be uploaded"
+      listTitle="Uploaded sampling plan procedure (optional)"
+    ></app-multiple-file-input>
+  </app-wizard-step>
+
+  <app-approach-return-link
+    parentTitle="Calculation approach"
+    reviewGroupUrl="calculation"
+    [isNested]="true"
+  ></app-approach-return-link>
+</app-permit-task>

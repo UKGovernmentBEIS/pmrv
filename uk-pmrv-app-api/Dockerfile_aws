@@ -1,0 +1,10 @@
+FROM eclipse-temurin:11-jre-focal
+RUN apt-get update
+RUN apt-get install -y openssh-client
+RUN echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+RUN apt-get install -y --no-install-recommends fontconfig ttf-mscorefonts-installer
+COPY src/main/resources/symbol.ttf /usr/share/fonts
+RUN fc-cache -f -v
+COPY target/uk-pmrv-app-api-env_version.jar /opt/applications/uk-pmrv-app-api/
+WORKDIR /opt/applications/uk-pmrv-app-api/
+CMD ["java", "-XX:+PrintFlagsFinal", "-Xmx1024m", "-Xms512m", "-jar", "uk-pmrv-app-api-env_version.jar"]

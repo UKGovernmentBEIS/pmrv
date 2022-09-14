@@ -1,0 +1,6 @@
+main {
+  // header: 100px
+  // footer: 310px
+  min-height: calc(100vh - 100px - 310px);
+  outline: none;
+}

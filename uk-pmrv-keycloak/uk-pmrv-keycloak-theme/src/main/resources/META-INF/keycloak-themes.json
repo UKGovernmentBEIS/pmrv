@@ -1,0 +1,11 @@
+{
+	"themes": [
+		{
+			"name": "uk-pmrv-theme",
+			"types": [
+				"login",
+				"email"
+			]
+		}
+	]
+}

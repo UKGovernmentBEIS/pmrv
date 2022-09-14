@@ -1,0 +1,10 @@
+@forward "../../app/shared/add-another/add-another.directive";
+@forward "../../app/shared/grouped-summary-list/grouped-summary-list.directive";
+
+.overflow-auto {
+  overflow: auto;
+  &.overflow-auto-table {
+    padding-left: 1px;
+    padding-right: 1px;
+  }
+}

@@ -1,0 +1,13 @@
+@import '~govuk-frontend/govuk/base';
+
+.summary-list--edge-border {
+  border-bottom: 1px solid $govuk-border-colour;
+}
+
+.summary-list--edge-border:not(:last-of-type) {
+  margin-bottom: 0;
+}
+
+.summary-list--no-bottom-border:last-of-type {
+  border-bottom: none;
+}

@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        logicalFilePath="v0.1.0/changelog_request_payment_model.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+
+    <changeSet id="0_1_0_REQUEST_PAYMENT_FEE_METHOD_CREATE_SEQUENCE" author="pafilisa@unisystems.gr">
+        <createSequence sequenceName="request_payment_fee_method_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS request_payment_fee_method_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="0_1_0_REQUEST_PAYMENT_FEE_METHOD_CREATE_TABLE" author="pafilisa@unisystems.gr">
+        <createTable tableName="request_payment_fee_method"
+                     remarks="Represents a payment fee method">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="request_payment_fee_method_pk" nullable="false"/>
+            </column>
+            <column name="competent_authority" type="varchar(255)" remarks="The competent authority">
+                <constraints nullable="false" />
+            </column>
+            <column name="request_type" type="varchar(255)" remarks="The request type">
+                <constraints nullable="false" />
+            </column>
+            <column name="type" type="varchar(255)" remarks="The fee method type">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="request_payment_fee_method" columnNames="competent_authority,request_type"
+                             constraintName="request_payment_fee_method_uc"/>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_payment_fee_method CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_PAYMENT_FEE_CREATE_TABLE" author="pafilisa@unisystems.gr">
+        <createTable tableName="request_payment_fee" remarks="Represents a payment fee">
+            <column name="fee_method_id" type="bigint" remarks="The payment fee method id where fee belongs to (foreign key to request_payment_fee_method table)">
+                <constraints foreignKeyName="request_payment_fee_method_fee_fk" references="request_payment_fee_method(id)" nullable="false"/>
+            </column>
+            <column name="type" type="varchar(255)" remarks="The fee type">
+                <constraints nullable="false" />
+            </column>
+            <column name="amount" type="numeric" remarks="The fee amount">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_payment_fee CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_EA_PERMIT_ISSUANCE" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'ENGLAND', 'PERMIT_ISSUANCE', 'INSTALLATION_CATEGORY_BASED');
+
+            WITH fee_method AS(
+                SELECT id
+                  FROM request_payment_fee_method
+                 WHERE competent_authority = 'ENGLAND'
+                   AND request_type = 'PERMIT_ISSUANCE'
+            )
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            VALUES ((SELECT id FROM fee_method), 'HSE', '1529'),
+                    ((SELECT id FROM fee_method), 'CAT_A', '1529'),
+                    ((SELECT id FROM fee_method), 'CAT_B', '2864'),
+                    ((SELECT id FROM fee_method), 'CAT_C', '6840');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                  FROM request_payment_fee
+                 WHERE fee_method_id = (SELECT id
+                                          FROM request_payment_fee_method
+                                         WHERE competent_authority = 'ENGLAND'
+                                           AND request_type = 'PERMIT_ISSUANCE');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'ENGLAND'
+                  AND request_type = 'PERMIT_ISSUANCE';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_SEPA_PERMIT_ISSUANCE" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'SCOTLAND', 'PERMIT_ISSUANCE', 'INSTALLATION_CATEGORY_BASED');
+
+            WITH fee_method AS(
+                SELECT id
+                  FROM request_payment_fee_method
+                 WHERE competent_authority = 'SCOTLAND'
+                   AND request_type = 'PERMIT_ISSUANCE'
+            )
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            VALUES ((SELECT id FROM fee_method), 'HSE', '2300'),
+                    ((SELECT id FROM fee_method), 'CAT_A', '2300'),
+                    ((SELECT id FROM fee_method), 'CAT_B', '3830'),
+                    ((SELECT id FROM fee_method), 'CAT_C', '4600');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                                         FROM request_payment_fee_method
+                                        WHERE competent_authority = 'SCOTLAND'
+                                          AND request_type = 'PERMIT_ISSUANCE');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'SCOTLAND'
+                AND request_type = 'PERMIT_ISSUANCE';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_NIEA_PERMIT_ISSUANCE" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'NORTHERN_IRELAND', 'PERMIT_ISSUANCE', 'INSTALLATION_CATEGORY_BASED');
+
+            WITH fee_method AS(
+                SELECT id
+                  FROM request_payment_fee_method
+                 WHERE competent_authority = 'NORTHERN_IRELAND'
+                   AND request_type = 'PERMIT_ISSUANCE'
+            )
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            VALUES ((SELECT id FROM fee_method), 'HSE', '1529'),
+                    ((SELECT id FROM fee_method), 'CAT_A', '1529'),
+                    ((SELECT id FROM fee_method), 'CAT_B', '2864'),
+                    ((SELECT id FROM fee_method), 'CAT_C', '6840');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                                         FROM request_payment_fee_method
+                                        WHERE competent_authority = 'NORTHERN_IRELAND'
+                                          AND request_type = 'PERMIT_ISSUANCE');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'NORTHERN_IRELAND'
+                AND request_type = 'PERMIT_ISSUANCE';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_NRW_PERMIT_ISSUANCE" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'WALES', 'PERMIT_ISSUANCE', 'INSTALLATION_CATEGORY_BASED');
+
+            WITH fee_method AS(
+                SELECT id
+                  FROM request_payment_fee_method
+                 WHERE competent_authority = 'WALES'
+                   AND request_type = 'PERMIT_ISSUANCE'
+            )
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            VALUES ((SELECT id FROM fee_method), 'HSE', '1627'),
+                    ((SELECT id FROM fee_method), 'CAT_A', '1627'),
+                    ((SELECT id FROM fee_method), 'CAT_B', '2441'),
+                    ((SELECT id FROM fee_method), 'CAT_C', '3255');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                                         FROM request_payment_fee_method
+                                        WHERE competent_authority = 'WALES'
+                                          AND request_type = 'PERMIT_ISSUANCE');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'WALES'
+                AND request_type = 'PERMIT_ISSUANCE';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_OPRED_PERMIT_ISSUANCE" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'OPRED', 'PERMIT_ISSUANCE', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '0'
+              FROM request_payment_fee_method
+             WHERE competent_authority = 'OPRED'
+              AND request_type = 'PERMIT_ISSUANCE';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                                         FROM request_payment_fee_method
+                                        WHERE competent_authority = 'OPRED'
+                                          AND request_type = 'PERMIT_ISSUANCE');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'OPRED'
+                AND request_type = 'PERMIT_ISSUANCE';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_PAYMENT_METHOD_CREATE_SEQUENCE" author="pafilisa@unisystems.gr">
+        <createSequence sequenceName="request_payment_method_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS request_payment_method_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_PAYMENT_METHOD_CREATE_TABLE" author="pafilisa@unisystems.gr">
+        <createTable tableName="request_payment_method"
+                     remarks="Represents a request payment method">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="request_payment_method_pk" nullable="false"/>
+            </column>
+            <column name="competent_authority" type="varchar(255)" remarks="The competent authority">
+                <constraints nullable="false" />
+            </column>
+            <column name="type" type="varchar(255)" remarks="The payment method type">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="request_payment_method" columnNames="competent_authority, type" constraintName="request_payment_method_uc"/>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_payment_method CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_METHOD_FOR_EA" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_method( id, competent_authority, type)
+            VALUES(nextval('request_payment_method_seq'), 'ENGLAND', 'CREDIT_OR_DEBIT_CARD');
+
+            INSERT INTO request_payment_method( id, competent_authority, type)
+            VALUES(nextval('request_payment_method_seq'), 'ENGLAND', 'BANK_TRANSFER');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_method
+                WHERE competent_authority = 'ENGLAND';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_METHOD_FOR_SEPA" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_method( id, competent_authority, type)
+            VALUES(nextval('request_payment_method_seq'), 'SCOTLAND', 'CREDIT_OR_DEBIT_CARD');
+
+            INSERT INTO request_payment_method( id, competent_authority, type)
+            VALUES(nextval('request_payment_method_seq'), 'SCOTLAND', 'BANK_TRANSFER');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_method
+                WHERE competent_authority = 'SCOTLAND';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_METHOD_FOR_NIEA" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_method( id, competent_authority, type)
+            VALUES(nextval('request_payment_method_seq'), 'NORTHERN_IRELAND', 'BANK_TRANSFER');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_method
+                WHERE competent_authority = 'NORTHERN_IRELAND';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_METHOD_FOR_NRW" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_method( id, competent_authority, type)
+            VALUES(nextval('request_payment_method_seq'), 'WALES', 'BANK_TRANSFER');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_method
+                WHERE competent_authority = 'WALES';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_PAYMENT_BANK_ACCOUNT_DETAILS_CREATE_SEQUENCE" author="pafilisa@unisystems.gr">
+        <createSequence sequenceName="request_payment_bank_account_details_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS request_payment_bank_account_details_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REQUEST_PAYMENT_BANK_ACCOUNT_DETAILS_CREATE_TABLE" author="pafilisa@unisystems.gr">
+        <createTable tableName="request_payment_bank_account_details" remarks="Represents the bank account details">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="request_payment_bank_account_details_pk" nullable="false"/>
+            </column>
+            <column name="competent_authority" type="varchar(255)" remarks="The competent authority">
+                <constraints nullable="false" />
+            </column>
+            <column name="sort_code" type="varchar(255)" remarks="The bank account sort code">
+                <constraints nullable="false" />
+            </column>
+            <column name="account_number" type="varchar(255)" remarks="The bank account number">
+                <constraints nullable="false" />
+            </column>
+            <column name="account_name" type="varchar(255)" remarks="The bank account name">
+                <constraints nullable="false" />
+            </column>
+            <column name="iban" type="varchar(255)" remarks="The iban that corresponds to the bank account">
+            </column>
+            <column name="swift_code" type="varchar(255)" remarks="The bank swift code">
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="request_payment_bank_account_details" columnNames="competent_authority" constraintName="request_payment_bank_account_details_ca_uc"/>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS request_payment_bank_account_details CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_BANK_ACCOUNT_DETAILS_FOR_EA" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_bank_account_details( id, competent_authority, sort_code, account_number, account_name, iban, swift_code)
+            VALUES(nextval('request_payment_bank_account_details_seq'), 'ENGLAND', '60-70-80', '10014411', 'Environment Agency', 'GB23NWBK60708010014411', 'NWBKGB2L');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_bank_account_details
+                WHERE competent_authority = 'ENGLAND';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_BANK_ACCOUNT_DETAILS_FOR_SEPA" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_bank_account_details( id, competent_authority, sort_code, account_number, account_name)
+            VALUES(nextval('request_payment_bank_account_details_seq'), 'SCOTLAND', '83-34-00', '00137187', 'Scottish Environment Protection Agency');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_bank_account_details
+                WHERE competent_authority = 'SCOTLAND';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_BANK_ACCOUNT_DETAILS_FOR_NIEA" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_bank_account_details( id, competent_authority, sort_code, account_number, account_name, iban, swift_code)
+            VALUES(nextval('request_payment_bank_account_details_seq'), 'NORTHERN_IRELAND', '95-01-21', '61253506', 'Northern Ireland Environment Agency', 'GB67DABA95012161253506', 'DABAGB2B');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_bank_account_details
+                WHERE competent_authority = 'NORTHERN_IRELAND';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_BANK_ACCOUNT_DETAILS_FOR_NRW" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_bank_account_details( id, competent_authority, sort_code, account_number, account_name, iban, swift_code)
+            VALUES(nextval('request_payment_bank_account_details_seq'), 'WALES', '60-70-80', '10014438', 'Natural Resources Wales', 'GB70NWBK60708010014438', 'NWBKGB2');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_bank_account_details
+                WHERE competent_authority = 'WALES';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_EA_PERMIT_SURRENDER" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'ENGLAND', 'PERMIT_SURRENDER', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '1279'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'ENGLAND'
+            AND request_type = 'PERMIT_SURRENDER';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'ENGLAND'
+                AND request_type = 'PERMIT_SURRENDER');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'ENGLAND'
+                AND request_type = 'PERMIT_SURRENDER';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_SEPA_PERMIT_SURRENDER" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'SCOTLAND', 'PERMIT_SURRENDER', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '1535'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'SCOTLAND'
+            AND request_type = 'PERMIT_SURRENDER';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'SCOTLAND'
+                AND request_type = 'PERMIT_SURRENDER');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'SCOTLAND'
+                AND request_type = 'PERMIT_SURRENDER';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_NIEA_PERMIT_SURRENDER" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'NORTHERN_IRELAND', 'PERMIT_SURRENDER', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '770'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'NORTHERN_IRELAND'
+            AND request_type = 'PERMIT_SURRENDER';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'NORTHERN_IRELAND'
+                AND request_type = 'PERMIT_SURRENDER');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'NORTHERN_IRELAND'
+                AND request_type = 'PERMIT_SURRENDER';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_NRW_PERMIT_SURRENDER" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'WALES', 'PERMIT_SURRENDER', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '1627'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'WALES'
+            AND request_type = 'PERMIT_SURRENDER';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'WALES'
+                AND request_type = 'PERMIT_SURRENDER');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'WALES'
+                AND request_type = 'PERMIT_SURRENDER';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_OPRED_PERMIT_SURRENDER" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'OPRED', 'PERMIT_SURRENDER', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '0'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'OPRED'
+            AND request_type = 'PERMIT_SURRENDER';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'OPRED'
+                AND request_type = 'PERMIT_SURRENDER');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'OPRED'
+                AND request_type = 'PERMIT_SURRENDER';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_EA_PERMIT_REVOCATION" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'ENGLAND', 'PERMIT_REVOCATION', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '1052'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'ENGLAND'
+            AND request_type = 'PERMIT_REVOCATION';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'ENGLAND'
+                AND request_type = 'PERMIT_REVOCATION');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'ENGLAND'
+                AND request_type = 'PERMIT_REVOCATION';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_SEPA_PERMIT_REVOCATION" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'SCOTLAND', 'PERMIT_REVOCATION', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '1537'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'SCOTLAND'
+            AND request_type = 'PERMIT_REVOCATION';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'SCOTLAND'
+                AND request_type = 'PERMIT_REVOCATION');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'SCOTLAND'
+                AND request_type = 'PERMIT_REVOCATION';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_NIEA_PERMIT_REVOCATION" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'NORTHERN_IRELAND', 'PERMIT_REVOCATION', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '770'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'NORTHERN_IRELAND'
+            AND request_type = 'PERMIT_REVOCATION';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'NORTHERN_IRELAND'
+                AND request_type = 'PERMIT_REVOCATION');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'NORTHERN_IRELAND'
+                AND request_type = 'PERMIT_REVOCATION';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_NRW_PERMIT_REVOCATION" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'WALES', 'PERMIT_REVOCATION', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '1627'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'WALES'
+            AND request_type = 'PERMIT_REVOCATION';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'WALES'
+                AND request_type = 'PERMIT_REVOCATION');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'WALES'
+                AND request_type = 'PERMIT_REVOCATION';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_REQUEST_PAYMENT_FEE_FOR_OPRED_PERMIT_REVOCATION" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO request_payment_fee_method(id, competent_authority, request_type, type)
+            values (nextval('request_payment_fee_method_seq'), 'OPRED', 'PERMIT_REVOCATION', 'STANDARD');
+
+            INSERT INTO request_payment_fee(fee_method_id, type, amount)
+            SELECT id , 'FIXED', '0'
+            FROM request_payment_fee_method
+            WHERE competent_authority = 'OPRED'
+            AND request_type = 'PERMIT_REVOCATION';
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE
+                FROM request_payment_fee
+                WHERE fee_method_id = (SELECT id
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'OPRED'
+                AND request_type = 'PERMIT_REVOCATION');
+
+                DELETE
+                FROM request_payment_fee_method
+                WHERE competent_authority = 'OPRED'
+                AND request_type = 'PERMIT_REVOCATION';
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

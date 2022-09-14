@@ -1,0 +1,59 @@
+<ng-container *ngIf="store.requestTaskType$ | async as taskType">
+  <govuk-notification-banner
+    *ngIf="taskType === 'PERMIT_NOTIFICATION_FOLLOW_UP_APPLICATION_AMENDS_SUBMIT'"
+    type="neutral"
+  >
+    <h1 class="govuk-notification-banner__heading">The regulator has requested amends to your application.</h1>
+    <a [routerLink]="" (click)="viewAmends()" govukLink class="govuk-notification-banner__link">
+      View all required amends
+    </a>
+  </govuk-notification-banner>
+  <app-base-task-container-component
+    [header]="(route.data | async)?.pageTitle"
+    [customContentTemplate]="customContentTemplate"
+    [expectedTaskType]="taskType"
+    [daysRemaining]="daysRemaining$ | async"
+    *ngIf="taskType === 'PERMIT_NOTIFICATION_FOLLOW_UP'"
+  >
+  </app-base-task-container-component>
+  <app-base-task-container-component
+    [header]="(route.data | async)?.pageTitle"
+    [customContentTemplate]="customContentTemplate"
+    [expectedTaskType]="taskType"
+    [daysRemaining]="daysRemaining$ | async"
+    *ngIf="taskType === 'PERMIT_NOTIFICATION_FOLLOW_UP_APPLICATION_AMENDS_SUBMIT'"
+  >
+  </app-base-task-container-component>
+
+  <ng-template #customContentTemplate>
+    <ul app-task-item-list>
+      <li
+        app-task-item
+        link="./details-amends-needed"
+        linkText="Details of the amends needed"
+        [status]="'FOLLOW_UP_AMENDS' | sectionStatus | async"
+        *ngIf="taskType === 'PERMIT_NOTIFICATION_FOLLOW_UP_APPLICATION_AMENDS_SUBMIT'"
+      ></li>
+      <li
+        app-task-item
+        link="./response"
+        linkText="Follow up response"
+        [status]="'FOLLOW_UP' | sectionStatus | async"
+      ></li>
+      <li
+        app-task-item
+        link="./submit"
+        linkText="Submit"
+        [status]="'FOLLOW_UP_SUBMIT' | sectionStatus | async"
+        *ngIf="taskType === 'PERMIT_NOTIFICATION_FOLLOW_UP'"
+      ></li>
+      <li
+        app-task-item
+        link="./submit-amends"
+        linkText="Submit"
+        [status]="'FOLLOW_UP_AMENDS_SUBMIT' | sectionStatus | async"
+        *ngIf="taskType === 'PERMIT_NOTIFICATION_FOLLOW_UP_APPLICATION_AMENDS_SUBMIT'"
+      ></li>
+    </ul>
+  </ng-template>
+</ng-container>

@@ -1,0 +1,24 @@
+<app-page-heading>
+  Deadline extension date {{ (decision$ | async) === 'ACCEPTED' ? 'accepted' : 'rejected' }}
+</app-page-heading>
+<p *ngIf="creationDate" class="govuk-caption-m">{{ creationDate | govukDate: 'datetime' }}</p>
+<h2 class="govuk-heading-m">Response details</h2>
+<dl govuk-summary-list [hasBorders]="false" [class.summary-list--edge-border]="true">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Decision</dt>
+    <dd govukSummaryListRowValue>{{ (decision$ | async) === 'ACCEPTED' ? 'Accepted' : 'Rejected' }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Evidence of operator consent</dt>
+    <dd govukSummaryListRowValue>{{ evidence$ | async }}</dd>
+  </div>
+</dl>
+<dl govuk-summary-list *ngIf="(store | async).rdeForceDecisionPayload?.files?.length > 0">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Files</dt>
+    <dd govukSummaryListRowValue>
+      <app-summary-download-files [files]="store.getDownloadUrlFiles((store | async).rdeForceDecisionPayload.files)">
+      </app-summary-download-files>
+    </dd>
+  </div>
+</dl>

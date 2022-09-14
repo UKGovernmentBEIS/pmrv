@@ -1,0 +1,13 @@
+<app-submit
+  [allowSubmit]="allowSubmit$ | async"
+  [isEditable]="store.isEditable$ | async"
+  [isActionSubmitted]="isPermitNotificationSubmitted$ | async"
+  [returnUrlConfig]="{ text: 'Permit notification', url: '..' }"
+  [competentAuthority]="competentAuthority$ | async"
+  (submitClicked)="onSubmit()"
+  [customSubmittedContentTemplate]="customSubmittedContentTemplate"
+></app-submit>
+
+<ng-template #customSubmittedContentTemplate>
+  <p class="govuk-body">The regulator will make a decision and respond within 14 days.</p>
+</ng-template>

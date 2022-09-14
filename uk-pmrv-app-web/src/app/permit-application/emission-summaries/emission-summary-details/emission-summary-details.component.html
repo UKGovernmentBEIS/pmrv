@@ -1,0 +1,41 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Fuels and equipment inventory"
+    [heading]="(isEditing$ | async) ? 'Edit emission summary' : 'Add an emission summary'"
+    submitText="Save and continue"
+  >
+    <p class="govuk-body">Create emissions summaries to show all the emissions connections at your installations</p>
+    <div formControlName="sourceStream" govuk-select label="Source stream" widthClass="govuk-!-width-full">
+      <option *ngFor="let sourceStream of 'sourceStreams' | task | async" [value]="sourceStream.id">
+        {{ sourceStream.reference }} {{ sourceStream | sourceStreamDescription }}
+      </option>
+    </div>
+    <div app-multi-select formControlName="emissionSources" label="Emission sources">
+      <div
+        *ngFor="let emissionSource of 'emissionSources' | task | async"
+        [itemValue]="emissionSource.id"
+        [label]="emissionSource.reference + ' ' + emissionSource.description"
+        app-multi-select-item
+        itemName="emissionSources"
+      ></div>
+    </div>
+    <div app-multi-select formControlName="emissionPoints" label="Emission points">
+      <div
+        *ngFor="let emissionPoint of 'emissionPoints' | task | async"
+        [itemValue]="emissionPoint.id"
+        [label]="emissionPoint.reference + ' ' + emissionPoint.description"
+        app-multi-select-item
+        itemName="emissionPoints"
+      ></div>
+    </div>
+    <div formControlName="regulatedActivity" govuk-select label="Regulated activity" widthClass="govuk-!-width-full">
+      <option *ngFor="let regulatedActivity of 'regulatedActivities' | task | async" [value]="regulatedActivity.id">
+        {{ regulatedActivity.type | regulatedActivityType }}
+      </option>
+      <option value="excludedRegulatedActivity">{{ 'excludedRegulatedActivity' | regulatedActivityType }}</option>
+    </div>
+  </app-wizard-step>
+  <a govukLink routerLink="..">Return to: Emission summaries</a>
+</app-permit-task>

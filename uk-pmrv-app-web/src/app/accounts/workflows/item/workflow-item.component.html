@@ -1,0 +1,30 @@
+<div class="govuk-grid-row" *ngIf="requestInfo$ | async as requestInfo">
+  <div class="govuk-grid-column-full">
+    <app-page-heading size="xl" [caption]="requestInfo.id">
+      {{ workflowDetailsTypesMap[requestInfo.requestType] }}
+      <span class="search-results-list_item_status govuk-tag govuk-tag--{{ requestInfo.requestStatus | tagColor }}">
+        <strong>{{ requestInfo.requestStatus | i18nSelect: workflowStatusesTagMap }}</strong>
+      </span>
+    </app-page-heading>
+  </div>
+
+  <div class="govuk-grid-column-full" *ngIf="relatedTasks$ | async as relatedTasks">
+    <app-related-tasks
+      *ngIf="relatedTasks.length > 0"
+      [items]="relatedTasks"
+      heading="Tasks to complete"
+    ></app-related-tasks>
+  </div>
+
+  <div class="govuk-grid-row" *ngIf="actions$ | async as actions">
+    <app-timeline class="govuk-grid-column-full">
+      <app-timeline-item
+        *ngFor="let action of actions"
+        [action]="action"
+        [link]="action | timelineItemLink"
+        [state]="navigationState"
+      ></app-timeline-item>
+      <p class="govuk-body" *ngIf="actions?.length === 0">No timeline events</p>
+    </app-timeline>
+  </div>
+</div>

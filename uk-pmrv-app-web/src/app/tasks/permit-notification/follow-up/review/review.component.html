@@ -1,0 +1,40 @@
+<app-base-task-container-component
+  [header]="(route.data | async)?.pageTitle"
+  [customContentTemplate]="customContentTemplate"
+  expectedTaskType="PERMIT_NOTIFICATION_FOLLOW_UP_APPLICATION_REVIEW"
+  [daysRemaining]="daysRemaining$ | async"
+>
+</app-base-task-container-component>
+
+<ng-template #customContentTemplate>
+  <ng-container>
+    <div class="govuk-button-group">
+      <button
+        *ngIf="allowNotifyOperator$ | async"
+        (click)="notifyOperator()"
+        govukButton
+        title="Notify operator of decision"
+        type="button"
+      >
+        Notify operator of decision
+      </button>
+      <button
+        *ngIf="allowReturnForAmends$ | async"
+        (click)="returnForAmends()"
+        govukButton
+        title="Return for amends"
+        type="button"
+      >
+        Return for amends
+      </button>
+    </div>
+  </ng-container>
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="./decision"
+      linkText="Operator follow up response"
+      [status]="'FOLLOW_UP' | reviewNotificationStatus | async"
+    ></li>
+  </ul>
+</ng-template>

@@ -1,0 +1,11 @@
+= Infrastructure view
+
+Let's take a look at how we can map the various software components comprising the UK ETS IT systems on underlying hardware.
+
+== Hosting choice
+
+AWS
+
+== Environments
+Description of the necessary operational environments is separately described under
+a different summary document, namely the xref:environments.adoc[UK PMRV IT Systems Environments].

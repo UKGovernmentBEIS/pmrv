@@ -1,0 +1,43 @@
+<label
+  [class.govuk-visually-hidden]="!templateLabel && isLabelHidden"
+  [for]="identifier"
+  [id]="'l.' + identifier"
+  class="govuk-label"
+>
+  <ng-container *ngIf="!templateLabel; else labelTemplate">{{ currentLabel }}</ng-container>
+  <ng-template #labelTemplate>
+    <ng-content select="[govukLabel]"></ng-content>
+  </ng-template>
+</label>
+<span *ngIf="hint" [id]="identifier + '-hint'" class="govuk-hint">
+  {{ hint }}
+</span>
+<govuk-error-message *ngIf="shouldDisplayErrors" [errors]="control.errors" [identifier]="identifier">
+</govuk-error-message>
+<ng-container *ngIf="prefix || suffix; else plainInput">
+  <div class="govuk-input__wrapper">
+    <div *ngIf="prefix" aria-hidden="true" class="govuk-input__prefix">{{ prefix }}</div>
+    <ng-container *ngTemplateOutlet="plainInput"></ng-container>
+    <div *ngIf="suffix" aria-hidden="true" class="govuk-input__suffix">{{ suffix }}</div>
+  </div>
+</ng-container>
+
+<ng-template #plainInput>
+  <input
+    #input
+    (blur)="handleBlur(getInputValue($event))"
+    (focus)="onFocus()"
+    (input)="onChange(getInputValue($event))"
+    (keydown)="onKeyDown($event)"
+    [attr.inputmode]="inputMode"
+    [autocomplete]="autoComplete"
+    [class.govuk-input--error]="shouldDisplayErrors"
+    [disabled]="disabled"
+    [id]="identifier"
+    [name]="identifier"
+    [ngClass]="widthClass"
+    [spellcheck]="spellCheck"
+    [type]="inputType === 'number' ? 'text' : inputType"
+    class="govuk-input"
+  />
+</ng-template>

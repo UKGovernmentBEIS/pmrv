@@ -1,0 +1,119 @@
+<app-permit-task>
+  <ng-container *ngIf="cannotStart$ | async; else edit">
+    <app-page-heading caption="Calculation">Activity Data</app-page-heading>
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Source stream category</li>
+      <li>Measurement devices or methods</li>
+    </ul>
+    <a govukLink routerLink="..">Return to: Add a source stream category</a>
+  </ng-container>
+
+  <ng-template #edit>
+    <ng-container
+      *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+    >
+      <app-wizard-step
+        (formSubmit)="onContinue()"
+        [formGroup]="form"
+        caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+        heading="Activity Data"
+        submitText="Continue"
+        [hideSubmit]="(store.isEditable$ | async) === false"
+      >
+        <p class="govuk-body">
+          Get help with <a routerLink="help" target="_blank" govukLink>applying tiers to activity data</a>
+        </p>
+        <p class="govuk-body">
+          Get help with
+          <a routerLink="help-metering-uncertainty" target="_blank" govukLink
+            >calculating overall metering uncertainty</a
+          >
+        </p>
+
+        <div
+          app-multi-select
+          formControlName="measurementDevicesOrMethods"
+          label="Select the measurement devices or methods used to determine the activity data for this source stream category"
+          hint="Include measurement devices or methods which measure the shared use of this source stream category with an excluded activity"
+        >
+          <div
+            *ngFor="let device of 'measurementDevicesOrMethods' | task | async"
+            [itemValue]="device.id"
+            [label]="device | measurementDeviceOrMethodName"
+            app-multi-select-item
+            itemName="measurementDevicesOrMethods"
+          ></div>
+        </div>
+
+        <div
+          govuk-select
+          formControlName="uncertainty"
+          label="What is the overall metering uncertainty for this source stream category?"
+        >
+          <option *ngFor="let option of uncertaintyOptions" [value]="option">
+            {{ option | meteringUncertaintyName }}
+          </option>
+        </div>
+
+        <div
+          formControlName="tier"
+          govuk-radio
+          legend="Apply a monitoring tier for your activity data"
+          legendSize="medium"
+        >
+          <govuk-radio-option value="TIER_4" label="Tier 4"></govuk-radio-option>
+          <govuk-radio-option value="TIER_3" label="Tier 3">
+            <ng-container govukConditionalContent>
+              <div
+                formControlName="isHighestRequiredTierT3"
+                govuk-radio
+                legend="Are you applying the highest required tier?"
+              >
+                <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+                <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option value="TIER_2" label="Tier 2">
+            <ng-container govukConditionalContent>
+              <div
+                formControlName="isHighestRequiredTierT2"
+                govuk-radio
+                legend="Are you applying the highest required tier?"
+              >
+                <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+                <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option value="TIER_1" label="Tier 1">
+            <ng-container govukConditionalContent>
+              <div
+                formControlName="isHighestRequiredTierT1"
+                govuk-radio
+                legend="Are you applying the highest required tier?"
+              >
+                <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+                <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option value="NO_TIER" label="No tier">
+            <ng-container govukConditionalContent>
+              <div
+                formControlName="isHighestRequiredTierT0"
+                govuk-radio
+                legend="Are you applying the highest required tier?"
+              >
+                <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+                <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+        </div>
+      </app-wizard-step>
+      <a govukLink routerLink="..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+    </ng-container>
+  </ng-template>
+</app-permit-task>

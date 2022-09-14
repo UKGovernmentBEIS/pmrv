@@ -1,0 +1,44 @@
+<app-permit-task>
+  <ng-container *ngIf="cannotStart$ | async; else edit">
+    <app-page-heading caption="Calculation">{{ statusKey | subtaskName }}</app-page-heading>
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Source stream category</li>
+    </ul>
+    <a govukLink routerLink="..">Return to: Add a source stream category</a>
+  </ng-container>
+
+  <ng-template #edit>
+    <ng-container
+      *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+    >
+      <ng-container *ngIf="statusKey | subtaskName as subtask">
+        <app-wizard-step
+          (formSubmit)="onContinue()"
+          [formGroup]="form"
+          caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+          [heading]="subtask"
+          submitText="Continue"
+          [hideSubmit]="(store.isEditable$ | async) === false"
+        >
+          <p class="govuk-body">
+            Get help with
+            <a routerLink="help" target="_blank" govukLink>{{ subtask | lowercase }} and applying tiers</a>.
+          </p>
+
+          <div
+            formControlName="exist"
+            govuk-radio
+            legend="Are you using {{ subtask | lowercase }} as part of your calculation?"
+            legendSize="medium"
+          >
+            <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+            <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+          </div>
+        </app-wizard-step>
+
+        <a govukLink routerLink="..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+      </ng-container>
+    </ng-container>
+  </ng-template>
+</app-permit-task>

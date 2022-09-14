@@ -1,0 +1,266 @@
+<databaseChangeLog
+        logicalFilePath="v0.1.0/changelog_ref_country.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_REF_COUNTRY_CREATE_SEQUENCE" author="P70383">
+        <createSequence sequenceName="ref_country_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS ref_country_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REF_COUNTRY_CREATE_TABLE" author="P70383">
+        <createTable tableName="ref_country" remarks="Represents reference data country details">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="ref_country_pk" nullable="false"/>
+            </column>
+            <column name="code" type="varchar(8)" remarks="The country code">
+                <constraints nullable="false" unique="true" uniqueConstraintName="ref_country_code_uq" />
+            </column>
+            <column name="name" type="varchar(255)" remarks="The country name">
+                <constraints nullable="false" />
+            </column>
+            <column name="official_name" type="varchar(255)" remarks="The country official name">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS ref_country CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_INSERT_REF_COUNTRY_VALUES" author="P70383">
+        <preConditions onFail="WARN">
+            <sqlCheck expectedResult="1">SELECT count(*) FROM information_schema.tables where table_name = 'ref_country';</sqlCheck>
+        </preConditions>
+
+        <sql>
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AD', 'Andorra', 'The Principality of Andorra');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AE', 'United Arab Emirates', 'The United Arab Emirates');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AF', 'Afghanistan', 'The Islamic Republic of Afghanistan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AG', 'Antigua and Barbuda', 'Antigua and Barbuda');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AL', 'Albania', 'The Republic of Albania');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AM', 'Armenia', 'The Republic of Armenia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AO', 'Angola', 'The Republic of Angola');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AR', 'Argentina', 'The Argentine Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AT', 'Austria', 'The Republic of Austria');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AU', 'Australia', 'The Commonwealth of Australia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'AZ', 'Azerbaijan', 'The Republic of Azerbaijan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BA', 'Bosnia and Herzegovina', 'Bosnia and Herzegovina');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BB', 'Barbados', 'Barbados');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BD', 'Bangladesh', 'The People''s Republic of Bangladesh');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BE', 'Belgium', 'The Kingdom of Belgium');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BF', 'Burkina Faso', 'Burkina Faso');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BG', 'Bulgaria', 'The Republic of Bulgaria');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BH', 'Bahrain', 'The Kingdom of Bahrain');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BI', 'Burundi', 'The Republic of Burundi');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BJ', 'Benin', 'The Republic of Benin');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BN', 'Brunei', 'Brunei Darussalam');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BO', 'Bolivia', 'The Plurinational State of Bolivia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BR', 'Brazil', 'The Federative Republic of Brazil');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BS', 'The Bahamas', 'The Commonwealth of The Bahamas');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BT', 'Bhutan', 'The Kingdom of Bhutan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BW', 'Botswana', 'The Republic of Botswana');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BY', 'Belarus', 'The Republic of Belarus');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'BZ', 'Belize', 'Belize');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CA', 'Canada', 'Canada');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CD', 'Congo (Democratic Republic)', 'The Democratic Republic of the Congo');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CF', 'Central African Republic', 'The Central African Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CG', 'Congo', 'The Republic of the Congo');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CH', 'Switzerland', 'The Swiss Confederation');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CI', 'Ivory Coast', 'The Republic of Côte D’Ivoire');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CL', 'Chile', 'The Republic of Chile');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CM', 'Cameroon', 'The Republic of Cameroon');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CN', 'China', 'The People''s Republic of China');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CO', 'Colombia', 'The Republic of Colombia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CR', 'Costa Rica', 'The Republic of Costa Rica');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CU', 'Cuba', 'The Republic of Cuba');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CV', 'Cape Verde', 'The Republic of Cabo Verde');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CY', 'Cyprus', 'The Republic of Cyprus');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'CZ', 'Czechia', 'The Czech Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'DE', 'Germany', 'The Federal Republic of Germany');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'DJ', 'Djibouti', 'The Republic of Djibouti');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'DK', 'Denmark', 'The Kingdom of Denmark');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'DM', 'Dominica', 'The Commonwealth of Dominica');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'DO', 'Dominican Republic', 'The Dominican Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'DZ', 'Algeria', 'The People''s Democratic Republic of Algeria');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'EC', 'Ecuador', 'The Republic of Ecuador');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'EE', 'Estonia', 'The Republic of Estonia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'EG', 'Egypt', 'The Arab Republic of Egypt');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ER', 'Eritrea', 'The State of Eritrea');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ES', 'Spain', 'The Kingdom of Spain');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ET', 'Ethiopia', 'The Federal Democratic Republic of Ethiopia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'FI', 'Finland', 'The Republic of Finland');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'FJ', 'Fiji', 'The Republic of Fiji');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'FM', 'Micronesia', 'The Federated States of Micronesia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'FR', 'France', 'The French Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GA', 'Gabon', 'The Gabonese Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GB', 'United Kingdom', 'The United Kingdom of Great Britain and Northern Ireland');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GD', 'Grenada', 'Grenada');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GE', 'Georgia', 'Georgia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GH', 'Ghana', 'The Republic of Ghana');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GM', 'The Gambia', 'The Republic of The Gambia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GN', 'Guinea', 'The Republic of Guinea');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GQ', 'Equatorial Guinea', 'The Republic of Equatorial Guinea');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GR', 'Greece', 'The Hellenic Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GT', 'Guatemala', 'The Republic of Guatemala');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GW', 'Guinea-Bissau', 'The Republic of Guinea-Bissau');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GY', 'Guyana', 'The Co-operative Republic of Guyana');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'HN', 'Honduras', 'The Republic of Honduras');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'HR', 'Croatia', 'The Republic of Croatia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'HT', 'Haiti', 'The Republic of Haiti');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'HU', 'Hungary', 'Hungary');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ID', 'Indonesia', 'The Republic of Indonesia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'IE', 'Ireland', 'Ireland');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'IL', 'Israel', 'The State of Israel');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'IN', 'India', 'The Republic of India');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'IQ', 'Iraq', 'The Republic of Iraq');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'IR', 'Iran', 'The Islamic Republic of Iran');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'IS', 'Iceland', 'The Republic of Iceland');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'IT', 'Italy', 'The Italian Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'JM', 'Jamaica', 'Jamaica');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'JO', 'Jordan', 'The Hashemite Kingdom of Jordan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'JP', 'Japan', 'Japan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KE', 'Kenya', 'The Republic of Kenya');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KG', 'Kyrgyzstan', 'The Kyrgyz Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KH', 'Cambodia', 'The Kingdom of Cambodia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KI', 'Kiribati', 'The Republic of Kiribati');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KM', 'Comoros', 'The Union of the Comoros');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KN', 'St Kitts and Nevis', 'The Federation of Saint Christopher and Nevis');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KP', 'North Korea', 'The Democratic People''s Republic of Korea');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KR', 'South Korea', 'The Republic of Korea');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KW', 'Kuwait', 'The State of Kuwait');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'KZ', 'Kazakhstan', 'The Republic of Kazakhstan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LA', 'Laos', 'The Lao People''s Democratic Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LB', 'Lebanon', 'The Lebanese Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LC', 'St Lucia', 'Saint Lucia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LI', 'Liechtenstein', 'The Principality of Liechtenstein');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LK', 'Sri Lanka', 'The Democratic Socialist Republic of Sri Lanka');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LR', 'Liberia', 'The Republic of Liberia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LS', 'Lesotho', 'The Kingdom of Lesotho');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LT', 'Lithuania', 'The Republic of Lithuania');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LU', 'Luxembourg', 'The Grand Duchy of Luxembourg');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LV', 'Latvia', 'The Republic of Latvia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'LY', 'Libya', 'Libya');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MA', 'Morocco', 'The Kingdom of Morocco');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MC', 'Monaco', 'The Principality of Monaco');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MD', 'Moldova', 'The Republic of Moldova');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ME', 'Montenegro', 'Montenegro');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MG', 'Madagascar', 'The Republic of Madagascar');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MH', 'Marshall Islands', 'The Republic of the Marshall Islands');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MK', 'North Macedonia', 'Republic of North Macedonia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ML', 'Mali', 'The Republic of Mali');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MM', 'Myanmar (Burma)', 'The Republic of the Union of Myanmar');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MN', 'Mongolia', 'Mongolia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MR', 'Mauritania', 'The Islamic Republic of Mauritania');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MT', 'Malta', 'The Republic of Malta');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MU', 'Mauritius', 'The Republic of Mauritius');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MV', 'Maldives', 'The Republic of Maldives');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MW', 'Malawi', 'The Republic of Malawi');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MX', 'Mexico', 'The United Mexican States');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MY', 'Malaysia', 'Malaysia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'MZ', 'Mozambique', 'The Republic of Mozambique');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'NA', 'Namibia', 'The Republic of Namibia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'NE', 'Niger', 'The Republic of Niger');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'NG', 'Nigeria', 'The Federal Republic of Nigeria');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'NI', 'Nicaragua', 'The Republic of Nicaragua');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'NL', 'Netherlands', 'The Kingdom of the Netherlands');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'NO', 'Norway', 'The Kingdom of Norway');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'NP', 'Nepal', 'The Federal Democratic Republic of Nepal');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'NR', 'Nauru', 'The Republic of Nauru');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'NZ', 'New Zealand', 'New Zealand');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'OM', 'Oman', 'The Sultanate of Oman');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'PA', 'Panama', 'The Republic of Panama');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'PE', 'Peru', 'The Republic of Peru');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'PG', 'Papua New Guinea', 'The Independent State of Papua New Guinea');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'PH', 'Philippines', 'The Republic of the Philippines');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'PK', 'Pakistan', 'The Islamic Republic of Pakistan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'PL', 'Poland', 'The Republic of Poland');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'PT', 'Portugal', 'The Portuguese Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'PW', 'Palau', 'The Republic of Palau');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'PY', 'Paraguay', 'The Republic of Paraguay');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'QA', 'Qatar', 'The State of Qatar');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'RO', 'Romania', 'Romania');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'RS', 'Serbia', 'The Republic of Serbia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'RU', 'Russia', 'The Russian Federation');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'RW', 'Rwanda', 'The Republic of Rwanda');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SA', 'Saudi Arabia', 'The Kingdom of Saudi Arabia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SB', 'Solomon Islands', 'Solomon Islands');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SC', 'Seychelles', 'The Republic of Seychelles');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SD', 'Sudan', 'The Republic of the Sudan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SE', 'Sweden', 'The Kingdom of Sweden');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SG', 'Singapore', 'The Republic of Singapore');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SI', 'Slovenia', 'The Republic of Slovenia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SK', 'Slovakia', 'The Slovak Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SL', 'Sierra Leone', 'The Republic of Sierra Leone');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SM', 'San Marino', 'The Republic of San Marino');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SN', 'Senegal', 'The Republic of Senegal');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SO', 'Somalia', 'Federal Republic of Somalia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SR', 'Suriname', 'The Republic of Suriname');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SS', 'South Sudan', 'The Republic of South Sudan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ST', 'Sao Tome and Principe', 'The Democratic Republic of Sao Tome and Principe');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SV', 'El Salvador', 'The Republic of El Salvador');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SY', 'Syria', 'The Syrian Arab Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'SZ', 'Eswatini', 'Kingdom of Eswatini');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TD', 'Chad', 'The Republic of Chad');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TG', 'Togo', 'The Togolese Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TH', 'Thailand', 'The Kingdom of Thailand');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TJ', 'Tajikistan', 'The Republic of Tajikistan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TL', 'East Timor', 'The Democratic Republic of Timor-Leste');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TM', 'Turkmenistan', 'Turkmenistan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TN', 'Tunisia', 'The Tunisian Republic');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TO', 'Tonga', 'The Kingdom of Tonga');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TR', 'Turkey', 'The Republic of Turkey');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TT', 'Trinidad and Tobago', 'The Republic of Trinidad and Tobago');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TV', 'Tuvalu', 'Tuvalu');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'TZ', 'Tanzania', 'The United Republic of Tanzania');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'UA', 'Ukraine', 'Ukraine');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'UG', 'Uganda', 'The Republic of Uganda');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'US', 'United States', 'The United States of America');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'UY', 'Uruguay', 'The Oriental Republic of Uruguay');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'UZ', 'Uzbekistan', 'The Republic of Uzbekistan');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'VA', 'Vatican City', 'Vatican City State');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'VC', 'St Vincent', 'Saint Vincent and the Grenadines');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'VE', 'Venezuela', 'The Bolivarian Republic of Venezuela');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'VN', 'Vietnam', 'The Socialist Republic of Vietnam');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'VU', 'Vanuatu', 'The Republic of Vanuatu');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'WS', 'Samoa', 'The Independent State of Samoa');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'XK', 'Kosovo', 'The Republic of Kosovo');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'YE', 'Yemen', 'The Republic of Yemen');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ZA', 'South Africa', 'The Republic of South Africa');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ZM', 'Zambia', 'The Republic of Zambia');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'ZW', 'Zimbabwe', 'The Republic of Zimbabwe');
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE FROM ref_country;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_REF_COUNTRY_ADD_NEW_COUNTRIES" author="P70453">
+        <comment>Populate updateAccountAddress service</comment>
+        <sql>
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GB-ENG', 'England', 'England');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GB-NIR', 'Northern Ireland', 'Northern Ireland');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GB-SCT', 'Scotland', 'Scotland');
+            INSERT INTO ref_country (id, code, name, official_name) VALUES (nextval('ref_country_seq'), 'GB-WLS', 'Wales', 'Wales');
+        </sql>
+        <rollback>
+            <sql>
+                delete from ref_country where code = 'GB-ENG';
+                delete from ref_country where code = 'GB-NIR';
+                delete from ref_country where code = 'GB-SCT';
+                delete from ref_country where code = 'GB-WLS';
+            </sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

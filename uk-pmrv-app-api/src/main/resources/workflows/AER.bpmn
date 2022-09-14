@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0xeklly" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="PROCESS_AER" name="AER Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0ionfvw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_1kh4rb4" name="what is the review outcome?" default="Flow_1dc0moe">
+      <bpmn:incoming>Flow_1ocvmdj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dc0moe</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0dmn7xy</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="AER_APPLICATION_REVIEW" name="Regulator:&#10;Review application">
+      <bpmn:incoming>Flow_14liola</bpmn:incoming>
+      <bpmn:incoming>Flow_17qgqpr</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ocvmdj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1ocvmdj" sourceRef="AER_APPLICATION_REVIEW" targetRef="Gateway_1kh4rb4" />
+    <bpmn:serviceTask id="Activity_0nbo0t7" name="Handle AER Granted" camunda:delegateExpression="#{aerGrantedHandler}">
+      <bpmn:incoming>Flow_1dc0moe</bpmn:incoming>
+      <bpmn:outgoing>Flow_1usi6ex</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1esichd" name="Update Workflow status to COMPLETED" camunda:delegateExpression="#{requestUpdateStatusHandler}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="requestStatus">APPROVED</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1usi6ex</bpmn:incoming>
+      <bpmn:outgoing>Flow_0daerhw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1usi6ex" sourceRef="Activity_0nbo0t7" targetRef="Activity_1esichd" />
+    <bpmn:sequenceFlow id="Flow_1dc0moe" sourceRef="Gateway_1kh4rb4" targetRef="Activity_0nbo0t7" />
+    <bpmn:subProcess id="Activity_0ahurmt">
+      <bpmn:incoming>Flow_0dmn7xy</bpmn:incoming>
+      <bpmn:outgoing>Flow_14liola</bpmn:outgoing>
+      <bpmn:startEvent id="Event_1q0ntyd">
+        <bpmn:outgoing>Flow_1igszmj</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:userTask id="AER_APPLICATION_AMENDS_SUBMIT" name="Operator: Submit AER amends">
+        <bpmn:incoming>Flow_12guiwi</bpmn:incoming>
+        <bpmn:incoming>Flow_0iqonq8</bpmn:incoming>
+        <bpmn:outgoing>Flow_07r81gp</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:userTask id="AER_WAIT_FOR_AMENDS" name="Regulator: Wait for amends">
+        <bpmn:incoming>Flow_1xga247</bpmn:incoming>
+        <bpmn:outgoing>Flow_0m8stf8</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:parallelGateway id="Gateway_06oym2o">
+        <bpmn:incoming>Flow_1igszmj</bpmn:incoming>
+        <bpmn:outgoing>Flow_1xga247</bpmn:outgoing>
+        <bpmn:outgoing>Flow_12guiwi</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:exclusiveGateway id="Gateway_0olyqq6" name="What is the submit outcoome?">
+        <bpmn:incoming>Flow_07r81gp</bpmn:incoming>
+        <bpmn:outgoing>Flow_0545lea</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0ryq6bm</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_12guiwi" sourceRef="Gateway_06oym2o" targetRef="AER_APPLICATION_AMENDS_SUBMIT" />
+      <bpmn:sequenceFlow id="Flow_07r81gp" sourceRef="AER_APPLICATION_AMENDS_SUBMIT" targetRef="Gateway_0olyqq6" />
+      <bpmn:sequenceFlow id="Flow_1xga247" sourceRef="Gateway_06oym2o" targetRef="AER_WAIT_FOR_AMENDS" />
+      <bpmn:sequenceFlow id="Flow_0m8stf8" sourceRef="AER_WAIT_FOR_AMENDS" targetRef="Event_0b8va0c" />
+      <bpmn:sequenceFlow id="Flow_1igszmj" sourceRef="Event_1q0ntyd" targetRef="Gateway_06oym2o" />
+      <bpmn:sequenceFlow id="Flow_0545lea" name="Send for Regulator review" sourceRef="Gateway_0olyqq6" targetRef="Event_0b8va0c">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${aerOutcome=='REVIEW_REQUESTED'}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:endEvent id="Event_0b8va0c">
+        <bpmn:incoming>Flow_0m8stf8</bpmn:incoming>
+        <bpmn:incoming>Flow_0545lea</bpmn:incoming>
+        <bpmn:terminateEventDefinition id="TerminateEventDefinition_1kdo54u" />
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0ryq6bm" name="Send for Veification" sourceRef="Gateway_0olyqq6" targetRef="Activity_11nzs1l">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${aerOutcome=='VERIFICATION_REQUESTED'}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:callActivity id="Activity_11nzs1l" name="Verification" calledElement="PROCESS_VERIFICATION">
+        <bpmn:extensionElements>
+          <camunda:in source="requestId" target="requestId" />
+          <camunda:in source="requestType" target="requestType" />
+          <camunda:in businessKey="#{businessKey}" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0ryq6bm</bpmn:incoming>
+        <bpmn:outgoing>Flow_0iqonq8</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:sequenceFlow id="Flow_0iqonq8" sourceRef="Activity_11nzs1l" targetRef="AER_APPLICATION_AMENDS_SUBMIT" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="Event_16zq4b1">
+      <bpmn:incoming>Flow_0daerhw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0daerhw" sourceRef="Activity_1esichd" targetRef="Event_16zq4b1" />
+    <bpmn:sequenceFlow id="Flow_0dmn7xy" name="amends needed" sourceRef="Gateway_1kh4rb4" targetRef="Activity_0ahurmt">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${aerReviewOutcome=='AMENDS_NEEDED'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_14liola" sourceRef="Activity_0ahurmt" targetRef="AER_APPLICATION_REVIEW" />
+    <bpmn:subProcess id="Activity_1kgbg55">
+      <bpmn:incoming>Flow_0ionfvw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0r3h1l7</bpmn:outgoing>
+      <bpmn:userTask id="AER_APPLICATION_SUBMIT" name="Operator: Submit AER">
+        <bpmn:incoming>Flow_0283kvj</bpmn:incoming>
+        <bpmn:incoming>Flow_0grbi77</bpmn:incoming>
+        <bpmn:outgoing>Flow_1i10c97</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:startEvent id="Event_1gxduia">
+        <bpmn:outgoing>Flow_0s0r3cf</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:exclusiveGateway id="Gateway_0vytcrx" name="What is the submit outcome?">
+        <bpmn:incoming>Flow_1i10c97</bpmn:incoming>
+        <bpmn:outgoing>Flow_11wuyl4</bpmn:outgoing>
+        <bpmn:outgoing>Flow_18rgzet</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:callActivity id="Activity_1t50xa3" name="Verification" calledElement="PROCESS_VERIFICATION">
+        <bpmn:extensionElements>
+          <camunda:in source="requestId" target="requestId" />
+          <camunda:in source="requestType" target="requestType" />
+          <camunda:in businessKey="#{businessKey}" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_11wuyl4</bpmn:incoming>
+        <bpmn:outgoing>Flow_0283kvj</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:sequenceFlow id="Flow_0s0r3cf" sourceRef="Event_1gxduia" targetRef="Gateway_1s9ig9k" />
+      <bpmn:sequenceFlow id="Flow_0283kvj" sourceRef="Activity_1t50xa3" targetRef="AER_APPLICATION_SUBMIT" />
+      <bpmn:sequenceFlow id="Flow_1i10c97" sourceRef="AER_APPLICATION_SUBMIT" targetRef="Gateway_0vytcrx" />
+      <bpmn:sequenceFlow id="Flow_11wuyl4" name="Send for Veification" sourceRef="Gateway_0vytcrx" targetRef="Activity_1t50xa3">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${aerOutcome=='VERIFICATION_REQUESTED'}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0grbi77" sourceRef="Gateway_1s9ig9k" targetRef="AER_APPLICATION_SUBMIT" />
+      <bpmn:parallelGateway id="Gateway_1s9ig9k">
+        <bpmn:incoming>Flow_0s0r3cf</bpmn:incoming>
+        <bpmn:outgoing>Flow_0grbi77</bpmn:outgoing>
+        <bpmn:outgoing>Flow_1sxcmrr</bpmn:outgoing>
+      </bpmn:parallelGateway>
+      <bpmn:exclusiveGateway id="Gateway_0wieuaw">
+        <bpmn:incoming>Flow_0w1kf7v</bpmn:incoming>
+        <bpmn:incoming>Flow_0cd0w64</bpmn:incoming>
+        <bpmn:outgoing>Flow_0k5a4ie</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="Activity_0a4azox" name="Handle First reminder date reached" camunda:delegateExpression="#{aerFirstReminderDateReachedHandler}">
+        <bpmn:incoming>Flow_1kagpcl</bpmn:incoming>
+        <bpmn:outgoing>Flow_0cd0w64</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:intermediateCatchEvent id="Event_1tffvym" name="AER First&#10;Reminder Timer">
+        <bpmn:incoming>Flow_0j38e9o</bpmn:incoming>
+        <bpmn:outgoing>Flow_1kagpcl</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_03dk26d">
+          <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${aerFirstReminderDate}</bpmn:timeDate>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:exclusiveGateway id="Gateway_1sl8f9u" name="is first reminder date in past?" default="Flow_0j38e9o">
+        <bpmn:incoming>Flow_1o6nuli</bpmn:incoming>
+        <bpmn:outgoing>Flow_0w1kf7v</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0j38e9o</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:exclusiveGateway id="Gateway_0nq5a72">
+        <bpmn:incoming>Flow_1f67trr</bpmn:incoming>
+        <bpmn:incoming>Flow_1i3hf30</bpmn:incoming>
+        <bpmn:incoming>Flow_0t2shhh</bpmn:incoming>
+        <bpmn:outgoing>Flow_0r3k7wk</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:exclusiveGateway id="Gateway_0bv2k27" name="is second reminder date in past?" default="Flow_0qhjm9y">
+        <bpmn:incoming>Flow_0k5a4ie</bpmn:incoming>
+        <bpmn:outgoing>Flow_1f67trr</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0qhjm9y</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="Activity_0rlkmgz" name="Handle Second reminder date reached" camunda:delegateExpression="#{aerSecondReminderDateReachedHandler}">
+        <bpmn:incoming>Flow_0aizpww</bpmn:incoming>
+        <bpmn:outgoing>Flow_1i3hf30</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:intermediateCatchEvent id="Event_1tg1ag5" name="AER Second&#10;Reminder Timer">
+        <bpmn:incoming>Flow_0qhjm9y</bpmn:incoming>
+        <bpmn:outgoing>Flow_0aizpww</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_0o1zwq8">
+          <bpmn:timeDate xsi:type="bpmn:tFormalExpression">${aerSecondReminderDate}</bpmn:timeDate>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:endEvent id="Event_1v1n4jt">
+        <bpmn:incoming>Flow_0r3k7wk</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0w1kf7v" name="yes" sourceRef="Gateway_1sl8f9u" targetRef="Gateway_0wieuaw">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${aerFirstReminderDate &lt; now()}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_0cd0w64" sourceRef="Activity_0a4azox" targetRef="Gateway_0wieuaw" />
+      <bpmn:sequenceFlow id="Flow_0k5a4ie" sourceRef="Gateway_0wieuaw" targetRef="Gateway_0bv2k27" />
+      <bpmn:sequenceFlow id="Flow_1kagpcl" sourceRef="Event_1tffvym" targetRef="Activity_0a4azox" />
+      <bpmn:sequenceFlow id="Flow_0j38e9o" sourceRef="Gateway_1sl8f9u" targetRef="Event_1tffvym" />
+      <bpmn:sequenceFlow id="Flow_1f67trr" name="yes" sourceRef="Gateway_0bv2k27" targetRef="Gateway_0nq5a72">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${aerSecondReminderDate &lt; now()}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_1i3hf30" sourceRef="Activity_0rlkmgz" targetRef="Gateway_0nq5a72" />
+      <bpmn:sequenceFlow id="Flow_0r3k7wk" sourceRef="Gateway_0nq5a72" targetRef="Event_1v1n4jt" />
+      <bpmn:sequenceFlow id="Flow_0qhjm9y" sourceRef="Gateway_0bv2k27" targetRef="Event_1tg1ag5" />
+      <bpmn:sequenceFlow id="Flow_0aizpww" sourceRef="Event_1tg1ag5" targetRef="Activity_0rlkmgz" />
+      <bpmn:endEvent id="Event_1ipcr8f">
+        <bpmn:incoming>Flow_18rgzet</bpmn:incoming>
+        <bpmn:terminateEventDefinition id="TerminateEventDefinition_0lbjqjt" />
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_18rgzet" name="Send for Regulator review" sourceRef="Gateway_0vytcrx" targetRef="Event_1ipcr8f">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${aerOutcome=='REVIEW_REQUESTED'}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:serviceTask id="Activity_12wrn87" name="Calculate expiration reminders" camunda:delegateExpression="#{calculateAerExpirationRemindersHandler}">
+        <bpmn:incoming>Flow_0vupcx9</bpmn:incoming>
+        <bpmn:outgoing>Flow_1o6nuli</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:sequenceFlow id="Flow_1o6nuli" sourceRef="Activity_12wrn87" targetRef="Gateway_1sl8f9u" />
+      <bpmn:exclusiveGateway id="Gateway_0bjamns" name="does the process expire?" default="Flow_0vupcx9">
+        <bpmn:incoming>Flow_1sxcmrr</bpmn:incoming>
+        <bpmn:outgoing>Flow_0t2shhh</bpmn:outgoing>
+        <bpmn:outgoing>Flow_0vupcx9</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_0t2shhh" name="no" sourceRef="Gateway_0bjamns" targetRef="Gateway_0nq5a72">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!execution.hasVariable('aerExpirationDate')}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_1sxcmrr" sourceRef="Gateway_1s9ig9k" targetRef="Gateway_0bjamns" />
+      <bpmn:sequenceFlow id="Flow_0vupcx9" sourceRef="Gateway_0bjamns" targetRef="Activity_12wrn87" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0r3h1l7" sourceRef="Activity_1kgbg55" targetRef="Gateway_1j1nbyb" />
+    <bpmn:sequenceFlow id="Flow_0ionfvw" sourceRef="StartEvent_1" targetRef="Activity_1kgbg55" />
+    <bpmn:parallelGateway id="Gateway_1j1nbyb">
+      <bpmn:incoming>Flow_0r3h1l7</bpmn:incoming>
+      <bpmn:outgoing>Flow_17qgqpr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_11weys4</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_17qgqpr" sourceRef="Gateway_1j1nbyb" targetRef="AER_APPLICATION_REVIEW" />
+    <bpmn:userTask id="AER_WAIT_FOR_REVIEW" name="Operator:&#10;Wait for review">
+      <bpmn:incoming>Flow_11weys4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0t6nu3n</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_11weys4" sourceRef="Gateway_1j1nbyb" targetRef="AER_WAIT_FOR_REVIEW" />
+    <bpmn:endEvent id="Event_067g8m0">
+      <bpmn:incoming>Flow_0t6nu3n</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1ov4s3o" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0t6nu3n" sourceRef="AER_WAIT_FOR_REVIEW" targetRef="Event_067g8m0" />
+  </bpmn:process>
+  <bpmn:message id="Message_1wx2gz2" name="timerPaused" />
+  <bpmn:message id="Message_1hyjtr1" name="timerExtended" />
+  <bpmn:message id="Message_10p46ne" name="rfiCancelled" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PROCESS_AER">
+      <bpmndi:BPMNEdge id="Flow_0t6nu3n_di" bpmnElement="Flow_0t6nu3n">
+        <di:waypoint x="2040" y="200" />
+        <di:waypoint x="2385" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11weys4_di" bpmnElement="Flow_11weys4">
+        <di:waypoint x="1850" y="360" />
+        <di:waypoint x="1850" y="200" />
+        <di:waypoint x="1940" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17qgqpr_di" bpmnElement="Flow_17qgqpr">
+        <di:waypoint x="1875" y="385" />
+        <di:waypoint x="1940" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ionfvw_di" bpmnElement="Flow_0ionfvw">
+        <di:waypoint x="188" y="385" />
+        <di:waypoint x="270" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r3h1l7_di" bpmnElement="Flow_0r3h1l7">
+        <di:waypoint x="1740" y="385" />
+        <di:waypoint x="1825" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14liola_di" bpmnElement="Flow_14liola">
+        <di:waypoint x="2035" y="705" />
+        <di:waypoint x="1990" y="705" />
+        <di:waypoint x="1990" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dmn7xy_di" bpmnElement="Flow_0dmn7xy">
+        <di:waypoint x="2403" y="410" />
+        <di:waypoint x="2403" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2413" y="419" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0daerhw_di" bpmnElement="Flow_0daerhw">
+        <di:waypoint x="2890" y="385" />
+        <di:waypoint x="2982" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dc0moe_di" bpmnElement="Flow_1dc0moe">
+        <di:waypoint x="2428" y="385" />
+        <di:waypoint x="2600" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1usi6ex_di" bpmnElement="Flow_1usi6ex">
+        <di:waypoint x="2700" y="385" />
+        <di:waypoint x="2790" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ocvmdj_di" bpmnElement="Flow_1ocvmdj">
+        <di:waypoint x="2040" y="385" />
+        <di:waypoint x="2378" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="367" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1kh4rb4_di" bpmnElement="Gateway_1kh4rb4" isMarkerVisible="true">
+        <dc:Bounds x="2378" y="360" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2361" y="323" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01thlla_di" bpmnElement="AER_APPLICATION_REVIEW">
+        <dc:Bounds x="1940" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nbo0t7_di" bpmnElement="Activity_0nbo0t7">
+        <dc:Bounds x="2600" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1esichd_di" bpmnElement="Activity_1esichd">
+        <dc:Bounds x="2790" y="345" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ahurmt_di" bpmnElement="Activity_0ahurmt" isExpanded="true">
+        <dc:Bounds x="2035" y="510" width="735" height="390" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0iqonq8_di" bpmnElement="Flow_0iqonq8">
+        <di:waypoint x="2380" y="600" />
+        <di:waypoint x="2300" y="600" />
+        <di:waypoint x="2300" y="655" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ryq6bm_di" bpmnElement="Flow_0ryq6bm">
+        <di:waypoint x="2540" y="670" />
+        <di:waypoint x="2540" y="600" />
+        <di:waypoint x="2480" y="600" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2545" y="616" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0545lea_di" bpmnElement="Flow_0545lea">
+        <di:waypoint x="2565" y="695" />
+        <di:waypoint x="2692" y="695" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2576" y="666" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1igszmj_di" bpmnElement="Flow_1igszmj">
+        <di:waypoint x="2093" y="695" />
+        <di:waypoint x="2135" y="695" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m8stf8_di" bpmnElement="Flow_0m8stf8">
+        <di:waypoint x="2350" y="820" />
+        <di:waypoint x="2710" y="820" />
+        <di:waypoint x="2710" y="713" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xga247_di" bpmnElement="Flow_1xga247">
+        <di:waypoint x="2160" y="720" />
+        <di:waypoint x="2160" y="820" />
+        <di:waypoint x="2250" y="820" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07r81gp_di" bpmnElement="Flow_07r81gp">
+        <di:waypoint x="2350" y="695" />
+        <di:waypoint x="2515" y="695" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12guiwi_di" bpmnElement="Flow_12guiwi">
+        <di:waypoint x="2185" y="695" />
+        <di:waypoint x="2250" y="695" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1q0ntyd_di" bpmnElement="Event_1q0ntyd">
+        <dc:Bounds x="2057" y="677" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06t70fb_di" bpmnElement="AER_APPLICATION_AMENDS_SUBMIT">
+        <dc:Bounds x="2250" y="655" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mqo1a6_di" bpmnElement="AER_WAIT_FOR_AMENDS">
+        <dc:Bounds x="2250" y="780" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1fpwow5_di" bpmnElement="Gateway_06oym2o">
+        <dc:Bounds x="2135" y="670" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0olyqq6_di" bpmnElement="Gateway_0olyqq6" isMarkerVisible="true">
+        <dc:Bounds x="2515" y="670" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2495" y="730" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0warxrt_di" bpmnElement="Event_0b8va0c">
+        <dc:Bounds x="2692" y="677" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_11nzs1l_di" bpmnElement="Activity_11nzs1l">
+        <dc:Bounds x="2380" y="560" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_16zq4b1_di" bpmnElement="Event_16zq4b1">
+        <dc:Bounds x="2982" y="367" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kgbg55_di" bpmnElement="Activity_1kgbg55" isExpanded="true">
+        <dc:Bounds x="270" y="80" width="1470" height="610" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0vupcx9_di" bpmnElement="Flow_0vupcx9">
+        <di:waypoint x="545" y="565" />
+        <di:waypoint x="600" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sxcmrr_di" bpmnElement="Flow_1sxcmrr">
+        <di:waypoint x="450" y="460" />
+        <di:waypoint x="450" y="565" />
+        <di:waypoint x="495" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0t2shhh_di" bpmnElement="Flow_0t2shhh">
+        <di:waypoint x="520" y="590" />
+        <di:waypoint x="520" y="660" />
+        <di:waypoint x="1549" y="660" />
+        <di:waypoint x="1549" y="590" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="533" y="603" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o6nuli_di" bpmnElement="Flow_1o6nuli">
+        <di:waypoint x="700" y="565" />
+        <di:waypoint x="804" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18rgzet_di" bpmnElement="Flow_18rgzet">
+        <di:waypoint x="1025" y="305" />
+        <di:waypoint x="1252" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1023" y="271" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aizpww_di" bpmnElement="Flow_0aizpww">
+        <di:waypoint x="1347" y="565" />
+        <di:waypoint x="1389" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qhjm9y_di" bpmnElement="Flow_0qhjm9y">
+        <di:waypoint x="1254" y="565" />
+        <di:waypoint x="1311" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1276" y="547" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r3k7wk_di" bpmnElement="Flow_0r3k7wk">
+        <di:waypoint x="1574" y="565" />
+        <di:waypoint x="1641" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i3hf30_di" bpmnElement="Flow_1i3hf30">
+        <di:waypoint x="1489" y="565" />
+        <di:waypoint x="1524" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f67trr_di" bpmnElement="Flow_1f67trr">
+        <di:waypoint x="1229" y="540" />
+        <di:waypoint x="1229" y="494" />
+        <di:waypoint x="1549" y="494" />
+        <di:waypoint x="1549" y="540" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1241" y="513" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j38e9o_di" bpmnElement="Flow_0j38e9o">
+        <di:waypoint x="854" y="565" />
+        <di:waypoint x="911" y="565" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="876" y="547" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kagpcl_di" bpmnElement="Flow_1kagpcl">
+        <di:waypoint x="947" y="565" />
+        <di:waypoint x="979" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k5a4ie_di" bpmnElement="Flow_0k5a4ie">
+        <di:waypoint x="1164" y="565" />
+        <di:waypoint x="1204" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cd0w64_di" bpmnElement="Flow_0cd0w64">
+        <di:waypoint x="1079" y="565" />
+        <di:waypoint x="1114" y="565" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w1kf7v_di" bpmnElement="Flow_0w1kf7v">
+        <di:waypoint x="829" y="540" />
+        <di:waypoint x="829" y="495" />
+        <di:waypoint x="1139" y="495" />
+        <di:waypoint x="1139" y="540" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="841" y="513" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0grbi77_di" bpmnElement="Flow_0grbi77">
+        <di:waypoint x="450" y="410" />
+        <di:waypoint x="450" y="305" />
+        <di:waypoint x="600" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11wuyl4_di" bpmnElement="Flow_11wuyl4">
+        <di:waypoint x="1000" y="280" />
+        <di:waypoint x="1000" y="180" />
+        <di:waypoint x="890" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="945" y="236" width="50" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i10c97_di" bpmnElement="Flow_1i10c97">
+        <di:waypoint x="700" y="305" />
+        <di:waypoint x="975" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0283kvj_di" bpmnElement="Flow_0283kvj">
+        <di:waypoint x="790" y="180" />
+        <di:waypoint x="650" y="180" />
+        <di:waypoint x="650" y="265" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s0r3cf_di" bpmnElement="Flow_0s0r3cf">
+        <di:waypoint x="358" y="435" />
+        <di:waypoint x="425" y="435" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0mmff07_di" bpmnElement="AER_APPLICATION_SUBMIT">
+        <dc:Bounds x="600" y="265" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gxduia_di" bpmnElement="Event_1gxduia">
+        <dc:Bounds x="322" y="417" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0vytcrx_di" bpmnElement="Gateway_0vytcrx" isMarkerVisible="true">
+        <dc:Bounds x="975" y="280" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="958" y="340" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1t50xa3_di" bpmnElement="Activity_1t50xa3">
+        <dc:Bounds x="790" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1h1eabe_di" bpmnElement="Gateway_1s9ig9k">
+        <dc:Bounds x="425" y="410" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0wieuaw_di" bpmnElement="Gateway_0wieuaw" isMarkerVisible="true">
+        <dc:Bounds x="1114" y="540" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0a4azox_di" bpmnElement="Activity_0a4azox">
+        <dc:Bounds x="979" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1tffvym_di" bpmnElement="Event_1tffvym">
+        <dc:Bounds x="911" y="547" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="891" y="591" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1sl8f9u_di" bpmnElement="Gateway_1sl8f9u" isMarkerVisible="true">
+        <dc:Bounds x="804" y="540" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="792" y="590" width="77" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0nq5a72_di" bpmnElement="Gateway_0nq5a72" isMarkerVisible="true">
+        <dc:Bounds x="1524" y="540" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0bv2k27_di" bpmnElement="Gateway_0bv2k27" isMarkerVisible="true">
+        <dc:Bounds x="1204" y="540" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1190" y="590" width="80" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0rlkmgz_di" bpmnElement="Activity_0rlkmgz">
+        <dc:Bounds x="1389" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1tg1ag5_di" bpmnElement="Event_1tg1ag5">
+        <dc:Bounds x="1311" y="547" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1290" y="591" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1v1n4jt_di" bpmnElement="Event_1v1n4jt">
+        <dc:Bounds x="1641" y="547" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ik532e_di" bpmnElement="Event_1ipcr8f">
+        <dc:Bounds x="1252" y="287" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="528" y="-254" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12wrn87_di" bpmnElement="Activity_12wrn87">
+        <dc:Bounds x="600" y="525" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0bjamns_di" bpmnElement="Gateway_0bjamns" isMarkerVisible="true">
+        <dc:Bounds x="495" y="540" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="478" y="510" width="85" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1j1nbyb_di" bpmnElement="Gateway_1j1nbyb">
+        <dc:Bounds x="1825" y="360" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lb1g34_di" bpmnElement="AER_WAIT_FOR_REVIEW">
+        <dc:Bounds x="1940" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_067g8m0_di" bpmnElement="Event_067g8m0">
+        <dc:Bounds x="2385" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

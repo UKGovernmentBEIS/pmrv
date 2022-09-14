@@ -1,0 +1,233 @@
+<div class="govuk-grid-row">
+  <div [class]="(isRelatedActionsSectionVisible$ | async) ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+    <app-page-heading size="xl">
+      {{ header$ | async }}
+      <app-task-header-info
+        *ngIf="isTask$ | async"
+        [assignee]="(store.select('assignee') | async).assigneeFullName"
+        [daysRemaining]="store.select('daysRemaining') | async"
+      ></app-task-header-info>
+    </app-page-heading>
+
+    <ng-container *ngIf="info$ | async as info">
+      <ng-container [ngSwitch]="requestTaskType$ | async">
+        <govuk-warning-text *ngSwitchCase="'PERMIT_ISSUANCE_WAIT_FOR_REVIEW'">
+          Waiting for the regulator to make a determination
+        </govuk-warning-text>
+        <govuk-warning-text *ngSwitchCase="'PERMIT_VARIATION_WAIT_FOR_REVIEW'">
+          Waiting for the regulator to make a determination
+        </govuk-warning-text>
+        <govuk-warning-text *ngSwitchCase="'PERMIT_ISSUANCE_WAIT_FOR_PEER_REVIEW'">
+          Waiting for peer review, you cannot make any changes
+        </govuk-warning-text>
+        <govuk-warning-text *ngSwitchCase="'PERMIT_ISSUANCE_WAIT_FOR_AMENDS'">
+          You cannot make a determination while the permit is being amended. To make changes recall permit.
+        </govuk-warning-text>
+      </ng-container>
+
+      <ng-container *ngIf="isPermitReviewSectionsVisible$ | async">
+        <div class="govuk-button-group">
+          <button
+            *ngIf="
+              (isDeterminationCompleted$ | async) &&
+              (allowedRequestTaskActions$ | async)?.includes('PERMIT_ISSUANCE_NOTIFY_OPERATOR_FOR_DECISION')
+            "
+            (click)="notifyOperator()"
+            govukButton
+            title="Notify Operator for decision"
+            type="button"
+          >
+            Notify Operator of decision
+          </button>
+
+          <button
+            *ngIf="
+              (isDeterminationCompleted$ | async) &&
+              (allowedRequestTaskActions$ | async)?.includes('PERMIT_ISSUANCE_REQUEST_PEER_REVIEW')
+            "
+            (click)="sendPeerReview()"
+            govukButton
+            title="Send for peer review"
+            type="button"
+          >
+            Send for peer review
+          </button>
+
+          <button
+            *ngIf="
+              (isAnyForAmends$ | async) &&
+              (allowedRequestTaskActions$ | async)?.includes('PERMIT_ISSUANCE_REVIEW_RETURN_FOR_AMENDS')
+            "
+            (click)="sendReturnForAmends()"
+            govukButton
+            title="Return for amends"
+            type="button"
+          >
+            Return for amends
+          </button>
+        </div>
+
+        <div
+          class="govuk-button-group"
+          *ngIf="(allowedRequestTaskActions$ | async)?.includes('PERMIT_ISSUANCE_REVIEW_SUBMIT_PEER_REVIEW_DECISION')"
+        >
+          <button (click)="peerReviewDecision()" govukButton title="Peer review decision" type="button">
+            Peer review decision
+          </button>
+        </div>
+
+        <ng-container *ngIf="isVariation$ | async">
+          <h2 class="govuk-heading-m">Validation details</h2>
+          <ul app-task-item-list>
+            <li
+              app-task-item
+              link="/"
+              linkText="About the variation"
+              [status]="variationDetailsReviewStatus$ | async"
+            ></li>
+          </ul>
+        </ng-container>
+
+        <h2 class="govuk-heading-m">Permit details</h2>
+        <ul app-task-item-list>
+          <li
+            app-task-item
+            link="permit-type"
+            [linkText]="'PERMIT_TYPE' | i18nSelect: linkText"
+            [status]="'PERMIT_TYPE' | reviewGroupStatus | async"
+          ></li>
+          <li
+            app-task-item
+            link="details"
+            [linkText]="'INSTALLATION_DETAILS' | i18nSelect: linkText"
+            [status]="'INSTALLATION_DETAILS' | reviewGroupStatus | async"
+          ></li>
+          <li
+            app-task-item
+            link="fuels"
+            [linkText]="'FUELS_AND_EQUIPMENT' | i18nSelect: linkText"
+            [status]="'FUELS_AND_EQUIPMENT' | reviewGroupStatus | async"
+          ></li>
+          <li
+            app-task-item
+            link="monitoring-approaches"
+            [linkText]="'DEFINE_MONITORING_APPROACHES' | i18nSelect: linkText"
+            [status]="'DEFINE_MONITORING_APPROACHES' | reviewGroupStatus | async"
+          ></li>
+
+          <ng-container *ngIf="'monitoringApproaches' | task | async as task">
+            <li
+              *ngIf="task.CALCULATION"
+              app-task-item
+              link="calculation"
+              [linkText]="'CALCULATION' | i18nSelect: linkText"
+              [status]="'CALCULATION' | reviewGroupStatus | async"
+            ></li>
+            <li
+              *ngIf="task.MEASUREMENT"
+              app-task-item
+              link="measurement"
+              [linkText]="'MEASUREMENT' | i18nSelect: linkText"
+              [status]="'MEASUREMENT' | reviewGroupStatus | async"
+            ></li>
+            <li
+              *ngIf="task.FALLBACK"
+              app-task-item
+              link="fall-back"
+              [linkText]="'FALLBACK' | i18nSelect: linkText"
+              [status]="'FALLBACK' | reviewGroupStatus | async"
+            ></li>
+            <li
+              *ngIf="task.N2O"
+              app-task-item
+              link="nitrous-oxide"
+              [linkText]="'N2O' | i18nSelect: linkText"
+              [status]="'N2O' | reviewGroupStatus | async"
+            ></li>
+            <li
+              *ngIf="task.PFC"
+              app-task-item
+              link="pfc"
+              [linkText]="'PFC' | i18nSelect: linkText"
+              [status]="'PFC' | reviewGroupStatus | async"
+            ></li>
+            <li
+              *ngIf="task.INHERENT_CO2"
+              app-task-item
+              link="inherent-co2"
+              [linkText]="'INHERENT_CO2' | i18nSelect: linkText"
+              [status]="'INHERENT_CO2' | reviewGroupStatus | async"
+            ></li>
+            <li
+              *ngIf="task.TRANSFERRED_CO2"
+              app-task-item
+              link="transferred-co2"
+              [linkText]="'TRANSFERRED_CO2' | i18nSelect: linkText"
+              [status]="'TRANSFERRED_CO2' | reviewGroupStatus | async"
+            ></li>
+          </ng-container>
+          <li
+            app-task-item
+            link="uncertainty-analysis"
+            [linkText]="'UNCERTAINTY_ANALYSIS' | i18nSelect: linkText"
+            [status]="'UNCERTAINTY_ANALYSIS' | reviewGroupStatus | async"
+          ></li>
+          <li
+            app-task-item
+            link="management-procedures"
+            [linkText]="'MANAGEMENT_PROCEDURES' | i18nSelect: linkText"
+            [status]="'MANAGEMENT_PROCEDURES' | reviewGroupStatus | async"
+          ></li>
+          <li
+            app-task-item
+            link="monitoring-methodology-plan"
+            [linkText]="'MONITORING_METHODOLOGY_PLAN' | i18nSelect: linkText"
+            [status]="'MONITORING_METHODOLOGY_PLAN' | reviewGroupStatus | async"
+          ></li>
+          <li
+            app-task-item
+            link="additional-info"
+            [linkText]="'ADDITIONAL_INFORMATION' | i18nSelect: linkText"
+            [status]="'ADDITIONAL_INFORMATION' | reviewGroupStatus | async"
+          ></li>
+          <li
+            app-task-item
+            link="confidentiality"
+            [linkText]="'CONFIDENTIALITY_STATEMENT' | i18nSelect: linkText"
+            [status]="'CONFIDENTIALITY_STATEMENT' | reviewGroupStatus | async"
+          ></li>
+        </ul>
+
+        <h2 class="govuk-heading-m">Decision</h2>
+        <ul app-task-item-list>
+          <li
+            app-task-item
+            link="determination/summary"
+            linkText="Overall decision"
+            [status]="determinationStatus$ | async"
+          ></li>
+        </ul>
+      </ng-container>
+
+      <ng-container *ngIf="relatedTasks$ | async as relatedTasks">
+        <app-related-tasks *ngIf="relatedTasks.length > 0" [items]="relatedTasks"></app-related-tasks>
+      </ng-container>
+
+      <app-timeline *ngIf="isTask$ | async">
+        <app-timeline-item
+          *ngFor="let action of requestActions$ | async"
+          [action]="action"
+          [link]="action | timelineItemLink"
+          [state]="navigationState"
+        ></app-timeline-item>
+      </app-timeline>
+    </ng-container>
+  </div>
+  <div *ngIf="isRelatedActionsSectionVisible$ | async" class="govuk-grid-column-one-third">
+    <app-related-actions
+      [isAssignable]="store.select('assignable') | async"
+      [taskId]="taskId$ | async"
+      [allowedActions]="store.select('allowedRequestTaskActions') | async"
+    ></app-related-actions>
+  </div>
+</div>

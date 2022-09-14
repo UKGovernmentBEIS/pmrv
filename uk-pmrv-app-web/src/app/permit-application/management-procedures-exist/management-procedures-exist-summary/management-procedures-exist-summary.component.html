@@ -1,0 +1,29 @@
+<app-permit-task
+  [notification]="notification"
+  [breadcrumb]="true"
+  reviewGroupTitle="Permit type"
+  reviewGroupUrl="permit-type"
+>
+  <app-page-heading caption="Management procedures"
+    >Confirm if management procedures will be provided
+  </app-page-heading>
+  <p class="govuk-body">Explain what management procedures are</p>
+  <govuk-warning-text>
+    Management procedures are optional if you are applying for a Hospital and small emitter (HSE) permit, or a
+    Greenhouse gas emissions (GHGE) permit as a Category A low emitter
+  </govuk-warning-text>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    Decision
+  </h2>
+  <app-management-procedures-exist-summary-template></app-management-procedures-exist-summary-template>
+
+  <app-list-return-link
+    reviewGroupTitle="Management procedures"
+    reviewGroupUrl="management-procedures"
+  ></app-list-return-link>
+</app-permit-task>

@@ -1,0 +1,16 @@
+= Constraints
+
+The suggested architecture must be delivered respecting a number of imposed constraints that affect the overall solution. These constraints are further described below.
+
+== Existing system and overall end user expectations
+UK PMRV is replacing EU ETSWAP, so the IT systems backing it are in the same way expected to offer similar or better functionality than the existing ones. This on one side raises the bar of expectations since the existing systems are being developed for more than 10 years and on the other can potentially limit users in the sense that over these 10 years they are used to doing things in one way and potentially cannot see a different better alternative. Careful navigation and up to a point scrutinization on the required features will be necessary to make sure that the right system is being built.
+
+== Team skill profile
+The contractor's team is highly skilled in a particular set of technologies and given the above time constraints it makes sense not to deviate from the most productive already acquired skill set. As such a number of technological choices have already been performed taking this skill set into consideration.
+
+Typically, this means a backend using the Spring framework technology stack (as opposed to say JEE or .NET) and a frontend based on Angular (as opposed to React, VueJs, etc.).
+
+== Various Applicable Technical Standards and Legislations
+Perhaps the strictest constraint of all is the sheer number of standards and regulations that govern these IT systems. The most important are probably GDPR/Data Protection Act and GDS guidelines.
+As there are numerous standards and regulations that apply and guide separate aspects of the UK ETS systems, further relevant information has been separated into 
+a different summary document, namely the xref:standards.adoc[Applicable Guidelines and Standards document].

@@ -1,0 +1,131 @@
+<h2
+  *ngIf="changePerStage"
+  app-summary-header
+  (changeClick)="changeClick('')"
+  [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Any transferred CO2 chemically bound in precipitated calcium carbonate</span>
+</h2>
+<dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Any transferred CO2 chemically bound in precipitated calcium carbonate?</dt>
+    <dd govukSummaryListRowValue>
+      {{ accounting?.chemicallyBound ? 'Yes' : 'No' }}
+    </dd>
+  </div>
+</dl>
+
+<ng-container *ngIf="accounting?.chemicallyBound === false && accounting?.accountingEmissionsDetails">
+  <h2
+    *ngIf="changePerStage"
+    app-summary-header
+    (changeClick)="changeClick('details')"
+    [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Any transferred CO2 chemically bound in precipitated calcium carbonate</span>
+  </h2>
+  <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+    <div govukSummaryListRow>
+      <ng-container *ngIf="missingMeasurementDevice; else measurementDevices">
+        <dt class="missing-row-key" govukSummaryListRowKey>Measurement devices</dt>
+        <dd govukSummaryListRowValue>
+          <span class="error">{{ missingMeasurementDevice }}</span>
+        </dd>
+      </ng-container>
+      <ng-template #measurementDevices>
+        <dt govukSummaryListRowKey>Measurement devices</dt>
+        <dd govukSummaryListRowValue>
+          <ng-container
+            *ngFor="let device of accounting.accountingEmissionsDetails.measurementDevicesOrMethods; let isLast = last"
+          >
+            {{ device | measurementDevicesLabel | async }}
+            <br *ngIf="!isLast && accounting.accountingEmissionsDetails.measurementDevicesOrMethods.length !== 1" />
+          </ng-container>
+        </dd>
+      </ng-template>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Sampling frequency</dt>
+      <dd govukSummaryListRowValue>
+        {{ accounting.accountingEmissionsDetails.samplingFrequency | samplingFrequency }}
+      </dd>
+    </div>
+    <div govukSummaryListRow *ngIf="accounting.accountingEmissionsDetails.samplingFrequency === 'OTHER'">
+      <dt govukSummaryListRowKey>Details</dt>
+      <dd govukSummaryListRowValue>{{ accounting.accountingEmissionsDetails.otherSamplingFrequency }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Applied tier</dt>
+      <dd govukSummaryListRowValue>
+        {{ accounting.accountingEmissionsDetails.tier | appliedTier }}
+      </dd>
+    </div>
+    <ng-container
+      *ngIf="
+        accounting.accountingEmissionsDetails.tier !== 'TIER_4' &&
+        accounting.accountingEmissionsDetails.tier !== 'NO_TIER'
+      "
+    >
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Highest tier</dt>
+        <dd govukSummaryListRowValue>
+          {{ accounting.accountingEmissionsDetails.isHighestRequiredTier ? 'Yes' : 'No' }}
+        </dd>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="accounting.accountingEmissionsDetails.tier === 'NO_TIER'">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>How emissions from transferred CO2 will be estimated</dt>
+        <dd govukSummaryListRowValue>{{ accounting.accountingEmissionsDetails.noTierJustification }}</dd>
+      </div>
+    </ng-container>
+  </dl>
+</ng-container>
+
+<ng-container *ngIf="accounting?.accountingEmissionsDetails?.isHighestRequiredTier === false">
+  <h2
+    *ngIf="changePerStage"
+    app-summary-header
+    (changeClick)="changeClick('justification')"
+    [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">No meeting highest Tiers</span>
+  </h2>
+  <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Reasons for not applying the highest required tier</dt>
+      <dd govukSummaryListRowValue>
+        <ng-container
+          *ngIf="accounting.accountingEmissionsDetails?.noHighestRequiredTierJustification?.isCostUnreasonable"
+        >
+          Unreasonable cost <br />
+        </ng-container>
+        <ng-container
+          *ngIf="accounting.accountingEmissionsDetails?.noHighestRequiredTierJustification?.isTechnicallyInfeasible"
+        >
+          Technical infeasibility
+        </ng-container>
+      </dd>
+    </div>
+    <div
+      govukSummaryListRow
+      *ngIf="
+        accounting.accountingEmissionsDetails?.noHighestRequiredTierJustification?.technicalInfeasibilityExplanation
+      "
+    >
+      <dt govukSummaryListRowKey>Explanation of technical infeasibility</dt>
+      <dd class="pre-wrap" govukSummaryListRowValue>
+        {{ accounting.accountingEmissionsDetails.noHighestRequiredTierJustification.technicalInfeasibilityExplanation }}
+      </dd>
+    </div>
+    <div govukSummaryListRow *ngIf="(files$ | async)?.length">
+      <dt govukSummaryListRowKey>Supporting files</dt>
+      <dd govukSummaryListRowValue>
+        <app-summary-download-files [files]="store.getDownloadUrlFiles(files$ | async)"> </app-summary-download-files>
+      </dd>
+    </div>
+  </dl>
+</ng-container>

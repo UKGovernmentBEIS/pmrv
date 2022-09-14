@@ -1,0 +1,23 @@
+<app-permit-task [notification]="notification" [breadcrumb]="[{ text: 'Calculation approach', link: ['calculation'] }]">
+  <app-page-heading caption="Calculation">Approach description</app-page-heading>
+
+  <div class="govuk-body">
+    <p>Include:</p>
+    <ul>
+      <li>list the relevant information needed here</li>
+    </ul>
+    <p>Get help with <a [routerLink]="" govukLink>Calculation</a>.</p>
+  </div>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Approach description</span>
+  </h2>
+
+  <app-calculation-approach-description-summary-template></app-calculation-approach-description-summary-template>
+
+  <app-approach-return-link parentTitle="Calculation approach" reviewGroupUrl="calculation"></app-approach-return-link>
+</app-permit-task>

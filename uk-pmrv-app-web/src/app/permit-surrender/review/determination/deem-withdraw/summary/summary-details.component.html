@@ -1,0 +1,35 @@
+<ng-container *ngIf="deemWithdrawDetermination$ | async as determination">
+  <h2
+    app-summary-header
+    (changeClick)="changeClick('')"
+    [changeRoute]="(isEditable$ | async) ? '.' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Decision</span>
+  </h2>
+  <dl govuk-summary-list>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Decision</dt>
+      <dd govukSummaryListRowValue>
+        {{ determination.type | determinationType }}
+      </dd>
+    </div>
+  </dl>
+
+  <h2
+    app-summary-header
+    (changeClick)="changeClick('reason')"
+    [changeRoute]="(isEditable$ | async) ? '.' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Reason for decision</span>
+  </h2>
+  <dl govuk-summary-list>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Reason for decision</dt>
+      <dd govukSummaryListRowValue class="pre-wrap">
+        {{ determination.reason }}
+      </dd>
+    </div>
+  </dl>
+</ng-container>

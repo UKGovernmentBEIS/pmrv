@@ -1,0 +1,188 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "uk-pmrv-main-web": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:application": {
+          "strict": true
+        },
+        "@schematics/angular:component": {
+          "style": "scss",
+          "changeDetection": "OnPush",
+          "inlineStyle": true
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "customWebpackConfig": {
+              "path": "./webpack.custom.js"
+            },
+            "outputPath": "dist/uk-pmrv-main-web",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "sourceMap": {
+              "styles": true,
+              "scripts": true,
+              "vendor": true
+            },
+            "assets": [
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/govuk-frontend/govuk/assets",
+                "output": "assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@hmcts/frontend/assets",
+                "output": "hmcts-assets/"
+              }
+            ],
+            "styles": ["src/styles.scss", "node_modules/dialog-polyfill/dialog-polyfill.css"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/sass/include"]
+            },
+            "scripts": ["node_modules/govuk-frontend/govuk/all.js"],
+            "allowedCommonJsDependencies": ["keycloak-js", "clean-deep", "crypto-js", "zxcvbn"]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1.4mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "uk-pmrv-main-web:build:production"
+            },
+            "development": {
+              "browserTarget": "uk-pmrv-main-web:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "uk-pmrv-main-web:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-builders/jest:run",
+          "options": {}
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+          }
+        }
+      }
+    },
+    "govuk-components": {
+      "projectType": "library",
+      "root": "projects/govuk-components",
+      "sourceRoot": "projects/govuk-components/src",
+      "prefix": "govuk",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/govuk-components/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/govuk-components/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/govuk-components/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-builders/jest:run",
+          "options": {}
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/govuk-components/**/*.ts", "projects/govuk-components/**/*.html"]
+          }
+        }
+      }
+    },
+    "pmrv-api": {
+      "projectType": "library",
+      "root": "projects/pmrv-api",
+      "sourceRoot": "projects/pmrv-api/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/pmrv-api/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/pmrv-api/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/pmrv-api/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/pmrv-api/**/*.ts"]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "uk-pmrv-main-web",
+  "cli": {
+    "analytics": false
+  }
+}

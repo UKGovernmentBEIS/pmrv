@@ -1,0 +1,35 @@
+<app-permit-task
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+    heading="Reasons for reduced sampling frequency"
+    submitText="Continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <h2 class="govuk-heading-m">Why are you using a reduced sampling frequency?</h2>
+
+    <div class="govuk-hint">Select all that apply.</div>
+    <div formControlName="justification" govuk-checkboxes>
+      <ng-container govukLegend>
+        <span class="govuk-visually-hidden">Unreasonable cost</span>
+      </ng-container>
+      <govuk-checkbox value="isCostUnreasonable" label="Unreasonable cost"> </govuk-checkbox>
+      <govuk-checkbox value="isOneThirdRuleAndSampling" label="1/3 rule for sampling method"> </govuk-checkbox>
+    </div>
+    <app-multiple-file-input
+      [baseDownloadUrl]="getDownloadUrl()"
+      [label]="
+        (isFileUploaded$ | async)
+          ? 'Upload a different file'
+          : 'Upload any supporting files or completed templates (optional)'
+      "
+      formControlName="files"
+      listTitle="Upload any supporting files or completed templates (optional)"
+      hint="The file must be smaller than 20MB"
+    ></app-multiple-file-input>
+  </app-wizard-step>
+  <a govukLink routerLink="../../../..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+</app-permit-task>

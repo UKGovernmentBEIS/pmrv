@@ -1,0 +1,24 @@
+<dl
+  *ngIf="procedureOptionalForm?.exist === false; else procedureForm"
+  govuk-summary-list
+  [hasBorders]="false"
+  [class.summary-list--edge-border]="hasBottomBorder"
+>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>
+      {{
+        taskKey === 'monitoringApproaches.MEASUREMENT.gasFlowCalculation'
+          ? 'Is gas flow determined by calculation?'
+          : 'Is CO2 produced from biomass included in emissions measurements?'
+      }}
+    </dt>
+    <dd govukSummaryListRowValue>No</dd>
+  </div>
+</dl>
+
+<ng-template #procedureForm>
+  <app-procedure-form-summary
+    [details]="procedureOptionalForm?.procedureForm"
+    [hasBottomBorder]="hasBottomBorder"
+  ></app-procedure-form-summary>
+</ng-template>

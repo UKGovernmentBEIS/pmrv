@@ -1,0 +1,45 @@
+<ng-container *ngIf="reviewDecision$ | async as decision">
+  <app-base-action-container-component
+    [header]="'Notification ' + (decision.type === 'ACCEPTED' ? 'approved' : 'rejected')"
+    [customContentTemplate]="customContentTemplate"
+    [expectedActionType]="['PERMIT_NOTIFICATION_APPLICATION_GRANTED', 'PERMIT_NOTIFICATION_APPLICATION_REJECTED']"
+  >
+  </app-base-action-container-component>
+  <ng-template #customContentTemplate>
+    <h2 class="govuk-heading-m">Decision details</h2>
+    <app-permit-notification-review-decision-summary-details [reviewDecision]="decision" [notesVisible]="false">
+    </app-permit-notification-review-decision-summary-details>
+    <ng-container *ngIf="reviewDecisionNotification$ | async as reviewDecisionNotification">
+      <ng-container *ngIf="usersInfo$ | async as usersInfo">
+        <h2 app-summary-header class="govuk-heading-m">Official notice recipients</h2>
+        <dl govuk-summary-list appGroupedSummaryList class="govuk-!-margin-bottom-6">
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Users</dt>
+            <dd govukSummaryListRowValue>
+              <div *ngFor="let user of operators$ | async">
+                {{ user | userInfoResolver: usersInfo }}
+              </div>
+            </dd>
+          </div>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Name and signature on the official notice</dt>
+            <dd govukSummaryListRowValue>
+              {{ signatory$ | async | userInfoResolver: usersInfo }}
+            </dd>
+          </div>
+          <div govukSummaryListRow *ngIf="officialNotice$ | async as officialNotice">
+            <dt govukSummaryListRowKey>Official notice</dt>
+            <dd govukSummaryListRowValue>
+              <a
+                [routerLink]="['/actions', actionId$ | async, 'file-download', 'document', officialNotice.uuid]"
+                govukLink
+                target="_blank"
+                >{{ officialNotice.name }}</a
+              >
+            </dd>
+          </div>
+        </dl>
+      </ng-container>
+    </ng-container>
+  </ng-template>
+</ng-container>

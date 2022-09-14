@@ -1,0 +1,27 @@
+<ng-container *ngIf="(isConfirmationDisplayed$ | async) !== true; else verifierDeleted">
+  <h2 class="govuk-heading-l">
+    Confirm that the user account of {{ verifier$ | async | userFullName }} will be deleted
+  </h2>
+
+  <govuk-warning-text>You will not be able to undo this action.</govuk-warning-text>
+  <p class="govuk-body">All tasks currently assigned to this user will be automatically unassigned.</p>
+  <p class="govuk-body">If they are site contacts, this will be unassigned.</p>
+  <p class="govuk-body">
+    You may cancel and manually re-assign tasks and site contacts before attempting to delete this user.
+  </p>
+
+  <div class="govuk-button-group">
+    <button (click)="delete()" appPendingButton govukWarnButton>Confirm delete</button>
+    <a govukLink routerLink="." (click)="location.back()">Cancel</a>
+  </div>
+</ng-container>
+
+<ng-template #verifierDeleted>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <govuk-panel title="The user account of {{ verifier$ | async | userFullName }} has been deleted"></govuk-panel>
+
+      <a govukLink routerLink="." (click)="location.back()"> Return to the manage verifier users page </a>
+    </div>
+  </div>
+</ng-template>

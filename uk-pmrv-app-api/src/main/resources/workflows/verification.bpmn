@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0xeklly" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.9.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="PROCESS_VERIFICATION" name="Process Verification" isExecutable="true">
+    <bpmn:userTask id="AER_WAIT_FOR_VERIFICATION" name="Operator: Wait for Verifier">
+      <bpmn:incoming>Flow_0ogl5y7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xl6xy4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="AER_APPLICATION_VERIFICATION_SUBMIT" name="Verifier: Submit verification">
+      <bpmn:incoming>Flow_1586dji</bpmn:incoming>
+      <bpmn:outgoing>Flow_15o3t6x</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:parallelGateway id="Gateway_1cl90v9">
+      <bpmn:incoming>Flow_19bmwi5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ogl5y7</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1586dji</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:startEvent id="Event_0pe4eaf">
+      <bpmn:outgoing>Flow_19bmwi5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0iii2lp">
+      <bpmn:incoming>Flow_1xl6xy4</bpmn:incoming>
+      <bpmn:incoming>Flow_15o3t6x</bpmn:incoming>
+      <bpmn:incoming>Flow_16c7ase</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1lo61fs" />
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_00zgcs1" name="vb deleted/disabled or accreditation removed" attachedToRef="AER_APPLICATION_VERIFICATION_SUBMIT">
+      <bpmn:outgoing>Flow_16c7ase</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_087di9m" messageRef="Message_0uxa1a0" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0ogl5y7" sourceRef="Gateway_1cl90v9" targetRef="AER_WAIT_FOR_VERIFICATION" />
+    <bpmn:sequenceFlow id="Flow_1xl6xy4" name="recall" sourceRef="AER_WAIT_FOR_VERIFICATION" targetRef="Event_0iii2lp" />
+    <bpmn:sequenceFlow id="Flow_1586dji" sourceRef="Gateway_1cl90v9" targetRef="AER_APPLICATION_VERIFICATION_SUBMIT" />
+    <bpmn:sequenceFlow id="Flow_15o3t6x" sourceRef="AER_APPLICATION_VERIFICATION_SUBMIT" targetRef="Event_0iii2lp" />
+    <bpmn:sequenceFlow id="Flow_19bmwi5" sourceRef="Event_0pe4eaf" targetRef="Gateway_1cl90v9" />
+    <bpmn:sequenceFlow id="Flow_16c7ase" sourceRef="Event_00zgcs1" targetRef="Event_0iii2lp" />
+  </bpmn:process>
+  <bpmn:message id="Message_0uxa1a0" name="verificationBodyChanged" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PROCESS_VERIFICATION">
+      <bpmndi:BPMNEdge id="Flow_16c7ase_di" bpmnElement="Flow_16c7ase">
+        <di:waypoint x="420" y="255" />
+        <di:waypoint x="420" y="300" />
+        <di:waypoint x="590" y="300" />
+        <di:waypoint x="590" y="215" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19bmwi5_di" bpmnElement="Flow_19bmwi5">
+        <di:waypoint x="188" y="197" />
+        <di:waypoint x="255" y="197" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15o3t6x_di" bpmnElement="Flow_15o3t6x">
+        <di:waypoint x="470" y="197" />
+        <di:waypoint x="572" y="197" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1586dji_di" bpmnElement="Flow_1586dji">
+        <di:waypoint x="305" y="197" />
+        <di:waypoint x="370" y="197" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xl6xy4_di" bpmnElement="Flow_1xl6xy4">
+        <di:waypoint x="470" y="90" />
+        <di:waypoint x="590" y="90" />
+        <di:waypoint x="590" y="179" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="517" y="72" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ogl5y7_di" bpmnElement="Flow_0ogl5y7">
+        <di:waypoint x="280" y="172" />
+        <di:waypoint x="280" y="90" />
+        <di:waypoint x="370" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_1tir49s_di" bpmnElement="AER_WAIT_FOR_VERIFICATION">
+        <dc:Bounds x="370" y="50" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tdlvlp_di" bpmnElement="AER_APPLICATION_VERIFICATION_SUBMIT">
+        <dc:Bounds x="370" y="157" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1cl90v9_di" bpmnElement="Gateway_1cl90v9">
+        <dc:Bounds x="255" y="172" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0pe4eaf_di" bpmnElement="Event_0pe4eaf">
+        <dc:Bounds x="152" y="179" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0iii2lp_di" bpmnElement="Event_0iii2lp">
+        <dc:Bounds x="572" y="179" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_00zgcs1_di" bpmnElement="Event_00zgcs1">
+        <dc:Bounds x="402" y="219" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="469" y="243" width="81" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

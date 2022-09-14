@@ -1,0 +1,19 @@
+<ng-container *ngIf="('PFC' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier">
+  <app-permit-task
+    [notification]="notification"
+    [breadcrumb]="[
+      { text: 'Perfluorocarbons', link: ['pfc'] },
+      { text: tier | sourceStreamCategoryName | async, link: ['pfc', 'category-tier', index$ | async] }
+    ]"
+  >
+    <app-page-heading caption="Perfluorocarbons, {{ tier | sourceStreamCategoryName | async }}"
+      >Emission factor</app-page-heading
+    >
+
+    <p class="govuk-body">Get help with <a [routerLink]="" govukLink>emission factor</a>.</p>
+
+    <app-category-tier-emission-factor-summary-overview></app-category-tier-emission-factor-summary-overview>
+
+    <a govukLink routerLink="../.."> Return to: {{ tier | sourceStreamCategoryName | async }} </a>
+  </app-permit-task>
+</ng-container>

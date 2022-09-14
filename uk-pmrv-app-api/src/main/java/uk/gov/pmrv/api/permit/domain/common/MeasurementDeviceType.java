@@ -1,0 +1,22 @@
+package uk.gov.pmrv.api.permit.domain.common;
+
+public enum MeasurementDeviceType {
+    BALANCE,
+    BELLOWS_METER,
+    BELT_WEIGHER,
+    CORIOLIS_METER,
+    ELECTRONIC_VOLUME_CONVERSION_INSTRUMENT,
+    GAS_CHROMATOGRAPH,
+    LEVEL_GAUGE,
+    ORIFICE_METER,
+    OTHER,
+    OVALRAD_METER,
+    ROTARY_METER,
+    TANK_DIP,
+    TURBINE_METER,
+    ULTRASONIC_METER,
+    VENTURI_METER,
+    VORTEX_METER,
+    WEIGHBRIDGE,
+    WEIGHSCALE
+}

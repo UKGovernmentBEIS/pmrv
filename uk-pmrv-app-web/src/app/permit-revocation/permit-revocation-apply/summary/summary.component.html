@@ -1,0 +1,42 @@
+<ng-container *ngIf="permitRevocation$ | async as permitRevocation">
+  <h2 *ngIf="sectionHeading" class="govuk-heading-m govuk-!-margin-bottom-2">{{sectionHeading}}</h2>
+  <dl
+    *ngFor="let item of summaryList(permitRevocation); let i = index"
+    govuk-summary-list
+    [hasBorders]="false"
+    [class.summary-list--edge-border]="true"
+    [class.govuk-!-margin-bottom-0]="true"
+  >
+    <div govukSummaryListRow>
+      <dt
+        govukSummaryListRowKey
+        [ngClass]="{ 'govuk-list-error-key': getError(errors, permitRevocationMapper[item?.key]?.error) }"
+        [id]="item?.key"
+      >
+        {{ permitRevocationMapper[item?.key]?.label }}
+      </dt>
+      <dd govukSummaryListRowValue>
+        <ng-container *ngIf="!isArray(item?.value); else arrayTemplate">
+          <div [attr.aria-labelledby]="item?.key">{{ getValue(item?.value) }}</div>
+        </ng-container>
+        <ng-template #arrayTemplate>
+          <ng-container *ngFor="let val of item?.value">
+            <div
+              class="govuk-!-margin-bottom-2"
+              [ngClass]="{ 'govuk-error-message': getError(errors, permitRevocationMapper[item?.key]?.error, val) }"
+              *ngIf="getValue(val)"
+              [attr.aria-labelledby]="item?.key"
+            >
+              <span *ngIf="val">{{ permitRevocationMapper[item?.key]?.prefix }}</span> {{ getValue(val) }}
+            </div>
+          </ng-container>
+        </ng-template>
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true && changeRoute">
+        <a govukLink [routerLink]="['..', permitRevocationMapper[item?.key]?.url]" [state]="{ changing: true }">
+          Change
+        </a>
+      </dd>
+    </div>
+  </dl>
+</ng-container>

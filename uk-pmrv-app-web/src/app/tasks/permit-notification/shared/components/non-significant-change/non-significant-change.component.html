@@ -1,0 +1,19 @@
+<app-page-heading>Non-significant change</app-page-heading>
+
+<p class="govuk-body">What is the change related for?</p>
+<div formControlName="relatedChanges" govuk-checkboxes>
+  <govuk-checkbox
+    [value]="relatedChangesTypes.MonitoringPlan"
+    label="Monitoring plan"
+    hint="This is the information you’ve supplied in your permit detailing how will monitor your emissions"
+  ></govuk-checkbox>
+  <govuk-checkbox
+    [value]="relatedChangesTypes.MonitoringMethodologyPlan"
+    label="Monitoring methodology plan (MMP)"
+    hint="The approved plan in your permit application used for monitoring your activity level"
+  ></govuk-checkbox>
+</div>
+
+<div formControlName="description" govuk-textarea [maxLength]="10000" label="Describe the change"></div>
+
+<ng-content></ng-content>

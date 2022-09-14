@@ -1,0 +1,37 @@
+<app-permit-task
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+    heading="1/3 rule for  sampled emissions"
+    submitText="Continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">Get help with <a govukLink routerLink=".">1/3 rule for sampled emissions.</a></p>
+
+    <div
+      formControlName="oneThirdRule"
+      govuk-radio
+      legend="Are you applying the 1/3 rule to reduce your sampled emissions to once a year?"
+      legendSize="medium"
+    >
+      <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+      <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+    </div>
+
+    <app-multiple-file-input
+      [baseDownloadUrl]="getDownloadUrl()"
+      [label]="
+        (isFileUploaded$ | async)
+          ? 'Upload a different file'
+          : 'Upload any supporting files or completed templates (optional)'
+      "
+      formControlName="oneThirdRuleFiles"
+      listTitle="Upload any supporting files or completed templates (optional)"
+      hint="The file must be smaller than 20MB"
+    ></app-multiple-file-input>
+  </app-wizard-step>
+  <a govukLink routerLink="../..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+</app-permit-task>

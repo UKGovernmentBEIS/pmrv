@@ -1,0 +1,6 @@
+= Architecture Decision Log
+
+A list of all the relevant architecture decisions can be found in this part of the documentation.
+Every decision is documented in a separate page (Architecture Decision Record).
+
+include::../../adrs/nav.adoc[]

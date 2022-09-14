@@ -1,0 +1,23 @@
+<app-page-heading>Request for deadline extension</app-page-heading>
+
+<app-answers-template></app-answers-template>
+
+<dl appGroupedSummaryList govuk-summary-list [hasBorders]="false" [class.summary-list--edge-border]="false">
+  <div govukSummaryListRow *ngIf="(store | async)?.officialDocument">
+    <dt govukSummaryListRowKey>Official notice</dt>
+    <dd govukSummaryListRowValue>
+      <a
+        [routerLink]="[
+          '/rde/action',
+          store.select('actionId') | async,
+          'file-download',
+          'document',
+          (store | async)?.officialDocument?.uuid
+        ]"
+        govukLink
+        target="_blank"
+        >{{ (store | async)?.officialDocument?.name }}</a
+      >
+    </dd>
+  </div>
+</dl>

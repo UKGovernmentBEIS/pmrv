@@ -1,0 +1,50 @@
+<div class="govuk-grid-row" *ngIf="route.data | async as routeData">
+  <div class="govuk-grid-column-full">
+    <ng-container *ngIf="!isActionSubmitted; else actionSubmitted">
+      <app-page-heading [caption]="routeData?.caption">{{ routeData?.pageTitle }}</app-page-heading>
+
+      <ng-container *ngIf="allowSubmit; else submitNotAllowed">
+        <ng-container
+          *ngTemplateOutlet="customSubmitContentTemplate ? customSubmitContentTemplate : defaultSubmitContentTemplate"
+        >
+        </ng-container>
+        <ng-template #defaultSubmitContentTemplate>
+          <p class="govuk-body"><strong>Now send your application</strong></p>
+
+          <p class="govuk-body">
+            By submitting this application you are confirming that, to the best of your knowledge, the details you are
+            providing are correct.
+          </p>
+        </ng-template>
+
+        <div class="govuk-button-group">
+          <button *ngIf="isEditable" (click)="onSubmit()" appPendingButton govukButton type="button">
+            Confirm and send
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-template #submitNotAllowed>
+        <p class="govuk-body">All tasks must be completed before you can submit your application.</p>
+      </ng-template>
+
+      <a govukLink [routerLink]="returnUrlConfig.url">Return to: {{ returnUrlConfig.text }}</a>
+    </ng-container>
+
+    <ng-template #actionSubmitted>
+      <govuk-panel [title]="routeData?.titleSubmitted"></govuk-panel>
+      <h3 class="govuk-heading-m">What happens next</h3>
+      <p class="govuk-body">We’ve sent your application to {{ competentAuthority | competentAuthority }}</p>
+      <ng-container
+        *ngTemplateOutlet="
+          customSubmittedContentTemplate ? customSubmittedContentTemplate : defaultSubmittedContentTemplate
+        "
+      >
+      </ng-container>
+      <ng-template #defaultSubmittedContentTemplate>
+        <p class="govuk-body">The regulator will make a decision and get back to you.</p>
+      </ng-template>
+      <a govukLink routerLink="/dashboard">Return to: Dashboard</a>
+    </ng-template>
+  </div>
+</div>

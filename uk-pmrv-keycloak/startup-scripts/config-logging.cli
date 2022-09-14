@@ -1,0 +1,5 @@
+embed-server --server-config=standalone-ha.xml --std-out=echo
+
+/subsystem=logging/console-handler=CONSOLE:write-attribute(name=named-formatter, value=PATTERN)
+
+stop-embedded-server

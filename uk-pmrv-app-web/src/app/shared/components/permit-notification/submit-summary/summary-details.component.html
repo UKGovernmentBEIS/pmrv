@@ -1,0 +1,163 @@
+<ng-container *ngIf="summary">
+  <h2 class="govuk-heading-m" *ngIf="sectionHeading">
+    {{ sectionHeading }}
+  </h2>
+  <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Type of change</dt>
+      <dd govukSummaryListRowValue>
+        {{ summary.type | notificationType }}
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['../details-of-change']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+  </dl>
+
+  <ng-container *ngIf="summary.type === 'OTHER_FACTOR'">
+    <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+      <div govukSummaryListRow *ngIf="summary.reportingType">
+        <dt govukSummaryListRowKey>Type of reporting</dt>
+        <dd govukSummaryListRowValue>
+          {{ summary.reportingType | reportingType }}
+        </dd>
+        <dd govukSummaryListRowActions *ngIf="allowChange">
+          <a govukLink [routerLink]="['../description']" [state]="{ changing: true }">Change</a>
+        </dd>
+      </div>
+      <div *ngIf="summary.startDateOfNonCompliance" govukSummaryListRow>
+        <dt govukSummaryListRowKey>{{ summary.type | i18nSelect: startDateLabelMap }}</dt>
+        <dd govukSummaryListRowValue>{{ summary.startDateOfNonCompliance | govukDate }}</dd>
+      </div>
+      <div *ngIf="summary.endDateOfNonCompliance" govukSummaryListRow>
+        <dt govukSummaryListRowKey>{{ summary.type | i18nSelect: endDateLabelMap }}</dt>
+        <dd govukSummaryListRowValue>{{ summary.endDateOfNonCompliance | govukDate }}</dd>
+      </div>
+    </dl>
+  </ng-container>
+
+  <ng-container *ngIf="summary.type === 'NON_SIGNIFICANT_CHANGE' && createRelatedChangesLabel(summary)">
+    <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Related change</dt>
+        <dd govukSummaryListRowValue>
+          {{ createRelatedChangesLabel(summary) }}
+        </dd>
+        <dd govukSummaryListRowActions *ngIf="allowChange">
+          <a govukLink [routerLink]="['../description']" [state]="{ changing: true }">Change</a>
+        </dd>
+      </div>
+    </dl>
+  </ng-container>
+
+  <dl govuk-summary-list [class]="cssClass" [hasBorders]="false" *ngIf="summary?.description">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>{{ summary.type | i18nSelect: descriptionLabelMap }}</dt>
+      <dd govukSummaryListRowValue class="pre-wrap">{{ summary.description }}</dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['../description']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+  </dl>
+
+  <ng-container *ngIf="summary.type === 'TEMPORARY_CHANGE' && summary.justification">
+    <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Justification for not submitting a permit variation</dt>
+        <dd govukSummaryListRowValue class="pre-wrap">
+          {{ summary.justification }}
+        </dd>
+        <dd govukSummaryListRowActions *ngIf="allowChange">
+          <a govukLink [routerLink]="['../description']" [state]="{ changing: true }">Change</a>
+        </dd>
+      </div>
+    </dl>
+  </ng-container>
+
+  <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Supporting documents</dt>
+      <dd govukSummaryListRowValue>
+        <ng-container *ngIf="summary.documents && summary.documents.length > 0; else noDocumentsSupport">
+          <app-summary-download-files [files]="files"> </app-summary-download-files>
+        </ng-container>
+        <ng-template #noDocumentsSupport> No </ng-template>
+      </dd>
+      <dd govukSummaryListRowActions *ngIf="allowChange">
+        <a govukLink [routerLink]="['../description']" [state]="{ changing: true }">Change</a>
+      </dd>
+    </div>
+  </dl>
+
+  <ng-container *ngIf="summary.type !== 'OTHER_FACTOR' && summary.type !== 'NON_SIGNIFICANT_CHANGE'">
+    <dl govuk-summary-list [class]="cssClass" [hasBorders]="false" *ngIf="summary.startDateOfNonCompliance">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>{{ summary.type | i18nSelect: startDateLabelMap }}</dt>
+        <dd govukSummaryListRowValue>
+          {{ summary.startDateOfNonCompliance | govukDate }}
+        </dd>
+        <dd govukSummaryListRowActions *ngIf="allowChange">
+          <a govukLink [routerLink]="['../description']" [state]="{ changing: true }">Change</a>
+        </dd>
+      </div>
+    </dl>
+
+    <dl govuk-summary-list [class]="cssClass" [hasBorders]="false" *ngIf="summary.endDateOfNonCompliance">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>{{ summary.type | i18nSelect: endDateLabelMap }}</dt>
+        <dd govukSummaryListRowValue>
+          {{ summary.endDateOfNonCompliance | govukDate }}
+        </dd>
+        <dd govukSummaryListRowActions *ngIf="allowChange">
+          <a govukLink [routerLink]="['../description']" [state]="{ changing: true }">Change</a>
+        </dd>
+      </div>
+    </dl>
+  </ng-container>
+
+  <ng-container *ngIf="summary.type === 'TEMPORARY_FACTOR'">
+    <ng-container *ngIf="summary.inRespectOfMonitoringMethodology; else respectOfMonitoringMethodology">
+      <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>This non-compliance in respect of the monitoring and reporting methodology</dt>
+          <dd govukSummaryListRowValue class="pre-wrap">Yes</dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['../description']" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Details of the interim monitoring and reporting methodology adopted</dt>
+          <dd govukSummaryListRowValue class="pre-wrap">
+            {{ summary.details }}
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>
+            Proof of the necessity for a change to the monitoring and reporting methodology
+          </dt>
+          <dd govukSummaryListRowValue class="pre-wrap">
+            {{ summary.proof }}
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Description of the measures taken to ensure prompt restoration of compliance</dt>
+          <dd govukSummaryListRowValue class="pre-wrap">
+            {{ summary.measures }}
+          </dd>
+        </div>
+      </dl>
+    </ng-container>
+
+    <ng-template #respectOfMonitoringMethodology>
+      <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Is this non-compliance in respect of the monitoring and reporting methodology</dt>
+          <dd govukSummaryListRowValue class="pre-wrap">No</dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['../description']" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+      </dl>
+    </ng-template>
+  </ng-container>
+</ng-container>

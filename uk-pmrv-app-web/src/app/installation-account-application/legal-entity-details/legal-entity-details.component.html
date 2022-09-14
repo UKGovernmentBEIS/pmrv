@@ -1,0 +1,50 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  caption="Identity and contact details of the operator"
+  heading="Add the organisation details"
+>
+  <h3 class="govuk-heading-m">Operator details</h3>
+  <p class="govuk-body">
+    The operator is the organisation or individual responsible for operating the installation account.
+  </p>
+  <div
+    formControlName="type"
+    govuk-radio
+    hint="Select one option"
+    legend="Choose the operator type"
+    legendSize="medium"
+  >
+    <govuk-radio-option
+      *ngFor="let option of radioOptions | keyvalue: originalOrder"
+      [label]="option.value"
+      [value]="option.key"
+    ></govuk-radio-option>
+  </div>
+  <div
+    appAsyncValidationField
+    formControlName="name"
+    govuk-text-input
+    hint="The name of the organisation that will operate the installation"
+    label="Operator name"
+  ></div>
+  <div
+    formControlName="referenceNumber"
+    govuk-text-input
+    hint="The company registration number or equivalent, for example the company number shown on the certificate of incorporation."
+    label="Company registration number"
+  ></div>
+  <govuk-details summary="I do not have a registration number">
+    <div
+      formControlName="noReferenceNumberReason"
+      govuk-textarea
+      [maxLength]="500"
+      label="Tell us why you do not have a registration number, for example if your installation is a hospital or military site"
+    ></div>
+  </govuk-details>
+  <fieldset govukFieldset>
+    <legend govukLegend>Organisation address</legend>
+    <p class="govuk-body">This should be the address registered with Companies House</p>
+    <app-address-input formGroupName="address"></app-address-input>
+  </fieldset>
+</app-wizard-step>

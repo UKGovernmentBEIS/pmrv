@@ -1,0 +1,132 @@
+<ng-container *ngIf="subtaskData">
+  <ng-container *ngIf="subtaskData?.analysisMethodUsed && subtaskData?.analysisMethods">
+    <ng-container *ngFor="let analysisMethod of subtaskData.analysisMethods; let i = index">
+      <dl
+        govuk-summary-list
+        class="govuk-summary-list--no-border"
+        [class.summary-list--edge-border]="!isPreview"
+        [class.govuk-!-margin-bottom-0]="isPreview"
+      >
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Analysis method added</dt>
+          <dd govukSummaryListRowValue></dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['..', 'analysis-method', i, 'delete']" [state]="{ changing: true }">Delete</a>
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Method of analysis</dt>
+          <dd govukSummaryListRowValue>{{ analysisMethod.analysis }}</dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['..', 'analysis-method', i]" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Sub parameter</dt>
+          <dd govukSummaryListRowValue>{{ analysisMethod.subParameter }}</dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['..', 'analysis-method', i]" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Sampling frequency</dt>
+          <dd govukSummaryListRowValue>{{ analysisMethod.samplingFrequency | samplingFrequency }}</dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['..', 'analysis-method', i]" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+        <div govukSummaryListRow *ngIf="analysisMethod.samplingFrequency === 'OTHER'">
+          <dt govukSummaryListRowKey>Other sampling frequency name</dt>
+          <dd govukSummaryListRowValue>{{ analysisMethod.samplingFrequencyOtherDetails }}</dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['..', 'analysis-method', i]" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Sampling frequency requirements met?</dt>
+          <dd govukSummaryListRowValue>
+            {{ analysisMethod.frequencyMeetsMinRequirements ? 'Yes' : 'No' }}
+          </dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['..', 'analysis-method', i]" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+        <div govukSummaryListRow *ngIf="analysisMethod.frequencyMeetsMinRequirements === false">
+          <ng-container *ngIf="analysisMethod?.reducedSamplingFrequencyJustification; else samplingJustificationError">
+            <dt govukSummaryListRowKey>Reasons for reduced sampling frequency</dt>
+            <dd govukSummaryListRowValue>
+              <ng-container *ngIf="analysisMethod.reducedSamplingFrequencyJustification.isCostUnreasonable"
+                >Unreasonable cost<br
+              /></ng-container>
+
+              <ng-container *ngIf="analysisMethod.reducedSamplingFrequencyJustification.isOneThirdRuleAndSampling"
+                >1/3 rules and sampling</ng-container
+              >
+              <ng-container *ngIf="analysisMethod.reducedSamplingFrequencyJustification?.files">
+                <div>
+                  <app-summary-download-files
+                    [files]="store.getDownloadUrlFiles(analysisMethod.reducedSamplingFrequencyJustification.files)"
+                  >
+                  </app-summary-download-files>
+                </div>
+              </ng-container>
+            </dd>
+          </ng-container>
+          <ng-template #samplingJustificationError>
+            <ng-container *ngIf="formErrors?.samplingJustificationNotExist">
+              <dt class="missing-row-key" govukSummaryListRowKey>
+                <div>Reasons for reduced sampling frequency</div>
+              </dt>
+              <dd govukSummaryListRowValue>
+                <span class="error">{{ formErrors.samplingJustificationNotExist }}</span>
+              </dd>
+            </ng-container>
+          </ng-template>
+
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a
+              govukLink
+              [routerLink]="['..', 'analysis-method', i, 'sampling-justification']"
+              [state]="{ changing: true }"
+              >Change</a
+            >
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Laboratory name</dt>
+          <dd govukSummaryListRowValue>
+            {{ analysisMethod.laboratoryName }}
+          </dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['..', 'analysis-method', i]" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Is the laboratory ISO17025 accredited?</dt>
+          <dd govukSummaryListRowValue>
+            {{ analysisMethod.laboratoryAccredited ? 'Yes' : 'No' }}
+          </dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['..', 'analysis-method', i]" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+        <div govukSummaryListRow *ngIf="analysisMethod?.files?.length">
+          <dt govukSummaryListRowKey>Supporting files</dt>
+          <dd govukSummaryListRowValue>
+            <app-summary-download-files [files]="store.getDownloadUrlFiles(analysisMethod.files)">
+            </app-summary-download-files>
+          </dd>
+          <dd govukSummaryListRowActions *ngIf="allowChange">
+            <a govukLink [routerLink]="['..', 'analysis-method', i]" [state]="{ changing: true }">Change</a>
+          </dd>
+        </div>
+      </dl>
+    </ng-container>
+  </ng-container>
+
+  <div class="govuk-grid-row govuk-!-margin-bottom-3" *ngIf="allowChange && subtaskData?.analysisMethodUsed === true">
+    <div class="govuk-grid-column-one-half">
+      <button govukSecondaryButton (click)="addAnalysisMethod()" type="button">Add another analysis method</button>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,36 @@
+<ng-container *ngIf="cannotStart$ | async; else start">
+  <app-permit-task [breadcrumb]="[{ text: 'Transferred CO2', link: ['transferred-co2'] }]">
+    <app-page-heading caption="Transferred CO2"> Accounting for emissions from transferred CO2 </app-page-heading>
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Measurement devices</li>
+    </ul>
+  </app-permit-task>
+
+  <a govukLink routerLink="..">Return to: Transferred CO2</a>
+</ng-container>
+
+<ng-template #start>
+  <app-permit-task>
+    <app-wizard-step
+      (formSubmit)="onContinue()"
+      [formGroup]="form"
+      submitText="Continue"
+      caption="Transferred CO2"
+      heading="Accounting for emissions from transferred CO2"
+      [hideSubmit]="(store.isEditable$ | async) === false"
+    >
+      <div class="govuk-body">
+        <p>Get help with <a [routerLink]="" govukLink>transferred CO2</a>.</p>
+      </div>
+
+      <app-boolean-radio-group
+        controlName="chemicallyBound"
+        legend="Is any of the transferred CO2 chemically bound in precipitated calcium carbonate?"
+      >
+      </app-boolean-radio-group>
+    </app-wizard-step>
+
+    <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+  </app-permit-task>
+</ng-template>

@@ -1,0 +1,18 @@
+<app-page-heading size="xl">MI Reports</app-page-heading>
+
+<div class="overflow-auto overflow-auto-table govuk-!-padding-1">
+  <govuk-table [columns]="tableColumns" [data]="currentPageData$ | async">
+    <ng-template let-column="column" let-row="row">
+      <ng-container [ngSwitch]="column.field">
+        <ng-container *ngSwitchDefault>
+          <a [routerLink]="miReportTypeLinkMap[row.miReportType]" govukLink>{{ row[column.field] }}</a>
+        </ng-container>
+      </ng-container>
+    </ng-template>
+  </govuk-table>
+  <app-pagination
+    (currentPageChange)="currentPage$.next($event)"
+    [count]="totalPages$ | async"
+    [pageSize]="pageSize"
+  ></app-pagination>
+</div>

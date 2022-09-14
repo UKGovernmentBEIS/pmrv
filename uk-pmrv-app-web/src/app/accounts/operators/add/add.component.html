@@ -1,0 +1,67 @@
+<ng-container *ngIf="(confirmAddedEmail$ | async) === null; else confirmSection">
+  <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading size="xl">Users, contacts and verifiers</app-page-heading>
+
+  <ng-container [ngSwitch]="userType$ | async">
+    <ng-container *ngSwitchCase="'operator_admin'">
+      <h2 class="govuk-heading-l">Add an operator admin user</h2>
+      <govuk-warning-text assistiveText="Warning">
+        An operator admin user will have the rights to add and remove other users from your account, perform all site
+        tasks as well as transfer the permit to another company or make permit variations.<br />
+        You should not give an agent / consultant these abilities.<br />
+        Your account can have any number of operator admin users.
+      </govuk-warning-text>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'operator'">
+      <h2 class="govuk-heading-l">Add an operator user</h2>
+      <govuk-warning-text assistiveText="Warning">
+        An operator user will not have the rights to add and remove other users from your account, but can perform all
+        site tasks as well as transfer the permit to another company or make permit variations.<br />
+        You should not give an agent / consultant these abilities.<br />
+        Your account can have any number of operator users.
+      </govuk-warning-text>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'consultant_agent'">
+      <h2 class="govuk-heading-l">Add an agent / consultant user</h2>
+      <govuk-warning-text assistiveText="Warning">
+        An agent / consultant user will not have rights to add and remove other users from your account, nor can they
+        transfer your permit. They can, however, perform all other site tasks including permit variations and AEM
+        reports.<br />
+        An agent / consultant can be designated as the Primary contact who will receive all tasks and notifications - as
+        well as any of the other available permissions.<br />
+        Your account can have any number of agent / consultant users.
+      </govuk-warning-text>
+    </ng-container>
+
+    <ng-container *ngSwitchCase="'emitter_contact'">
+      <h2 class="govuk-heading-l">Add an emitter contact user</h2>
+      <govuk-warning-text assistiveText="Warning">
+        An emitter contact cannot perform any tasks on the PMRV system.<br />
+        This user can be nominated to receive official notices and correspondence as the service contact - or financial
+        notices as the financial contact.<br />
+        Your account can have any number of emitter contacts.
+      </govuk-warning-text>
+    </ng-container>
+  </ng-container>
+
+  <form (ngSubmit)="submitForm()" [formGroup]="form" name="userForm">
+    <div formControlName="firstName" govuk-text-input label="First name" widthClass="govuk-!-width-one-half"></div>
+    <div formControlName="lastName" govuk-text-input label="Last name" widthClass="govuk-!-width-one-half"></div>
+    <div
+      formControlName="email"
+      govuk-text-input
+      inputType="email"
+      label="Input the email address they use to access PMRV"
+      widthClass="govuk-!-width-two-thirds"
+    ></div>
+    <button appPendingButton govukButton type="submit">Submit</button>
+  </form>
+</ng-container>
+<ng-template #confirmSection>
+  <govuk-panel [title]="'An account confirmation email has been sent to ' + (confirmAddedEmail$ | async)"></govuk-panel>
+  <h3 class="govuk-heading-m">What happens next</h3>
+  <p class="govuk-body">The new user will appear in your installation once they have confirmed their account.</p>
+  <a govukLink routerLink="../../.." fragment="users"> Return to the users, contacts and verifiers page </a>
+</ng-template>

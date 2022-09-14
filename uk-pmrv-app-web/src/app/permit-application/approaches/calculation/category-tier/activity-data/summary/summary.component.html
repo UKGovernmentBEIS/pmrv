@@ -1,0 +1,34 @@
+<ng-container
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-permit-task
+    [notification]="notification"
+    [breadcrumb]="[
+      { text: 'Calculation', link: ['calculation'] },
+      { text: tier | sourceStreamCategoryName | async, link: ['calculation', 'category-tier', index$ | async] }
+    ]"
+  >
+    <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+    <app-page-heading caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+      >Activity Data</app-page-heading
+    >
+    <p class="govuk-body">
+      Get help with <a routerLink="../help" target="_blank" govukLink>applying tiers to activity data</a>
+    </p>
+    <p class="govuk-body">
+      Get help with
+      <a routerLink="../help-metering-uncertainty" target="_blank" govukLink
+        >calculating overall metering uncertainty</a
+      >
+    </p>
+
+    <app-activity-data-summary-overview
+      [isChangeLinkAvailable]="(store.isEditable$ | async) === true"
+      [activityDataSectionHasBottomBorder]="true"
+      [justificationSectionHasBottomBorder]="!tier?.activityData?.isHighestRequiredTier"
+      [validMeasurementDevicesOrMethodsError]="form.errors?.validMeasurementDevicesOrMethods"
+    ></app-activity-data-summary-overview>
+
+    <a govukLink routerLink="../.."> Return to: {{ tier | sourceStreamCategoryName | async }} </a>
+  </app-permit-task>
+</ng-container>

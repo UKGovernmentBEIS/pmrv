@@ -1,0 +1,35 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    submitText="Save and continue"
+    caption="Monitoring approaches"
+    heading="Uncertainty analysis"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-body">
+      <p>
+        An uncertainty analysis demonstrates how the measurement devices or methods used to monitor your emissions are
+        able to meet the requirements as defined within the monitoring approaches you have selected.
+      </p>
+
+      <p>Get help with <a [routerLink]="" govukLink>uncertainty analysis</a>.</p>
+    </div>
+
+    <govuk-warning-text>
+      An uncertainty analysis is optional if you are applying for a Hospital and small emitter (HSE) permit, or a
+      Greenhouse gas emissions (GHGE) permit as a Category A low emitter
+    </govuk-warning-text>
+
+    <app-boolean-radio-group
+      controlName="exist"
+      legend="Are you supplying an uncertainty analysis as part of your permit application?"
+    >
+    </app-boolean-radio-group>
+  </app-wizard-step>
+
+  <app-list-return-link
+    reviewGroupTitle="Uncertainty analysis"
+    reviewGroupUrl="uncertainty-analysis"
+  ></app-list-return-link>
+</app-permit-task>

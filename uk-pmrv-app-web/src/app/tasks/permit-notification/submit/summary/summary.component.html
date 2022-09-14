@@ -1,0 +1,21 @@
+<div class="govuk-grid-row" *ngIf="notificationBanner">
+  <div class="govuk-grid-column-full">
+    <govuk-notification-banner type="success">
+      <h1 class="govuk-notification-banner__heading">Details updated</h1>
+    </govuk-notification-banner>
+  </div>
+</div>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <app-page-heading>Details of the Change</app-page-heading>
+    <ng-container *ngIf="notification$ | async as notification">
+      <app-permit-notification-summary-details
+        [files]="permitNotificationService.downloadUrlFiles$ | async"
+        [notification]="notification"
+        [allowChange]="store.isEditable$ | async"
+        cssClass="summary-list--edge-border"
+      ></app-permit-notification-summary-details>
+    </ng-container>
+  </div>
+</div>
+<a govukLink routerLink="..">Return to: Notify the regulator of a change</a>

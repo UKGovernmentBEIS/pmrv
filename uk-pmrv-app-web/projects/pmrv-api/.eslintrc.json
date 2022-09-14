@@ -1,0 +1,18 @@
+{
+  "extends": "../../.eslintrc.json",
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["projects/pmrv-api/tsconfig.lib.json", "projects/pmrv-api/tsconfig.spec.json"],
+        "createDefaultProgram": true
+      },
+      "rules": {
+        "no-control-regex": "off",
+        "no-useless-escape": "off",
+        "@typescript-eslint/ban-types": "off"
+      }
+    }
+  ]
+}

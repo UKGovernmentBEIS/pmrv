@@ -1,0 +1,16 @@
+<div
+  #banner
+  (blur)="tabIndex = null"
+  [attr.role]="type === 'success' ? 'alert' : 'region'"
+  [attr.tabindex]="tabIndex"
+  [class.govuk-notification-banner--success]="type === 'success'"
+  aria-labelledby="govuk-notification-banner-title"
+  class="govuk-notification-banner"
+>
+  <div class="govuk-notification-banner__header">
+    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">{{ heading }}</h2>
+  </div>
+  <div class="govuk-notification-banner__content">
+    <ng-content></ng-content>
+  </div>
+</div>

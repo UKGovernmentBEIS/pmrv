@@ -1,0 +1,20 @@
+= Principles
+
+The previously mentioned constraints may restrict some options and choices available in the architecture. For the rest of them, a set of principles that can be used as guidance to the decision-making process presented below.
+
+== Pay attention to code quality
+These systems are built once but maintained and expanded for many years afterwards. It is important to deliver good quality code that can be built upon as needed in the future. As such we follow the SOLID Objec Oriented Design principles to the maximum extent possible. For a quick introduction on SOLID principles take a look at https://www.baeldung.com/solid-principles and for a thorough reference at http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod. 
+
+== Security comes first, given adequate usability
+Top-level security is necessary. At the same time large parts of it are a public service and therefore must be accessible and usable to the public. Given that some times usability and security antagonize each other, we need some kind of guidance on how to resolve relevant dilemmas.
+
+Typically, security comes first and precedes everything else. Unless in the process it creates a solution deemed unusable of course. So our guideline is to be as secure as possible maintaining sufficient usability and accessibility of the service. If the need appears we may relax the security measures in favor of usability but only *as long as BEIS and security officers consider the end solution at least as secure as ETSWAP*.
+
+== DevOps Culture
+It is our goal to follow the DevOps way of working.
+This generally means going forward from the usual Continuous Integration and Continuous Delivery to Continuous Deployment, taking advantage of the cloud services upon where we will host the final solution. Always think about how to automate things, how to measure any benefits coming from that automation and finally how to further improve the overall solution, including its operational aspects. To facilitate this process we follow the trunk based development source-control branching model and all the practices that come because of it. Details are available at https://trunkbaseddevelopment.com/
+
+== Keep things as simple as possible
+ETS systems are complex by nature. They are governed by complicated legislation, have strict deadlines, etc.
+Try to maintain things as simple as possible. If this means suggesting back a simpler solution or re specifying something, or even challenging something presented as a requirement, then try and do so.
+Complexity is something we should all be constantly be fighting against.

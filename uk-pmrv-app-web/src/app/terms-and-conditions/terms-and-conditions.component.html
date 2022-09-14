@@ -1,0 +1,15 @@
+<app-page-heading size="xl">Terms and conditions</app-page-heading>
+<p class="govuk-body">
+  You must agree to the
+  <a govukLink href="{{ terms?.url }}" rel="noreferrer noopener" target="_blank">terms and conditions</a> of the UK ETS
+  reporting service.
+</p>
+<form (ngSubmit)="submitTerms()" [formGroup]="form">
+  <div formControlName="terms" govuk-checkboxes>
+    <ng-container govukLegend>
+      <span class="govuk-visually-hidden">Accept terms and conditions</span>
+    </ng-container>
+    <govuk-checkbox [value]="true" label="I have read, understood and accept the terms and conditions"></govuk-checkbox>
+  </div>
+  <button appPendingButton govukButton type="submit">Accept and continue</button>
+</form>

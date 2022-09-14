@@ -1,0 +1,49 @@
+<govuk-header
+  logoSvg="/assets/images/govuk-header-logotype-crown.svg"
+  title="Manage your UK Emissions Trading Scheme reporting"
+>
+  <govuk-skip-link></govuk-skip-link>
+  <govuk-header-actions-list>
+    <a *ngIf="authService.isLoggedIn | async" class="govuk-header__link" routerLink="." (click)="authService.logout()">
+      Sign out
+    </a>
+  </govuk-header-actions-list>
+  <app-navigation *ngIf="isPermissionsLoaded$ | async as permissions">
+    <a *ngIf="permissions.showDashboard" [routerLink]="['/dashboard']" appNavigationLink>Tasks</a>
+    <a
+      *ngIf="permissions.showRegulators || permissions.showAuthorizedOperators"
+      [routerLink]="['/accounts']"
+      appNavigationLink
+    >
+      Account search
+    </a>
+    <a *ngIf="permissions.showRegulators" [routerLink]="['user/regulators']" appNavigationLink>
+      Regulator users and contacts
+    </a>
+    <a *ngIf="permissions.showRegulators" [routerLink]="['verification-bodies']" appNavigationLink>
+      Verification body accounts
+    </a>
+    <a *ngIf="permissions.showRegulators" [routerLink]="['/templates']" appNavigationLink> Templates </a>
+    <a *ngIf="permissions.showRegulators" [routerLink]="['/mi-reports']" appNavigationLink> MI Reports </a>
+    <a *ngIf="permissions.showVerifiers" [routerLink]="['user/verifiers']" appNavigationLink> Manage verifier users </a>
+  </app-navigation>
+</govuk-header>
+
+<main class="govuk-width-container" id="main-content" role="main">
+  <app-phase-bar></app-phase-bar>
+  <app-incorporate-header></app-incorporate-header>
+  <app-breadcrumbs></app-breadcrumbs>
+  <app-identity-bar></app-identity-bar>
+  <app-back-link></app-back-link>
+  <div class="govuk-main-wrapper">
+    <router-outlet appSkipLinkFocus></router-outlet>
+  </div>
+</main>
+<govuk-footer>
+  <govuk-footer-meta-info>
+    <a govukLink="meta" routerLink="/privacy-notice"> Privacy Νotice </a>
+    <a govukLink="meta" routerLink="/contact-us"> Contact us </a>
+    <a govukLink="meta" routerLink="/accessibility"> Accessibility Statement </a>
+  </govuk-footer-meta-info>
+</govuk-footer>
+<app-timeout-banner></app-timeout-banner>

@@ -1,0 +1,22 @@
+@use '~govuk-frontend/govuk/base' as govuk;
+
+.locked > .govuk-warning-text__icon {
+  background-color: govuk.$govuk-error-colour;
+  border-color: govuk.$govuk-error-colour;
+  left: unset;
+  min-width: govuk.govuk-spacing(4);
+  min-height: govuk.govuk-spacing(4);
+  font-size: govuk.govuk-spacing(3);
+  line-height: govuk.govuk-spacing(3);
+  position: relative;
+  margin-top: 0;
+}
+
+.locked-text {
+  color: govuk.$govuk-error-colour;
+}
+
+.locked {
+  position: absolute;
+  margin-top: -(govuk.govuk-spacing(6));
+}

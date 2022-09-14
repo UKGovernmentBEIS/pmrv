@@ -1,0 +1,48 @@
+<ng-container
+  *ngIf="
+    ('N2O' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async]
+      .sourceStreamCategory as sourceStreamCategory
+  "
+>
+  <app-permit-task
+    *ngIf="sourceStreamCategory.sourceStream | findSourceStream | async as sourceStream"
+    [notification]="notification"
+    [breadcrumb]="[
+      {
+        text: 'Nitrous oxide',
+        link: ['nitrous-oxide']
+      },
+      {
+        text: sourceStream | tierSourceStreamName: sourceStreamCategory,
+        link: ['nitrous-oxide', 'category-tier', index$ | async]
+      }
+    ]"
+  >
+    <app-page-heading caption="Nitrous Oxide">Source stream category</app-page-heading>
+
+    <div class="govuk-body">
+      <p>Define a source stream category by linking a source stream with its emission source.</p>
+      <p>
+        You must include the amount of carbon dioxide (CO2) or carbon dioxide equivalent (CO2e) this source stream
+        category emits and the applied monitoring approach being used at the installation.
+      </p>
+    </div>
+
+    <h2
+      app-summary-header
+      [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+      class="govuk-heading-m"
+    >
+      <span class="govuk-visually-hidden">Source stream category</span>
+    </h2>
+
+    <app-category-summary-overview
+      [sourceStreamCategory]="sourceStreamCategory"
+      cssClass="summary-list--edge-border"
+    ></app-category-summary-overview>
+    <a govukLink routerLink="../..">
+      Return to:
+      {{ sourceStream | tierSourceStreamName: sourceStreamCategory }}
+    </a>
+  </app-permit-task>
+</ng-container>

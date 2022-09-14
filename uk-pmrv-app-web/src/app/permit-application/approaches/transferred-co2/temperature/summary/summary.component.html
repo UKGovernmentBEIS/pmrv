@@ -1,0 +1,21 @@
+<app-permit-task [notification]="notification" [breadcrumb]="[{ text: 'Transferred CO2', link: ['transferred-co2'] }]">
+  <app-page-heading caption="Transferred CO2">Temperature and pressure measurement equipment</app-page-heading>
+
+  <div class="govuk-body">
+    <p>Text explaining this task and any additional information needed to complete the task.</p>
+    <p>Get help with <a [routerLink]="" govukLink>temperature and pressure equipment</a>.</p>
+  </div>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Temperature and pressure measurement equipment</span>
+  </h2>
+
+  <app-temperature-summary-template
+    [details]="('TRANSFERRED_CO2' | monitoringApproachTask | async).temperaturePressure"
+  ></app-temperature-summary-template>
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

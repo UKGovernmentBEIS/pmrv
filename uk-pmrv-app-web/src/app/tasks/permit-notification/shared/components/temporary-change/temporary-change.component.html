@@ -1,0 +1,26 @@
+<app-page-heading>Temporary change to the permitted installation</app-page-heading>
+
+<div formControlName="description" govuk-textarea [maxLength]="10000" label="Describe the temporary change"></div>
+
+<div
+  formControlName="justification"
+  govuk-textarea
+  [maxLength]="10000"
+  hint="You must give reasons why your change is temporary and doesn’t require a permit variation"
+  label="Justification for not submitting a permit variation"
+></div>
+
+<ng-content></ng-content>
+
+<div
+  formControlName="startDateOfNonCompliance"
+  govuk-date-input
+  label="Provide the start date of the temporary change"
+></div>
+
+<div
+  formControlName="endDateOfNonCompliance"
+  govuk-date-input
+  [min]="today"
+  label="Provide the expected end date of the temporary change"
+></div>

@@ -1,0 +1,19 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <govuk-error-summary [form]="form"></govuk-error-summary>
+    <app-page-heading>{{ (route.data | async)?.pageTitle }}</app-page-heading>
+    <app-summary [errors]="form?.errors"></app-summary>
+    <div class="govuk-button-group govuk-!-margin-top-6">
+      <button
+        appPendingButton
+        govukButton
+        type="button"
+        (click)="confirm()"
+        *ngIf="(store.isEditable$ | async) === true"
+      >
+        Confirm and complete
+      </button>
+    </div>
+    <a govukLink routerLink="../..">Return to: Permit revocation task list</a>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  caption="Monitoring approaches"
+  heading="Add monitoring approaches"
+  submitText="Save and continue"
+>
+  <p class="govuk-body">Select the monitoring approaches relevant to your installation.</p>
+  <p class="govuk-body">
+    Get help with
+    <a govukLink routerLink="../help-with-monitoring-approaches" target="_blank">monitoring approaches</a>.
+  </p>
+
+  <div *ngIf="monitoringApproaches" formControlName="monitoringApproaches" govuk-checkboxes>
+    <ng-container govukLegend>
+      <span class="govuk-visually-hidden">Monitoring approaches</span>
+    </ng-container>
+    <govuk-checkbox
+      *ngIf="!monitoringApproaches.CALCULATION"
+      [label]="'CALCULATION' | monitoringApproachDescription"
+      hint="A monitoring plan based on knowing the amount of a fuel or material which is releasing carbon - and calculating CO2 emissions using a formula"
+      value="CALCULATION"
+    ></govuk-checkbox>
+    <govuk-checkbox
+      *ngIf="!monitoringApproaches.MEASUREMENT"
+      [label]="'MEASUREMENT' | monitoringApproachDescription"
+      hint="A monitoring plan based on direct measurement of CO2 emissions released from a fuel or material"
+      value="MEASUREMENT"
+    ></govuk-checkbox>
+    <govuk-checkbox
+      *ngIf="!monitoringApproaches.FALLBACK"
+      [label]="'FALLBACK' | monitoringApproachDescription"
+      hint="A monitoring plan based on estimates used only if it is not possible to determine CO2 emissions by calculation or measurement"
+      value="FALLBACK"
+    ></govuk-checkbox>
+    <govuk-checkbox
+      *ngIf="!monitoringApproaches.N2O"
+      [label]="'N2O' | monitoringApproachDescription"
+      hint="Emissions of N2O require a separate plan in addition to your plan for other emissions"
+      value="N2O"
+    ></govuk-checkbox>
+    <govuk-checkbox
+      *ngIf="!monitoringApproaches.PFC"
+      [label]="'PFC' | monitoringApproachDescription"
+      hint="Emissions of PFC require a separate plan in addition to your plan for other emissions"
+      value="PFC"
+    ></govuk-checkbox>
+    <govuk-checkbox
+      *ngIf="!monitoringApproaches.INHERENT_CO2"
+      [label]="'INHERENT_CO2' | monitoringApproachDescription"
+      hint="Inherent CO2 is CO2 that's part of a fuel"
+      value="INHERENT_CO2"
+    ></govuk-checkbox>
+    <govuk-checkbox
+      *ngIf="!monitoringApproaches.TRANSFERRED_CO2"
+      [label]="'TRANSFERRED_CO2' | monitoringApproachDescription"
+      hint="CO2 transferred out to a carbon capture and storage (CCS) related facility"
+      value="TRANSFERRED_CO2"
+    ></govuk-checkbox>
+  </div>
+</app-wizard-step>
+
+<a govukLink routerLink="..">Return to: Define monitoring approaches</a>

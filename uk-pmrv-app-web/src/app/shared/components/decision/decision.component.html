@@ -1,0 +1,27 @@
+<form (ngSubmit)="submit(decisionForm.get('isAccepted').value)" [formGroup]="decisionForm">
+  <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="decisionForm"></govuk-error-summary>
+  <h2 class="govuk-heading-m">Approve or reject this account application</h2>
+  <div
+    formControlName="isAccepted"
+    govuk-radio
+    legend="Use your judgement to make minor changes within the details if needed"
+  >
+    <govuk-radio-option [value]="true" label="Approved">
+      <div govukConditionalContent>
+        <div
+          formControlName="acceptanceReason"
+          govuk-textarea
+          [maxLength]="10000"
+          label="Reason for acceptance (optional)"
+        ></div>
+      </div>
+    </govuk-radio-option>
+    <govuk-radio-option [value]="false" label="Rejected">
+      <div govukConditionalContent>
+        <div formControlName="rejectionReason" govuk-textarea [maxLength]="10000" label="Reason for rejection"></div>
+      </div>
+    </govuk-radio-option>
+  </div>
+  <button appPendingButton govukButton type="submit">Submit</button>
+</form>
+<hr class="govuk-!-margin-bottom-6" />

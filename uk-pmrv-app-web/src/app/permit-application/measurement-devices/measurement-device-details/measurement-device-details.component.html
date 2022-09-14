@@ -1,0 +1,88 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    [heading]="(isEditing$ | async) ? 'Edit measurement device or method' : 'Add a measurement device or method'"
+    caption="Fuels and equipment inventory"
+    submitText="Save and continue"
+  >
+    <p class="govuk-body">
+      Add a measurement device or method used at the installation to measure the use of fuels or materials, or the
+      amount of carbon that is released.
+    </p>
+    <govuk-details summary="What is a measurement device?">
+      A measurement device is a tool for measuring the use of fuels or materials, for example, a meter or scale. It can
+      also be a measurement method, such as using invoices from a supplier as evidence of the amount of fuel used.
+    </govuk-details>
+
+    <div
+      formControlName="reference"
+      govuk-text-input
+      hint="For example, 'M1 Meter south boiler 1'"
+      label="Reference"
+    ></div>
+    <app-select-other
+      formControlName="type"
+      widthClass="govuk-!-width-full"
+      label="Type of measurement device or method"
+      hint="Select the type of measuring instrument. If your measuring instrument is not listed, select 'Other' and enter a name for the instrument."
+    >
+      <option *ngFor="let option of typeOptions" [value]="option">
+        {{ option | measurementDevicesType }}
+      </option>
+      <div govukConditionalContent>
+        <div formControlName="otherTypeName" govuk-text-input label="Provide a short name"></div>
+      </div>
+    </app-select-other>
+
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-one-third">
+        <div
+          formControlName="measurementRange"
+          govuk-text-input
+          hint="For example 1-100"
+          label="Measurement range"
+          widthClass="govuk-!-width-two-thirds"
+        ></div>
+      </div>
+      <div class="govuk-grid-column-two-thirds">
+        <div
+          formControlName="meteringRangeUnits"
+          govuk-text-input
+          hint="For example, litres"
+          label="Metering range units"
+          widthClass="govuk-!-width-two-thirds"
+        ></div>
+      </div>
+    </div>
+
+    <div
+      formControlName="uncertaintySpecified"
+      govuk-radio
+      hint="Enter the specified uncertainty, including the range this uncertainty is related to, as given in the manufacturer's specification."
+      legend="Does this device or method have a specified uncertainty?"
+    >
+      <govuk-radio-option [value]="true" label="Yes">
+        <ng-container govukConditionalContent>
+          <div
+            formControlName="specifiedUncertaintyPercentage"
+            govuk-text-input
+            hint="Some devices have the specified uncertainty listed on them. For example, '1.02'."
+            label="Provide the specified uncertainty as a percentage"
+            prefix="&#177;"
+            suffix="%"
+            widthClass="govuk-!-width-one-third"
+          ></div>
+        </ng-container>
+      </govuk-radio-option>
+      <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+    </div>
+    <div
+      formControlName="location"
+      govuk-text-input
+      hint="Enter where the meter is found in the installation and how it is identified in the process flow chart, for example 'Inside admin boiler house on control panel’ or ‘North terminal'."
+      label="Location"
+    ></div>
+  </app-wizard-step>
+  <a govukLink routerLink="..">Return to: Measurement devices or methods</a>
+</app-permit-task>

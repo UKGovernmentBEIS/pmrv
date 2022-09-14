@@ -1,0 +1,42 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Permit type"
+    heading="Define permit type"
+    submitText="Confirm and complete"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">
+      Based on the information you gave, this installation can apply for a Hospital and Small Emitter (HSE) permit or a
+      full Greenhouse Gas Emissions (GHGE) permit.
+    </p>
+    <p class="govuk-body">
+      Get help with understanding <a routerLink="." target="_blank" govukLink>ultra small emitters</a>
+    </p>
+    <p class="govuk-body">Get help with applying for an <a routerLink="." target="_blank" govukLink>HSE permit</a></p>
+    <p class="govuk-body">Get help with applying for a <a routerLink="." target="_blank" govukLink>GHGE permit</a></p>
+    <p class="govuk-body">
+      Get help with
+      <a routerLink="." target="_blank" govukLink>CO2e</a>
+    </p>
+
+    <div formControlName="type" govuk-radio legend="Which type of permit are you applying for?" legendSize="medium">
+      <govuk-radio-option [value]="'GHGE'" label="Apply for a GHGE permit"></govuk-radio-option>
+      <govuk-radio-option [value]="'HSE'" label="Apply for an HSE permit">
+        <ng-container govukConditionalContent>
+          <govuk-warning-text>
+            <p class="govuk-body">To apply for an HSE permit you must:</p>
+            <ul class="govuk-list govuk-list--bullet">
+              <li>already be known to the regulator a an ultra-small emitter</li>
+              <li>have an estimated annual emission of less than or equal to 2500t of CO2e each year</li>
+              <li>qualify as either a hospital or small emitter</li>
+            </ul>
+          </govuk-warning-text>
+        </ng-container>
+      </govuk-radio-option>
+    </div>
+  </app-wizard-step>
+
+  <app-list-return-link reviewGroupTitle="Permit type" reviewGroupUrl="permit-type"></app-list-return-link>
+</app-permit-task>

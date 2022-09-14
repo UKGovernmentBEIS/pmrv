@@ -1,0 +1,116 @@
+<ng-container *ngIf="(isFormSubmitted$ | async) === false; else confirmation">
+  <app-page-heading size="l">Select who should receive the official determination notice</app-page-heading>
+
+  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <govuk-error-summary *ngIf="isSummaryDisplayed | async" [form]="form"></govuk-error-summary>
+    <div
+      *ngIf="accountPrimaryContactUsersInfo$ | async as accountPrimaryContactUsersInfo"
+      class="govuk-heading-m govuk-!-margin-bottom-6"
+    >
+      Users automatically notified
+      <p *ngFor="let primaryContactUsersInfo of accountPrimaryContactUsersInfo | keyvalue" class="govuk-body">
+        {{ primaryContactUsersInfo.key | userInfoResolver: accountPrimaryContactUsersInfo }}
+      </p>
+    </div>
+
+    <ng-container *ngIf="otherOperatorUsersInfo$ | async as usersInfo">
+      <ng-container *ngIf="objectKeys(usersInfo).length > 0; else noUsers">
+        <div govuk-checkboxes formControlName="users" legend="Select the users you want to notify" legendSize="medium">
+          <govuk-checkbox
+            *ngFor="let userInfo of usersInfo | keyvalue"
+            [value]="userInfo.key"
+            [label]="userInfo.key | userInfoResolver: usersInfo"
+          ></govuk-checkbox>
+        </div>
+      </ng-container>
+      <ng-template #noUsers>
+        <div class="govuk-heading-m govuk-!-margin-bottom-6">
+          Select the users you want to notify
+          <p class="govuk-body">No additional users exist</p>
+        </div>
+      </ng-template>
+    </ng-container>
+
+    <ng-container *ngIf="contacts$ | async as contacts">
+      <ng-container *ngIf="contacts.length > 0; else noContacts">
+        <div
+          govuk-checkboxes
+          formControlName="contacts"
+          legend="Select the external contacts you want to notify"
+          legendSize="medium"
+        >
+          <govuk-checkbox
+            *ngFor="let contact of contacts"
+            [value]="contact.id.toString()"
+            [label]="contact.email"
+          ></govuk-checkbox>
+        </div>
+      </ng-container>
+      <ng-template #noContacts>
+        <div class="govuk-heading-m govuk-!-margin-bottom-6">
+          Select the external contacts you want to notify
+          <p class="govuk-body">No external contacts exist</p>
+        </div>
+      </ng-template>
+    </ng-container>
+
+    <div class="govuk-heading-m govuk-!-margin-bottom-6">
+      Select the name and signature that will be shown on the official notice document?
+      <div
+        class="govuk-body"
+        [options]="assignees$ | async"
+        formControlName="assignees"
+        govuk-select
+        widthClass="govuk-!-width-two-thirds"
+      ></div>
+    </div>
+
+    <button appPendingButton govukButton type="submit">Confirm and complete</button>
+  </form>
+
+  <ng-container *ngIf="pendingRfi">
+    <div govukInsetText>
+      Clicking 'confirm and complete' will automatically cancel the active request for information.
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="pendingRde">
+    <div govukInsetText>
+      Clicking 'confirm and complete' will automatically cancel the active request for determination extension.
+    </div>
+  </ng-container>
+
+  <a govukLink [routerLink]="returnToUrl(requestTaskActionType)">
+    Return to:
+    <ng-container [ngSwitch]="requestTaskActionType">
+      <ng-container *ngSwitchCase="'PERMIT_ISSUANCE_NOTIFY_OPERATOR_FOR_DECISION'"> Permit Determination </ng-container>
+      <ng-container *ngSwitchCase="'PERMIT_SURRENDER_NOTIFY_OPERATOR_FOR_DECISION'"> Permit Surrender </ng-container>
+      <ng-container *ngSwitchCase="'PERMIT_SURRENDER_CESSATION_NOTIFY_OPERATOR_FOR_DECISION'">
+        Surrender Cessation
+      </ng-container>
+      <ng-container *ngSwitchCase="'PERMIT_REVOCATION_NOTIFY_OPERATOR_FOR_SUBMISSION'">
+        Permit Revocation
+      </ng-container>
+      <ng-container *ngSwitchCase="'PERMIT_REVOCATION_NOTIFY_OPERATOR_FOR_WITHDRAWAL'"> Dashboard </ng-container>
+      <ng-container *ngSwitchCase="'PERMIT_REVOCATION_NOTIFY_OPERATOR_FOR_CESSATION'">
+        Revocation cessation
+      </ng-container>
+      <ng-container *ngSwitchCase="'PERMIT_NOTIFICATION_NOTIFY_OPERATOR_FOR_DECISION'">
+        Permit Notification
+      </ng-container>
+      <ng-container *ngSwitchCase="'PERMIT_NOTIFICATION_FOLLOW_UP_NOTIFY_OPERATOR_FOR_DECISION'">
+        Permit notification follow up
+      </ng-container>
+    </ng-container>
+  </a>
+</ng-container>
+
+<ng-template #confirmation>
+  <div class="govuk-grid-row">
+    <govuk-panel [title]="confirmationMessage"></govuk-panel>
+    <p class="govuk-body">Notification text if needed (TBD)</p>
+    <h3 class="govuk-heading-m">What happens next</h3>
+    <p class="govuk-body">Explanation text(TBD)</p>
+    <a govukLink routerLink="/dashboard"> Return to dashboard </a>
+  </div>
+</ng-template>

@@ -1,0 +1,29 @@
+<ng-container formGroupName="details">
+  <ng-container *ngIf="formGroupDirective.form.get('id'); else addLegend">
+    <span class="govuk-visually-hidden">Edit verification body details</span>
+  </ng-container>
+  <ng-template #addLegend>
+    <h2 class="govuk-heading-m">Add a verification body</h2>
+  </ng-template>
+  <div
+    autoComplete="organization"
+    formControlName="name"
+    govuk-text-input
+    label="Name of verification body organisation"
+  ></div>
+  <div
+    autoComplete="accreditation-ref-num"
+    formControlName="accreditationRefNum"
+    govuk-text-input
+    label="Accreditation reference number"
+  ></div>
+  <app-address-input formGroupName="address"></app-address-input>
+</ng-container>
+<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+<div formControlName="types" govuk-checkboxes legend="Type of verification body" legendSize="medium">
+  <govuk-checkbox
+    *ngFor="let option of typeOptions"
+    [label]="option | verificationBodyType"
+    [value]="option"
+  ></govuk-checkbox>
+</div>

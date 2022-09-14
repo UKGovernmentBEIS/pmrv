@@ -1,0 +1,66 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  heading="Deadline extension request"
+  submitText="Confirm and complete"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <app-page-heading size="xl">
+    <app-task-header-info
+        [assignee]="(store | async).assignee.assigneeFullName"
+        [daysRemaining]="(store | async).daysRemaining"
+    ></app-task-header-info>
+  </app-page-heading>
+
+  <h2 app-summary-header class="govuk-heading-m">Request details</h2>
+  <dl govuk-summary-list class="govuk-summary-list--no-border summary-list--edge-border">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Current deadline date</dt>
+      <dd govukSummaryListRowValue>{{ (store | async)?.rdeResponsePayload?.currentDueDate | govukDate }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Proposed deadline date</dt>
+      <dd govukSummaryListRowValue>{{ (store | async)?.rdeResponsePayload?.proposedDueDate | govukDate }}</dd>
+    </div>
+  </dl>
+
+  <ng-container *ngIf="(store.isEditable$ | async) === true">
+    <div class="govuk-!-margin-top-6">
+      <h2 class="govuk-heading-m">What is your decision?</h2>
+      <div formControlName="decision" govuk-radio>
+        <govuk-radio-option value="ACCEPTED" label="Accept new due date"></govuk-radio-option>
+        <govuk-radio-option value="REJECTED" label="Reject new due date"></govuk-radio-option>
+      </div>
+    </div>
+
+    <h2 class="govuk-heading-m">Provide evidence of operator consent</h2>
+    <div class="govuk-hint">
+      Provide evidence that a representative of the operator has agreed to the deadline extension. An email screenshot
+      or similar will suffice.
+    </div>
+    <div govuk-textarea formControlName="evidence" [maxLength]="10000" label="Details"></div>
+
+    <app-multiple-file-input
+      [baseDownloadUrl]="getDownloadUrl()"
+      [label]="(isFileUploaded$ | async) === true ? 'Upload a different file' : 'Upload a file (optional)'"
+      [listTitle]="'Uploaded files'"
+      formControlName="files"
+      hint="The file must be smaller than 20MB"
+    ></app-multiple-file-input>
+  </ng-container>
+</app-wizard-step>
+
+<ng-container *ngIf="relatedTasks$ | async as relatedTasks">
+  <app-related-tasks *ngIf="relatedTasks.length > 0" [items]="relatedTasks"></app-related-tasks>
+</ng-container>
+
+<div class="govuk-!-margin-top-6">
+  <app-timeline>
+    <app-timeline-item
+      *ngFor="let action of actions$ | async"
+      [action]="action"
+      [link]="action | timelineItemLink"
+      [state]="navigationState"
+    ></app-timeline-item>
+  </app-timeline>
+</div>

@@ -1,0 +1,58 @@
+<div class="govuk-grid-row">
+  <div [class]="(hasRelatedActions$ | async) === true ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+    <ng-container *ngIf="requestTaskItem$ | async as requestTaskItem">
+      <app-page-heading size="xl">
+        {{ type$ | async | i18nSelect: headingMap }}
+        <app-task-header-info
+            [assignee]="requestTaskItem.requestTask.assigneeFullName"
+            [daysRemaining]="requestTaskItem.requestTask.daysRemaining"
+        ></app-task-header-info>
+      </app-page-heading>
+
+      <p class="govuk-body">{{ type$ | async | i18nSelect: contentMap }}.</p>
+
+      <h2 app-summary-header class="govuk-heading-m">Payment Details</h2>
+      <ng-container *ngIf="paymentDetails$ | async as paymentDetails">
+        <dl govuk-summary-list>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Date created</dt>
+            <dd govukSummaryListRowValue>{{ paymentDetails.creationDate | govukDate }}</dd>
+          </div>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Reference number</dt>
+            <dd govukSummaryListRowValue>{{ paymentDetails.paymentRefNum }}</dd>
+          </div>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Amount to pay</dt>
+            <dd govukSummaryListRowValue>{{ paymentDetails.amount | currency: 'GBP' }}</dd>
+          </div>
+        </dl>
+      </ng-container>
+
+      <button *ngIf="(store.isEditable$ | async) === true" (click)="makePayment()" govukButton type="button">
+        Make payment
+      </button>
+
+      <ng-container *ngIf="relatedTasks$ | async as relatedTasks">
+        <app-related-tasks *ngIf="relatedTasks.length > 0" [items]="relatedTasks"></app-related-tasks>
+      </ng-container>
+
+      <div class="govuk-!-margin-top-6">
+        <app-timeline>
+          <app-timeline-item
+            *ngFor="let action of actions$ | async"
+            [action]="action"
+            [link]="action | timelineItemLink"
+          ></app-timeline-item>
+        </app-timeline>
+      </div>
+    </ng-container>
+  </div>
+  <div class="govuk-grid-column-one-third" *ngIf="(hasRelatedActions$ | async) === true">
+    <app-related-actions
+        [isAssignable]="isAssignable$ | async"
+        [taskId]="taskId$ | async"
+        [allowedActions]="allowedRequestTaskActions$ | async"
+    ></app-related-actions>
+  </div>
+</div>

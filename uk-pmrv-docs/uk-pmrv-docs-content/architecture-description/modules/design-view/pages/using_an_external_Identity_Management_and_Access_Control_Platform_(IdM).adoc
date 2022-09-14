@@ -1,0 +1,21 @@
+= Using an external Identity Management and Access Control Platform (IdM)
+
+== Context
+In the context of user registration and expanding from there to general user management, authentication, authorization mechanisms the following two options are presented:
+
+. Custom code whatever is needed
+. Delegate to some external software and build only the needed glue code
+
+In a complex architecture governed by a number of standards and regulations, isolating security needs to the extent possible and segregating sensitive private data (e.g. private details such as addresses, phone numbers, etc.) from the typical business data (accounts and workflows) is of paramount importance.
+
+Our choice of an external IDM platform and particularly Keycloak is meant to handle the above requirements and provide the full flexibility needed in the future to expand.
+
+== Recommendation
+Use Redhat's Keycloak platform instead of custom coding everything.
+
+== Decision
+The recommendation has been assessed and the decision was in favor of including Keycloak as part of the UK PMRV software solution to handle identity management and access control tasks as a backend platform.
+
+== Consequences
+Using an external platform for such a critical aspect of the overall system ensures a certain level of security (the platform has gone through 3rd-party security assessments) and protects the development team from having to understand and handle low level security code around certificate authentication, storing hashes, salting, etc.
+On the other hand it creates a new integration point to be handled and deployed, increasing perhaps the operational requirements of the overall solution.

@@ -1,0 +1,19 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    heading="Send for peer review"
+    submitText="Confirm and complete"
+  >
+    <div
+      [options]="assignees$ | async"
+      formControlName="assignees"
+      govuk-select
+      label="Select the name and signature that will be shown on the official notice document?"
+    ></div>
+    <div govukInsetText *ngIf="(pendingRfi$ | async) === true">
+      Clicking 'confirm and complete' will automatically cancel the active request for information.
+    </div>
+  </app-wizard-step>
+  <a govukLink routerLink=".."> Return to: Permit Determination </a>
+</app-permit-task>

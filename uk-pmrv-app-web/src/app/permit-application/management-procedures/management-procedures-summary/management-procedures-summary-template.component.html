@@ -1,0 +1,71 @@
+<ng-container *ngIf="taskKey | task | async as task">
+  <dl govuk-summary-list [hasBorders]="false" [class.summary-list--edge-border]="hasBottomBorder">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Procedure document</dt>
+      <dd govukSummaryListRowValue>{{ task.procedureDocumentName }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Procedure reference</dt>
+      <dd govukSummaryListRowValue>{{ task.procedureReference }}</dd>
+    </div>
+    <div *ngIf="task.diagramReference" govukSummaryListRow>
+      <dt govukSummaryListRowKey>Diagram reference</dt>
+      <dd govukSummaryListRowValue>{{ task.diagramReference }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Procedure description</dt>
+      <dd class="pre-wrap" govukSummaryListRowValue>{{ task.procedureDescription }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Department or role that’s responsible for the procedure and the data generated</dt>
+      <dd govukSummaryListRowValue>{{ task.responsibleDepartmentOrRole }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Location of records</dt>
+      <dd govukSummaryListRowValue>{{ task.locationOfRecords }}</dd>
+    </div>
+    <div *ngIf="task.itSystemUsed" govukSummaryListRow>
+      <dt govukSummaryListRowKey>IT system used</dt>
+      <dd govukSummaryListRowValue>{{ task.itSystemUsed }}</dd>
+    </div>
+    <div *ngIf="task.appliedStandards" govukSummaryListRow>
+      <dt govukSummaryListRowKey>European or other standards applied</dt>
+      <dd govukSummaryListRowValue>{{ task.appliedStandards }}</dd>
+    </div>
+    <ng-container *ngIf="task | isDataFlowActivities: taskKey">
+      <div *ngIf="task.primaryDataSources" govukSummaryListRow>
+        <dt govukSummaryListRowKey>Primary data sources</dt>
+        <dd govukSummaryListRowValue>{{ task.primaryDataSources }}</dd>
+      </div>
+      <div *ngIf="task.processingSteps" govukSummaryListRow>
+        <dt govukSummaryListRowKey>Processing steps for each data flow activity</dt>
+        <dd govukSummaryListRowValue>{{ task.processingSteps }}</dd>
+      </div>
+    </ng-container>
+  </dl>
+  <ng-container *ngIf="(task | isDataFlowActivities: taskKey) && task.diagramAttachmentId">
+    <ng-container *ngIf="store.select('permitAttachments') | async as attachments">
+      <ng-container *ngIf="attachments[task.diagramAttachmentId] as attachment">
+        <h2 app-summary-header class="govuk-heading-m govuk-!-margin-top-6">Uploaded file</h2>
+        <dl appGroupedSummaryList govuk-summary-list [hasBottomBorder]="hasBottomBorder">
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Diagram</dt>
+            <dd govukSummaryListRowValue>
+              <a
+                [routerLink]="[
+                  '/permit-application',
+                  store.select('requestTaskId') | async,
+                  'file-download',
+                  task.diagramAttachmentId
+                ]"
+                govukLink
+                target="_blank"
+                >{{ attachment }}</a
+              >
+            </dd>
+          </div>
+        </dl>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>

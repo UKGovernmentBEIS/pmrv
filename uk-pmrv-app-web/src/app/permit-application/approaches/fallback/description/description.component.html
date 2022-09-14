@@ -1,0 +1,27 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Fall-back"
+    heading="Approach description and justification"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div
+      formControlName="approachDescription"
+      govuk-textarea
+      [maxLength]="30000"
+      label="Describe the method used to monitor the source streams and emission sources listed in your fall-back approach"
+    ></div>
+
+    <div
+      formControlName="justification"
+      govuk-textarea
+      [maxLength]="10000"
+      label="Justify the use of a fall-back approach"
+      hint="Demonstrate that the overall uncertainty thresholds for the annual level of total emissions do not exceed 7.5% for category A, 5.0% for category B and 2.5% for category C installations"
+    ></div>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Fall-back" reviewGroupUrl="fall-back"></app-approach-return-link>
+</app-permit-task>

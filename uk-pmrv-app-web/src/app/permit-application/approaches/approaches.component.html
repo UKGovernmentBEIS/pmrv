@@ -1,0 +1,73 @@
+<app-permit-task
+  [breadcrumb]="true"
+  reviewGroupTitle="Define monitoring approaches"
+  reviewGroupUrl="monitoring-approaches"
+>
+  <app-page-heading caption="Monitoring approaches">Define monitoring approaches</app-page-heading>
+
+  <ng-container *ngIf="('monitoringApproachesPrepare' | taskStatus | async) === 'not started'; else defineApproaches">
+    <p class="govuk-body">
+      This task requires you to define one or more monitoring approaches which you will use to monitor emissions at your
+      installation.
+    </p>
+
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Preparing to define monitoring approaches</li>
+    </ul>
+
+    <p class="govuk-body">
+      The monitoring approach is the part of a monitoring plan that defines how annual emissions are monitored.
+    </p>
+  </ng-container>
+
+  <ng-template #defineApproaches>
+    <app-approaches-template></app-approaches-template>
+
+    <ng-container *ngIf="(monitoringApproaches$ | async).length === 0; else addAnother">
+      <div class="govuk-button-group" *ngIf="(store.isEditable$ | async) === true">
+        <button *ngIf="(store.isEditable$ | async) === true" govukButton routerLink="add" type="button">
+          Add monitoring approaches
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-template #addAnother>
+      <h2 app-summary-header class="govuk-heading-m">
+        You have added {{ (monitoringApproaches$ | async).length }} monitoring
+        {{ (monitoringApproaches$ | async).length > 1 ? 'approaches' : 'approach' }}
+      </h2>
+      <ng-container *ngFor="let monitoringApproach of monitoringApproaches$ | async">
+        <dl appGroupedSummaryList govuk-summary-list>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>{{ monitoringApproach | monitoringApproachDescription }} approach</dt>
+            <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+              <a [routerLink]="['delete', monitoringApproach]" govukLink>Delete</a>
+            </dd>
+          </div>
+        </dl>
+      </ng-container>
+
+      <ng-container *ngIf="(store.isEditable$ | async) === true">
+        <button
+          *ngIf="(isEveryMonitoringApproachDefined$ | async) === false"
+          govukSecondaryButton
+          routerLink="add"
+          type="button"
+        >
+          Add another monitoring approach
+        </button>
+
+        <div class="govuk-button-group">
+          <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+        </div>
+      </ng-container>
+    </ng-template>
+  </ng-template>
+
+  <app-list-return-link
+    reviewGroupTitle="Define monitoring approaches"
+    reviewGroupUrl="monitoring-approaches"
+  ></app-list-return-link>
+</app-permit-task>

@@ -1,0 +1,60 @@
+<ng-container *ngIf="store | async as details">
+  <app-page-heading>
+    {{ details.determination.type | i18nSelect: applicationDecisionNameMap }}
+    <div class="govuk-!-margin-top-2">
+      <p class="govuk-body">{{ details.creationDate | govukDate: 'date' }}</p>
+    </div>
+  </app-page-heading>
+
+  <h2 app-summary-header class="govuk-heading-m">Decision details</h2>
+  <dl govuk-summary-list appGroupedSummaryList class="govuk-!-margin-bottom-6">
+    <div *ngIf="details.determination.type === 'GRANTED'" govukSummaryListRow>
+      <dt govukSummaryListRowKey>Permit application</dt>
+      <dd govukSummaryListRowValue>
+        <a govukLink [routerLink]="permitLink$ | async">Permit application</a>
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Decision</dt>
+      <dd govukSummaryListRowValue>{{ details.determination.type | i18nSelect: determinationTypeMap }}</dd>
+    </div>
+    <div *ngIf="details.determination.reason" govukSummaryListRow>
+      <dt govukSummaryListRowKey>Reason for decision</dt>
+      <dd govukSummaryListRowValue class="pre-wrap">{{ details.determination.reason }}</dd>
+    </div>
+    <ng-container *ngIf="details.determination.type === 'GRANTED'">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Permit effective date</dt>
+        <dd govukSummaryListRowValue>{{ details.determination.activationDate | govukDate: 'date' }}</dd>
+      </div>
+      <ng-container *ngIf="details.permitType === 'HSE'">
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Emission targets</dt>
+          <dd govukSummaryListRowValue>
+            <div *ngFor="let emission of emissions">
+              <div>{{ emission.year }} - {{ emission.emissions }} tCO2e</div>
+            </div>
+          </dd>
+        </div>
+      </ng-container>
+    </ng-container>
+  </dl>
+
+  <h2 app-summary-header class="govuk-heading-m">Recipients</h2>
+  <dl govuk-summary-list appGroupedSummaryList class="govuk-!-margin-bottom-6">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Users</dt>
+      <dd govukSummaryListRowValue>
+        <div *ngFor="let user of operators">
+          {{ user | userInfoResolver: details.usersInfo }}
+        </div>
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Name and signature on the official notice</dt>
+      <dd govukSummaryListRowValue>
+        {{ signatory | userInfoResolver: details.usersInfo }}
+      </dd>
+    </div>
+  </dl>
+</ng-container>

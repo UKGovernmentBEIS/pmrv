@@ -1,0 +1,21 @@
+<app-permit-task
+  [notification]="notification"
+  [breadcrumb]="true"
+  reviewGroupTitle="Confidentiality"
+  reviewGroupUrl="confidentiality"
+>
+  <app-page-heading caption="Confidentiality statement">Confidentiality statement</app-page-heading>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span [class.govuk-visually-hidden]="(hasConfidentialSections$ | async) === false"
+      >Commercially confidential sections</span
+    >
+  </h2>
+
+  <app-confidentiality-statement-summary-template></app-confidentiality-statement-summary-template>
+  <app-list-return-link reviewGroupTitle="Confidentiality" reviewGroupUrl="confidentiality"></app-list-return-link>
+</app-permit-task>

@@ -1,0 +1,117 @@
+= Applicable Guidelines and Standards
+== Introduction
+There are many guidelines and standards that apply on various aspects of the UK PMRV IT systems. In order to get a better understanding and have a complete overview of which set of standards applies and to what extent, this separate document tries to clarify the landscape and help the team assimilate the most important information first.
+
+The various standards are grouped and discussed together as much as possible.
+
+== UK Government Digital Standards
+Since UK PMRV is a UK governmental system a number of UK Government standards apply.
+|===
+| Standard/Regulation Title | Authoritative Source | Commentary | Primary Interest
+
+a| GOV.UK Service Manual and Service Standard	
+a|
+- https://www.gov.uk/service-manual
+- https://www.gov.uk/service-manual/service-standard
+a| UK PMRV is delivered as a public service to UK (and other countries) citizens. As such it must follow a standard service manual and guidelines as described in the authoritative links. An audit against those standards and guidelines is expected, towards the end of the development lifecycle before final approval for a public go-live. *Deviation from these standards should be avoided and done only with prior approval to avoid future impediments.*
+a| All
+
+a| Technology Code of Practice
+a| https://www.gov.uk/government/publications/technology-code-of-practice/technology-code-of-practice
+a| Technological and occasional design choices are guided based on this document. *Recommendations and solutions should not deviate from this code of practice unless a substantial argument in favor of the difference can be established.*	
+a| Architects
+
+a| Service Design System	
+a| https://design-system.service.gov.uk
+a| The styles, colors, components and generally the user workflow patterns in the user interface of the service should adhere to this service design system. Adherence to these guidelines will be audited. *Deviation from these standards should be avoided and done only with prior approval to avoid future impediments.* Do notice that some parts of the user interface particular those targeted to administrators are not covered by this standard. We can still try to maintain the overall guidelines but strict adherence to the guidelines may not be possible.	
+a| Business Analysts, UIX specialists
+
+a| HMCTS extension to the above design system
+a| https://hmcts-design-system.herokuapp.com
+a| Some extra styles, components and workflows can be found under this design system. They can be freely used as a supplement where needed to the above deisgn system. The same remarks around deviation from the guidelines and applicability for administration screens apply.
+a| Business Analysts, UIX specialists
+|===
+
+== Departmental standards and principles
+Given the specific departments that will be responsible for delivering the hosted solution an extra set of principles and guidelines must be adhered to. For the large part these are equivalent to the GOV.UK Service Standard and are kept here for informational purposes. Some more specific details may occasionally be found in the documents below:
+|===
+| Document (directly linked)
+
+a|link:{attachmentsdir}/BEIS_UK_PMRV_DA_Principles.pdf[Digital, Data and Technology (DDaT) Design Authority Principles document]
+
+a|link:{attachmentsdir}/BEIS_UK_PMRV_Defra_Principles.pdf[Defra Architecture Principles document]
+|===
+
+== Accessibility Guidelines
+Standard accessibility guidelines apply and most of these have been already integrated in the design system that should be used. Still the UK ETS IT systems target a WCAG 2.1 Compliance level of AA, which is something to be kept in mind.
+|===
+| Standard/Regulation Title | Authoritative Source | Commentary | Primary Interest
+
+a| GOV.UK Service manual, accessibility section	
+a| https://www.gov.uk/service-manual/helping-people-to-use-your-service
+a| Using this as a starting point or a summary of what the goal is. Consider this as good introductory material, used for information purposes mostly.
+a| Business Analysts, UIX specialists, Architects, Development Team
+
+a| WCAG 2.1 standard
+a|
+- https://www.w3.org/WAI/standards-guidelines/wcag/
+- https://www.w3.org/WAI/standards-guidelines/wcag/glance/
+- https://www.w3.org/WAI/WCAG21/quickref/
+- https://www.w3.org/TR/WCAG21/
+a| A lot of information around accessibility, both at an overview level and in full detail, including a quick reference guide on how to meet the standard. Given a specific target compliance level, *adherence to these standards is expected*.
+a| Business Analysts, UIX specialists, Architects, Development Team
+|===
+
+== Security Guidelines
+|===
+| Standard/Regulation Title | Authoritative Source | Commentary | Primary Interest
+
+a| Secure-by-design Code of practice
+a| https://www.gov.uk/government/collections/secure-by-design
+a| General guidelines, targeted mostly to IoT but some of the principles are generally applicable. Mostly for information purposes.	
+a| Business Analysts, Architects
+
+a| Cloud Security Guidance by National Cyber Security Centre
+a| https://www.ncsc.gov.uk/collection/cloud-security?curPage=/collection/cloud-security/implementing-the-cloud-security-principles
+a| *These guidelines should be checked and adhered to*. For the most part OWASP ASVS is a superset of these, so adherence to the ASVS would be sufficient. Still since some of these guidelines are cloud specific, they should be reviewed and consulted when appropriate.	
+a| Architects, Security Consultants
+
+a| ISO/IEC 27001:2013
+a| https://www.iso.org/obp/ui/#iso:std:iso-iec:27001:ed-2:v1:en
+a| This standard contains a myriad of controls and policies. Since the contractors are already certified and subject to frequent auditing to maintain their certification, this document is mostly for information only.
+a| Architects, Security Consultants
+
+a| OWASP OpenSAMM
+a| https://owaspsamm.org/
+a| This document describes a maturity model that UK PMRV should strive to adhere to.
+a| Architects, Security Consultants
+
+a| OWASP ASVS 4.0.1
+a| https://www.owasp.org/index.php/Category:OWASP_Application_Security_Verification_Standard_Project
+a| The set of standards and guidelines used during design and implementation of UK ETS IT systems. *Deviation from these standards should be avoided, exceptions and their argumentation should be clearly recorded and approved by BEIS.*
+a| Architects, Security Consultants
+|===
+
+== Data Protection
+On top of the general security requirements above, specific data protection requirements apply.
+|===
+| Standard/Regulation Title | Authoritative Source | Commentary | Primary Interest
+
+a| EU GDPR
+a| https://eugdpr.org/
+.2+a| For the most part the two regulations are equivalent. Strictly speaking UK PMRV being a UK system must adhere to the UK Data Protection Act but since it also needs to link to EU ETS adherence to EU GDPR is also expected. In practice it is important to note what private data are collected, where and who has access to them.
+.2+a| Business Analysts, Architects, Security Consultants, Legal Advisors
+
+a| UK Data Protection Act
+a| http://www.legislation.gov.uk/ukpga/2018/12/contents/enacted	
+|===
+
+== General project governance and methodology
+|===
+| Standard/Regulation Title | Authoritative Source | Commentary | Primary Interest
+
+a| GDS Agile Delivery Methodology and in particular the Beta phase
+a| https://www.gov.uk/service-manual/agile-delivery/how-the-beta-phase-works
+a| Based on the service manual, this document describes our current standing in the process of delivering a public process.
+a| All
+|===

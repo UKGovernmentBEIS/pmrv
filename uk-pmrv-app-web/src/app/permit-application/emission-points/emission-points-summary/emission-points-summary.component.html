@@ -1,0 +1,25 @@
+<app-permit-task
+  [notification]="notification"
+  [breadcrumb]="true"
+  reviewGroupTitle="Fuels and equipment inventory"
+  reviewGroupUrl="fuels"
+>
+  <app-page-heading caption="Fuels and equipment inventory">Emission points</app-page-heading>
+
+  <h2
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    app-summary-header
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">List of emission points</span>
+  </h2>
+
+  <dl *ngFor="let emissionPoint of 'emissionPoints' | task | async" govuk-summary-list appGroupedSummaryList>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Emission point</dt>
+      <dd govukSummaryListRowValue>{{ emissionPoint.reference }} {{ emissionPoint.description }}</dd>
+    </div>
+  </dl>
+
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

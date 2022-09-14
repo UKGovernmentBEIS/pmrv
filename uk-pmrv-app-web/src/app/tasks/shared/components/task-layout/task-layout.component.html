@@ -1,0 +1,59 @@
+<ng-container *ngIf="requestTaskItem">
+  <div class="govuk-grid-row">
+    <div [class]="hasRelatedActions ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+      <!-- Task Header -->
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <h1 class="govuk-heading-l">{{ header }}</h1>
+          <app-task-header-info
+              [assignee]="requestTaskItem.requestTask.assigneeFullName"
+              [daysRemaining]="daysRemaining"
+          ></app-task-header-info>
+        </div>
+      </div>
+
+      <!-- Custom content -->
+      <ng-container *ngIf="customContentTemplate">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-full">
+            <ng-container
+                *ngTemplateOutlet="customContentTemplate ? customContentTemplate : defaultCustomContentTemplate"
+            >
+            </ng-container>
+            <ng-template #defaultCustomContentTemplate></ng-template>
+          </div>
+        </div>
+      </ng-container>
+
+      <!--Related Tasks Component -->
+      <ng-container *ngIf="relatedTasks?.length > 0">
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" *ngIf="showSectionBreak" />
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-full">
+            <app-related-tasks [items]="relatedTasks" [noBorders]="false"></app-related-tasks>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Timeline Component -->
+      <div class="govuk-grid-row">
+        <app-timeline class="govuk-grid-column-full">
+          <app-timeline-item
+              *ngFor="let action of timelineActions"
+              [action]="action"
+              [link]="action | timelineItemLink"
+              [state]="navigationState"
+          ></app-timeline-item>
+        </app-timeline>
+      </div>
+    </div>
+    <div class="govuk-grid-column-one-third" *ngIf="hasRelatedActions">
+      <!-- Related Actions Component -->
+      <app-related-actions
+          [isAssignable]="requestTaskItem.requestTask.assignable"
+          [taskId]="requestTaskItem.requestTask.id"
+          [allowedActions]="requestTaskItem.allowedRequestTaskActions"
+      ></app-related-actions>
+    </div>
+  </div>
+</ng-container>

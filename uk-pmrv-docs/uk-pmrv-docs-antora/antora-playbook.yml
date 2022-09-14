@@ -1,0 +1,18 @@
+site:
+  title: UK PMRV Technical Documentation
+  # the 404 page and sitemap files only get generated when the url property is set
+  url: https://docs.ukpmrv.net/
+  start_page: architecture-description:introduction:index.adoc
+content:
+  sources:
+  # embedding empty credentials in the URL disables the Edit this Page link for any page created from this repository
+  # url: https://@git.trasys.gr/bitbucket/scm/pmrv/uk-pmrv-docs.git # actual repo
+  - url: ../. # use for local dev`
+    branches: [master]
+    start_path: uk-pmrv-docs-content/architecture-description
+ui:
+  bundle:
+    #url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    url: antora-ui-default/build/ui-bundle.zip
+    snapshot: true
+

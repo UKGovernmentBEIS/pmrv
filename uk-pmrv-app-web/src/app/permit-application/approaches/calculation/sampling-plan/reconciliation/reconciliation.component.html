@@ -1,0 +1,33 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    submitText="Continue"
+    caption="Calculation"
+    heading="Year end reconciliation"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-boolean-radio-group
+      controlName="exist"
+      legend="Are stock estimates carried out as part of the emission calculations?"
+    >
+      <div govukConditionalContent>
+        <app-procedure-form formGroupName="procedureForm">
+          <h2 class="govuk-heading-m">Provide year end reconciliation details</h2>
+          <div class="govuk-body">
+            <p>
+              Provide details of the procedures used to estimate stocks at the beginning and end of a reporting period.
+              Include any source streams monitored using batch metering, for example using invoices.
+            </p>
+          </div>
+        </app-procedure-form>
+      </div>
+    </app-boolean-radio-group>
+  </app-wizard-step>
+
+  <app-approach-return-link
+    parentTitle="Calculation approach"
+    reviewGroupUrl="calculation"
+    [isNested]="true"
+  ></app-approach-return-link>
+</app-permit-task>

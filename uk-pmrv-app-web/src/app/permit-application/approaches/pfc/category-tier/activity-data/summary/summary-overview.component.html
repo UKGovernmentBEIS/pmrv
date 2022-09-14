@@ -1,0 +1,77 @@
+<ng-container
+  *ngIf="
+    ('PFC' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async]
+      ?.activityData as activityData
+  "
+>
+  <h2
+    *ngIf="isChangeLinkAvailable"
+    app-summary-header
+    (changeClick)="changeClick('')"
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Activity Data</span>
+  </h2>
+  <dl
+    govuk-summary-list
+    class="govuk-summary-list--no-border"
+    [class.summary-list--edge-border]="activityDataSectionHasBottomBorder"
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Mass balance</dt>
+      <dd govukSummaryListRowValue>{{ activityData.massBalanceApproachUsed ? 'Yes' : 'No' }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Tier</dt>
+      <dd govukSummaryListRowValue>{{ activityData.tier | appliedTier }}</dd>
+    </div>
+    <ng-container *ngIf="activityData.isHighestRequiredTier !== undefined">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Highest required tier</dt>
+        <dd govukSummaryListRowValue>{{ activityData.isHighestRequiredTier ? 'Yes' : 'No' }}</dd>
+      </div>
+    </ng-container>
+  </dl>
+
+  <ng-container *ngIf="activityData.isHighestRequiredTier === false">
+    <h2
+      *ngIf="isChangeLinkAvailable"
+      app-summary-header
+      (changeClick)="changeClick('justification')"
+      [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+      class="govuk-heading-m"
+    >
+      <span class="govuk-visually-hidden">Activity Data Justification</span>
+    </h2>
+    <dl
+      govuk-summary-list
+      class="govuk-summary-list--no-border"
+      [class.summary-list--edge-border]="justificationSectionHasBottomBorder"
+    >
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Reasons for not applying the highest required tier</dt>
+        <dd govukSummaryListRowValue>
+          <ng-container *ngIf="activityData?.noHighestRequiredTierJustification?.isCostUnreasonable"
+            >Unreasonable cost<br
+          /></ng-container>
+          <ng-container *ngIf="activityData?.noHighestRequiredTierJustification?.isTechnicallyInfeasible"
+            >Technical infeasibility</ng-container
+          >
+        </dd>
+      </div>
+      <div govukSummaryListRow *ngIf="activityData?.noHighestRequiredTierJustification?.isTechnicallyInfeasible">
+        <dt govukSummaryListRowKey>Explanation of technical infeasibility</dt>
+        <dd govukSummaryListRowValue class="pre-wrap">
+          {{ activityData.noHighestRequiredTierJustification.technicalInfeasibilityExplanation }}
+        </dd>
+      </div>
+      <div govukSummaryListRow *ngIf="(files$ | async)?.length">
+        <dt govukSummaryListRowKey>Supporting files</dt>
+        <dd govukSummaryListRowValue>
+          <app-summary-download-files [files]="store.getDownloadUrlFiles(files$ | async)"> </app-summary-download-files>
+        </dd>
+      </div>
+    </dl>
+  </ng-container>
+</ng-container>

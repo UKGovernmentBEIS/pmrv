@@ -1,0 +1,55 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h2 class="govuk-heading-m">Site emissions</h2>
+  </div>
+  <form [formGroup]="form">
+    <div class="govuk-grid-column-one-third">
+      <div
+        class="govuk-!-margin-bottom-0"
+        [options]="displayRows"
+        formControlName="selectionControl"
+        govuk-select
+        widthClass="govuk-!-width-full"
+        label="Select between Tonnes and Percentage"
+        [isLabelHidden]="true"
+      ></div>
+    </div>
+  </form>
+</div>
+<govuk-table [columns]="columns" [data]="tableRows$ | async">
+  <ng-template let-column="column" let-row="row">
+    <ng-container [ngSwitch]="column.field">
+      <ng-container *ngSwitchCase="'approach'">
+        {{ row.approach === 'Total' ? row.approach : (row.approach | monitoringApproachDescription) }}
+      </ng-container>
+      <ng-container *ngSwitchCase="'marginal'">
+        {{
+          form.get('selectionControl').value
+            ? (row.marginal | number) + 't'
+            : (row.marginal | siteEmissionPercentage: (tableTotal$ | async) | percent)
+        }}
+      </ng-container>
+      <ng-container *ngSwitchCase="'minimis'">
+        {{
+          form.get('selectionControl').value
+            ? (row.minimis | number) + 't'
+            : (row.minimis | siteEmissionPercentage: (tableTotal$ | async) | percent)
+        }}
+      </ng-container>
+      <ng-container *ngSwitchCase="'minor'">
+        {{
+          form.get('selectionControl').value
+            ? (row.minor | number) + 't'
+            : (row.minor | siteEmissionPercentage: (tableTotal$ | async) | percent)
+        }}
+      </ng-container>
+      <ng-container *ngSwitchCase="'major'">
+        {{
+          form.get('selectionControl').value
+            ? (row.major | number) + 't'
+            : (row.major | siteEmissionPercentage: (tableTotal$ | async) | percent)
+        }}
+      </ng-container>
+    </ng-container>
+  </ng-template>
+</govuk-table>

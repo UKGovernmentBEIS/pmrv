@@ -1,0 +1,10 @@
+<app-base-task-container-component
+  header="Notification application"
+  [customContentTemplate]="customContentTemplate"
+  expectedTaskType="PERMIT_NOTIFICATION_WAIT_FOR_REVIEW"
+>
+</app-base-task-container-component>
+
+<ng-template #customContentTemplate>
+  <govuk-warning-text> Waiting for the regulator to make a determination </govuk-warning-text>
+</ng-template>

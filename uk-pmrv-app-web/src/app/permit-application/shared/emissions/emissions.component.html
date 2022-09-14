@@ -1,0 +1,133 @@
+<app-permit-task>
+  <ng-container *ngIf="measuredEmissionsNotApplicable$ | async; else start">
+    <app-page-heading [caption]="(taskKey$ | async) === 'MEASUREMENT' ? 'Measurement' : 'Nitrous oxide'">
+      Measured emissions
+    </app-page-heading>
+    <p class="govuk-body">Other tasks must be completed before you can start:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Measurement devices or methods</li>
+      <li>Source stream category</li>
+    </ul>
+    <a govukLink routerLink="..">Return to: Add a source stream category</a>
+  </ng-container>
+  <ng-template #start>
+    <ng-container
+      *ngIf="
+        (taskKey$ | async | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier
+      "
+    >
+      <app-wizard-step
+        (formSubmit)="onContinue()"
+        [formGroup]="form"
+        submitText="Continue"
+        caption="{{ (taskKey$ | async) === 'MEASUREMENT' ? 'Measurement' : 'Nitrous oxide' }}, {{
+          tier | sourceStreamCategoryName | async
+        }}"
+        heading="Measured emissions"
+        [hideSubmit]="(store.isEditable$ | async) === false"
+      >
+        <div
+          app-multi-select
+          formControlName="measurementDevicesOrMethods"
+          label="Select a measurement devices used to monitor {{ tier | sourceStreamCategoryName | async }}"
+        >
+          <div
+            *ngFor="let measurementDeviceOrMethod of 'measurementDevicesOrMethods' | task | async"
+            [itemValue]="measurementDeviceOrMethod.id"
+            [label]="
+              measurementDeviceOrMethod.reference +
+              ', ' +
+              (measurementDeviceOrMethod.type | measurementDevicesType) +
+              (measurementDeviceOrMethod.uncertaintySpecified
+                ? ', Specified uncertainty ±' + measurementDeviceOrMethod.specifiedUncertaintyPercentage + '%'
+                : '')
+            "
+            app-multi-select-item
+            itemName="emissionSources"
+          ></div>
+        </div>
+        <div
+          formControlName="samplingFrequency"
+          govuk-radio
+          legend="What is the sampling frequency for these devices?"
+          hint="A continuous sampling frequency is expected when a measurement approach is being used."
+        >
+          <govuk-radio-option *ngFor="let option of typeOptions" [label]="option.label" [value]="option.value">
+          </govuk-radio-option>
+          <govuk-radio-option [value]="'OTHER'" label="Other">
+            <ng-container govukConditionalContent>
+              <div formControlName="otherSamplingFrequency" govuk-text-input label="Provide details"></div>
+            </ng-container>
+          </govuk-radio-option>
+        </div>
+
+        <div formControlName="tier" govuk-radio legend="What tier are you applying for measured emissions?">
+          <ng-container *ngIf="(taskKey$ | async) === 'MEASUREMENT'">
+            <govuk-radio-option [value]="'TIER_4'" label="Tier 4"> </govuk-radio-option>
+            <govuk-radio-option [value]="'TIER_3'" label="Tier 3">
+              <ng-container govukConditionalContent>
+                <div
+                  formControlName="isHighestRequiredTierT3"
+                  govuk-radio
+                  legend="Are you applying the highest required tier?"
+                >
+                  <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+                  <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+                </div>
+              </ng-container>
+            </govuk-radio-option>
+          </ng-container>
+
+          <ng-container *ngIf="(taskKey$ | async) === 'N2O'">
+            <govuk-radio-option [value]="'TIER_3'" label="Tier 3 (less than 5%)"> </govuk-radio-option>
+          </ng-container>
+
+          <govuk-radio-option
+            [value]="'TIER_2'"
+            label="Tier 2 {{ (taskKey$ | async) === 'N2O' ? '(less than 7.5%)' : '' }} "
+          >
+            <ng-container govukConditionalContent>
+              <div
+                formControlName="isHighestRequiredTierT2"
+                govuk-radio
+                legend="Are you applying the highest required tier?"
+              >
+                <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+                <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+          <govuk-radio-option
+            [value]="'TIER_1'"
+            label="Tier 1 {{ (taskKey$ | async) === 'N2O' ? '(less than 10%)' : '' }} "
+          >
+            <ng-container govukConditionalContent>
+              <div
+                formControlName="isHighestRequiredTierT1"
+                govuk-radio
+                legend="Are you applying the highest required tier?"
+              >
+                <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+                <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+
+          <ng-container *ngIf="(taskKey$ | async) === 'MEASUREMENT'">
+            <govuk-radio-option [value]="'NO_TIER'" label="No tier">
+              <ng-container govukConditionalContent>
+                <div
+                  formControlName="noTierJustification"
+                  govuk-textarea
+                  [maxLength]="10000"
+                  label="How will emissions from transferred CO2 be estimated?"
+                ></div>
+              </ng-container>
+            </govuk-radio-option>
+          </ng-container>
+        </div>
+      </app-wizard-step>
+      <a govukLink routerLink=".."> Return to: {{ tier | sourceStreamCategoryName | async }} </a>
+    </ng-container>
+  </ng-template>
+</app-permit-task>

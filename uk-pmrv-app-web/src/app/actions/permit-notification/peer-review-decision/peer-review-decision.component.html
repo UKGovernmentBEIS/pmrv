@@ -1,0 +1,29 @@
+<ng-container *ngIf="payload$ | async as payload">
+  <app-base-action-container-component
+    [header]="'Peer review ' + (payload.decision.type === 'AGREE' ? 'approved' : 'rejected')"
+    [customContentTemplate]="customContentTemplate"
+    [expectedActionType]="[
+      'PERMIT_NOTIFICATION_APPLICATION_PEER_REVIEWER_ACCEPTED',
+      'PERMIT_NOTIFICATION_APPLICATION_PEER_REVIEWER_REJECTED'
+    ]"
+  >
+  </app-base-action-container-component>
+
+  <ng-template #customContentTemplate>
+    <h2 class="govuk-heading-m">Decision details</h2>
+    <dl govuk-summary-list class="govuk-summary-list--no-border summary-list--edge-border">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Decision</dt>
+        <dd govukSummaryListRowValue>{{ payload.decision.type | determinationAssessment }}</dd>
+      </div>
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Supporting notes</dt>
+        <dd govukSummaryListRowValue>{{ payload.decision.notes }}</dd>
+      </div>
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Peer reviewer</dt>
+        <dd govukSummaryListRowValue>{{ submitter$ | async }}</dd>
+      </div>
+    </dl>
+  </ng-template>
+</ng-container>

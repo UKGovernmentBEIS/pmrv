@@ -1,0 +1,18 @@
+<div *ngIf="confirmedAddedVerifier$ | async as verifierEmail; else addVerifierForm" class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <govuk-panel>An account confirmation email has been sent to {{ verifierEmail }}</govuk-panel>
+    <h2 class="govuk-heading-m">What happens next</h2>
+    <p class="govuk-body">The new user will appear at this verification body once they have confirmed their account.</p>
+  </div>
+</div>
+
+<ng-template #addVerifierForm>
+  <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+
+  <app-page-heading size="xl">Add a new verifier admin</app-page-heading>
+
+  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <app-user-input phoneType="national"></app-user-input>
+    <button appPendingButton govukButton type="submit">Submit</button>
+  </form>
+</ng-template>

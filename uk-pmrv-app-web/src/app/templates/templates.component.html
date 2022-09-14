@@ -1,0 +1,63 @@
+<app-page-heading size="xl">Templates</app-page-heading>
+
+<govuk-tabs>
+  <ng-template govukTab id="operator-emails" label="Operator emails">
+    <ng-container *ngTemplateOutlet="tabTemplate"></ng-container>
+  </ng-template>
+
+  <ng-template govukTab id="operator-documents" label="Operator documents">
+    <ng-container *ngTemplateOutlet="tabTemplate"></ng-container>
+  </ng-template>
+
+  <ng-template govukTab id="regulator-emails" label="Regulator emails">
+    <ng-container *ngTemplateOutlet="tabTemplate"></ng-container>
+  </ng-template>
+</govuk-tabs>
+
+<ng-template #tabTemplate>
+  <div class="govuk-hint">Search for a template</div>
+  <div class="govuk-grid-row">
+    <form (ngSubmit)="onSearch()" [formGroup]="searchForm" id="search-form">
+      <div class="govuk-grid-column-full">
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-three-quarters"></div>
+          <div class="govuk-grid-column-three-quarters">
+            <div formControlName="term" govuk-text-input></div>
+          </div>
+          <div class="govuk-grid-column-one-quarter">
+            <button appPendingButton govukButton type="submit">Search</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <ng-container *ngIf="(templates$ | async)?.length; else noResults">
+    <govuk-table
+      [columns]="(currentFragment$ | async) === 'regulator-emails' ? regulatorTabCols : operatorTabCols"
+      [data]="templates$ | async"
+    >
+      <ng-template let-column="column" let-row="row">
+        <ng-container [ngSwitch]="column.field">
+          <ng-container *ngSwitchCase="'name'">
+            <a routerLink="." (click)="navigateToTemplate(row['id'])" govukLink>{{ row[column.field] }}</a>
+          </ng-container>
+          <ng-container *ngSwitchCase="'operatorType'">{{ row[column.field] | operatorType }}</ng-container>
+          <ng-container *ngSwitchCase="'workflow'">{{ row[column.field] }}</ng-container>
+          <ng-container *ngSwitchCase="'lastUpdatedDate'">{{ row[column.field] | govukDate }}</ng-container>
+        </ng-container>
+      </ng-template>
+    </govuk-table>
+    <app-pagination
+      (currentPageChange)="currentPage$.next($event)"
+      [count]="totalPages$ | async"
+      [pageSize]="pageSize"
+    ></app-pagination>
+  </ng-container>
+  <ng-template #noResults>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <p class="govuk-body" tabindex="-1">There are no results to show</p>
+      </div>
+    </div>
+  </ng-template>
+</ng-template>

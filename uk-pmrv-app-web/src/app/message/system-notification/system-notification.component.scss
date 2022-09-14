@@ -1,0 +1,10 @@
+@use '~govuk-frontend/govuk/base' as govuk;
+
+.info {
+  background-color: govuk.$govuk-canvas-background-colour;
+  padding: govuk.govuk-spacing(3) govuk.govuk-spacing(3) 1px;
+}
+
+.initiator {
+  color: govuk.$govuk-brand-colour;
+}

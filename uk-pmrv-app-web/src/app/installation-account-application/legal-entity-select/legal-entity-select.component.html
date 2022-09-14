@@ -1,0 +1,18 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  caption="Identity and contact details of the operator"
+  heading="Select the organisation"
+>
+  <div formControlName="isNew" govuk-radio hint="Select one option">
+    <ng-container govukLegend>
+      <span class="govuk-visually-hidden">Select the organisation</span>
+    </ng-container>
+    <govuk-radio-option [value]="false" label="From the list below">
+      <div govukConditionalContent>
+        <div [options]="legalEntities$ | async" formControlName="id" govuk-select label="Please select"></div>
+      </div>
+    </govuk-radio-option>
+    <govuk-radio-option [value]="true" label="Add a new organisation"></govuk-radio-option>
+  </div>
+</app-wizard-step>

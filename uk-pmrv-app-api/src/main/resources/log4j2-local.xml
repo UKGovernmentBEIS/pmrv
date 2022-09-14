@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" packages="uk.gov.pmrv.api.web.logging">
+
+    <Properties>
+        <Property name="LOG_EXCEPTION_CONVERSION_WORD">%xwEx</Property>
+        <Property name="LOG_LEVEL_PATTERN">%5p</Property>
+        <Property name="LOG_DATEFORMAT_PATTERN">yyyy-MM-dd HH:mm:ss.SSS</Property>
+        <Property name="CONSOLE_LOG_PATTERN">%clr{%d{${sys:LOG_DATEFORMAT_PATTERN}}}{faint} %clr{${sys:LOG_LEVEL_PATTERN}} %clr{%pid}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+        <Property name="FILE_LOG_PATTERN">%d{${LOG_DATEFORMAT_PATTERN}} ${LOG_LEVEL_PATTERN} %pid --- [%t] %-40.40c{1.} : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}"/>
+        </Console>
+        <Rewrite name="mask">
+            <MaskRewritePolicy>
+                <property name="payloadProperty">password</property>
+                <property name="payloadProperty">token</property>
+                <property name="payloadProperty">emailToken</property>
+                <property name="payloadProperty">invitationToken</property>
+                <property name="payloadProperty">email</property>
+                <property name="payloadProperty">firstName</property>
+                <property name="payloadProperty">lastName</property>
+                <property name="payloadProperty">line1</property>
+                <property name="payloadProperty">line2</property>
+                <property name="payloadProperty">city</property>
+                <property name="payloadProperty">country</property>
+                <property name="payloadProperty">postcode</property>
+                <property name="payloadProperty">number</property>
+                <property name="payloadProperty">phoneNumber</property>
+                <property name="payloadProperty">mobileNumber</property>
+                <property name="payloadProperty">jobTitle</property>
+            </MaskRewritePolicy>
+            <AppenderRef ref="consoleAppender"/>
+        </Rewrite>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="consoleAppender"/>
+        </Root>
+        <Logger name="uk.gov.pmrv.api" level="debug" additivity="false">
+            <AppenderRef ref="mask"/>
+        </Logger>
+    </Loggers>
+</Configuration>

@@ -1,0 +1,58 @@
+<app-page-heading size="xl">Manage verifier users</app-page-heading>
+<govuk-tabs>
+  <ng-template govukTab id="verifier-users" label="Verifier users">
+    <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="verifiersForm"></govuk-error-summary>
+    <div *ngIf="isEditable$ | async" class="govuk-grid-row">
+      <div class="govuk-grid-column-one-half">
+        <form
+          (ngSubmit)="addNewUser()"
+          [formGroup]="addNewUserForm"
+          class="govuk-grid-row row-container"
+          id="add-verifier"
+        >
+          <div class="govuk-grid-column-two-thirds">
+            <div
+              [options]="roleCodes"
+              formControlName="roleCode"
+              govuk-select
+              label="Add a new user"
+              widthClass="govuk-!-width-full"
+            ></div>
+          </div>
+          <div class="govuk-grid-column-one-third">
+            <button govukButton type="submit">Continue</button>
+          </div>
+        </form>
+        <govuk-details summary="Learn more about user types">
+          <article>
+            <h3 class="govuk-heading-s govuk-!-padding-bottom-3">User types</h3>
+            <section>
+              <h4 class="govuk-heading-s govuk-!-font-weight-regular">Verifier admin</h4>
+              <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">Role description TBC</p>
+            </section>
+            <section>
+              <h4 class="govuk-heading-s govuk-!-font-weight-regular">Verifier</h4>
+              <p class="govuk-!-padding-left-3 govuk-!-padding-bottom-3">Role description TBC</p>
+            </section>
+          </article>
+        </govuk-details>
+      </div>
+    </div>
+    <app-verifiers-table
+      [verifiersAuthorities]="verifiersAuthorities$"
+      (verifiersFormSubmitted)="onVerifiersFormSubmitted($event)"
+      (discard)="this.refresh$.next()"
+    ></app-verifiers-table>
+  </ng-template>
+  <ng-template govukTab id="site-contacts" label="Site contacts">
+    <app-site-contacts
+      [contacts]="siteContact$ | async"
+      [pageSize]="siteContactsPageSize"
+      [verifiers]="verifiers$ | async"
+      [totalCount]="(siteContact$ | async)?.totalItems"
+      (pageChange)="siteContactsPage$.next($event)"
+      (siteContactChange)="saveSiteContacts($event)"
+      (cancel)="refresh$.next()"
+    ></app-site-contacts>
+  </ng-template>
+</govuk-tabs>

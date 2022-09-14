@@ -1,0 +1,61 @@
+<app-page-heading caption="Create user account" size="xl">Check your answers</app-page-heading>
+
+<h2 [changeRoute]="['/registration', 'user', 'contact-details']" app-summary-header class="govuk-heading-m">
+  Your details
+</h2>
+<dl *ngIf="userInfo$ | async as userInfo" govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>First Name</dt>
+    <dd govukSummaryListRowValue>{{ userInfo.firstName }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Last Name</dt>
+    <dd govukSummaryListRowValue>{{ userInfo.lastName }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Telephone number</dt>
+    <dd govukSummaryListRowValue>
+      {{ userInfo.phoneNumber.countryCode | phoneNumber }} {{ userInfo.phoneNumber.number }}
+    </dd>
+  </div>
+  <div *ngIf="userInfo.mobileNumber?.countryCode && userInfo.mobileNumber?.number" govukSummaryListRow>
+    <dt govukSummaryListRowKey>Mobile number</dt>
+    <dd govukSummaryListRowValue>
+      {{ userInfo.mobileNumber?.countryCode | phoneNumber }} {{ userInfo.mobileNumber?.number }}
+    </dd>
+  </div>
+  <ng-container *ngIf="userInfo.address">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Building and street</dt>
+      <dd govukSummaryListRowValue>
+        {{ userInfo.address.line2 ? userInfo.address.line1 + ', ' + userInfo.address.line2 : userInfo.address.line1 }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Town or city</dt>
+      <dd govukSummaryListRowValue>
+        {{ userInfo.address.city }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Postcode</dt>
+      <dd govukSummaryListRowValue>
+        {{ userInfo.address.postcode }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Country</dt>
+      <dd govukSummaryListRowValue>
+        {{ userInfo.address.country | country }}
+      </dd>
+    </div>
+  </ng-container>
+</dl>
+
+<ng-container *ngIf="(invitationStatus$ | async) !== 'PENDING_USER_REGISTRATION_NO_PASSWORD'">
+  <h2 [changeRoute]="['/registration', 'user', 'choose-password']" app-summary-header class="govuk-heading-m">
+    Password
+  </h2>
+</ng-container>
+
+<button (click)="registerUser()" [disabled]="isSubmitDisabled" govukButton type="button">Submit</button>

@@ -1,0 +1,34 @@
+<div formControlName="parameter" govuk-text-input label="Parameter"></div>
+<div
+  formControlName="appliedStandard"
+  govuk-text-input
+  hint="For example, 'QAL2'."
+  label="What applied standard are you using?"
+></div>
+<div
+  formControlName="deviationFromAppliedStandardExist"
+  govuk-radio
+  legend="Are there any deviations from the applied standard?"
+>
+  <govuk-radio-option [value]="true" label="Yes">
+    <ng-container govukConditionalContent>
+      <div formControlName="deviationFromAppliedStandardDetails" govuk-text-input label="Provide details"></div>
+    </ng-container>
+  </govuk-radio-option>
+  <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+</div>
+<div formControlName="laboratoryName" govuk-text-input hint="What help can we offer here" label="Laboratory name"></div>
+<div formControlName="laboratoryAccredited" govuk-radio legend="Is the laboratory ISO17025 accredited?">
+  <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+  <govuk-radio-option [value]="false" label="No">
+    <ng-container govukConditionalContent>
+      <div
+        formControlName="laboratoryAccreditationEvidence"
+        govuk-textarea
+        [maxLength]="10000"
+        label="Provide evidence"
+        hint="Provide details that the laboratory is competent and able to generate valid results using the relevant analytical approach."
+      ></div>
+    </ng-container>
+  </govuk-radio-option>
+</div>

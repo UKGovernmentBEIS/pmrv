@@ -1,0 +1,29 @@
+<app-page-heading size="l" *ngIf="route.data | async as data">{{ data?.pageTitle }}</app-page-heading>
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+  <govuk-error-summary *ngIf="isErrorSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+  <h2 class="govuk-heading-s govuk-!-margin-bottom-0">Request from the regulator</h2>
+  <p class="govuk-body">{{ followUpRequest$ | async }}</p>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div formControlName="followUpResponse" label="Provide a response" [maxLength]="10000" govuk-textarea></div>
+    </div>
+  </div>
+
+  <div class="govuk-grid-row govuk-!-margin-top-4">
+    <div class="govuk-grid-column-two-thirds">
+      <h2 class="govuk-heading-m">Upload any supporting documents (optional)</h2>
+      <app-multiple-file-input
+        [baseDownloadUrl]="getDownloadUrl()"
+        [label]="(isFileUploaded$ | async) ? 'Upload a different file' : 'Upload a file (optional)'"
+        formControlName="files"
+        hint="The file must be smaller than 20MB"
+      >
+      </app-multiple-file-input>
+    </div>
+  </div>
+
+  <button appPendingButton govukButton type="submit" *ngIf="(isEditable$ | async) === true">
+    Confirm and complete
+  </button>
+</form>
+<a govukLink routerLink="../">Return to: Follow up response to a notification</a>

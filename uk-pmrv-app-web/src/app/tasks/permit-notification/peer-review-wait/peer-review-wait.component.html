@@ -1,0 +1,20 @@
+<app-base-task-container-component
+  header="Notification determination"
+  [daysRemaining]="daysRemaining$ | async"
+  [customContentTemplate]="customContentTemplate"
+  expectedTaskType="PERMIT_NOTIFICATION_WAIT_FOR_PEER_REVIEW"
+>
+</app-base-task-container-component>
+
+<ng-template #customContentTemplate>
+  <govuk-warning-text> Waiting for peer review, you cannot make any changes</govuk-warning-text>
+
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="../review/decision"
+      linkText="Details of the Change"
+      [status]="'DETAILS_CHANGE' | reviewNotificationStatus | async"
+    ></li>
+  </ul>
+</ng-template>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        logicalFilePath="v0.1.0/changelog_schema_cleanup.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_DROP_NOTIFICATION_SYSTEM_MESSAGE_TABLE" author="pafilisa@unisystems.gr" logicalFilePath="v0.1.0/changelog_notification_system_message.xml">
+        <sql>
+            DROP TABLE IF EXISTS notification_system_message;
+        </sql>
+
+        <rollback>
+            <sql>
+                CREATE TABLE notification_system_message (
+                id bigint,
+                type VARCHAR(255) NOT NULL,
+                subject VARCHAR(255) NOT NULL,
+                text TEXT NOT NULL,
+                creation_date TIMESTAMP NOT NULL,
+                competent_authority VARCHAR(255),
+                account_id bigint,
+                receiver VARCHAR(255) NOT NULL,
+                verification_body_id bigint);
+
+                ALTER TABLE notification_system_message ADD CONSTRAINT notification_system_message_pk PRIMARY KEY (id);
+
+                COMMENT ON TABLE notification_system_message IS 'Stores information about created notification system messages';
+                COMMENT ON COLUMN notification_system_message.type IS 'The notification system message type';
+                COMMENT ON COLUMN notification_system_message.subject IS 'The notification system message subject';
+                COMMENT ON COLUMN notification_system_message.text IS 'The notification system message text';
+                COMMENT ON COLUMN notification_system_message.creation_date IS 'The date-time that the notification system message was created';
+                COMMENT ON COLUMN notification_system_message.competent_authority IS 'The competent authority the notification system message is related to';
+                COMMENT ON COLUMN notification_system_message.account_id IS 'The account id the notification system message is related to';
+                COMMENT ON COLUMN notification_system_message.receiver IS 'The receiver (user id) of the notification system message';
+                COMMENT ON COLUMN notification_system_message.verification_body_id IS 'The verification body id the the notification system message is related to';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_DROP_NOTIFICATION_SYSTEM_MESSAGE_SEQUENCE" author="pafilisa@unisystems.gr" logicalFilePath="v0.1.0/changelog_notification_system_message.xml">
+        <sql>
+            DROP SEQUENCE IF EXISTS notification_system_message_seq;
+        </sql>
+
+        <rollback>
+            <sql>
+                CREATE SEQUENCE notification_system_message_seq MINVALUE 0 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 1 NO CYCLE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

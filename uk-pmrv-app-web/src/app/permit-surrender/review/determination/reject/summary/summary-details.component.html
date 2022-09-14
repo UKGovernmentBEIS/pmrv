@@ -1,0 +1,70 @@
+<h2
+  app-summary-header
+  (changeClick)="changeClick('')"
+  [changeRoute]="(isEditable$ | async) ? '.' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Decision</span>
+</h2>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Decision</dt>
+    <dd govukSummaryListRowValue>
+      {{ rejectDetermination.type | determinationType }}
+    </dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  (changeClick)="changeClick('reason')"
+  [changeRoute]="(isEditable$ | async) ? '.' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Reason for decision</span>
+</h2>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Reason for decision</dt>
+    <dd govukSummaryListRowValue class="pre-wrap">
+      {{ rejectDetermination.reason }}
+    </dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  (changeClick)="changeClick('refusal')"
+  [changeRoute]="(isEditable$ | async) ? '.' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Official refusal letter</span>
+</h2>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Official refusal letter</dt>
+    <dd govukSummaryListRowValue class="pre-wrap">
+      {{ rejectDetermination.officialRefusalLetter }}
+    </dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  (changeClick)="changeClick('refund')"
+  [changeRoute]="(isEditable$ | async) ? '.' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Operator refund</span>
+</h2>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Operator refund</dt>
+    <dd govukSummaryListRowValue>
+      <ng-container *ngIf="rejectDetermination.shouldFeeBeRefundedToOperator !== undefined">
+        <ng-container *ngIf="rejectDetermination.shouldFeeBeRefundedToOperator; else noRefund"> Yes </ng-container>
+        <ng-template #noRefund> No </ng-template>
+      </ng-container>
+    </dd>
+  </div>
+</dl>

@@ -1,0 +1,24 @@
+<ng-container *ngIf="(confirmedVBname$ | async) === null; else confirmSection">
+  <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading>Verification body details</app-page-heading>
+  <form (ngSubmit)="submit()" [formGroup]="form">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <app-form></app-form>
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+        <h2 class="govuk-heading-m">Add an admin user</h2>
+        <app-user-input formGroupName="adminVerifierUserInvitation" phoneType="national"></app-user-input>
+      </div>
+    </div>
+    <button appPendingButton govukButton type="submit">Submit</button>
+  </form>
+</ng-container>
+<ng-template #confirmSection>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <govuk-panel [title]="'Verification body ' + (confirmedVBname$ | async) + ' has been added'"></govuk-panel>
+      <h2 class="govuk-heading-m">What happens next</h2>
+      <p class="govuk-body">An account confirmation email has been sent to the admin of this verification body</p>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,148 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Measurement approach">
+  <app-site-emissions></app-site-emissions>
+
+  <h2 class="govuk-heading-m">Measurement emission sources</h2>
+
+  <ul app-task-item-list>
+    <div class="overflow-auto">
+      <ng-container *ngIf="(sourceStreamCategoryAppliedTiers$ | async)?.length > 0; else addNew">
+        <govuk-table [columns]="columns" [data]="sourceStreamCategoryAppliedTiers$ | async">
+          <ng-template let-column="column" let-row="row" let-index="index">
+            <ng-container [ngSwitch]="column.field">
+              <ng-container *ngSwitchCase="'category'">
+                <a govukLink [routerLink]="['../../measurement/category-tier', index]">
+                  <ng-container
+                    *ngIf="
+                      row?.sourceStreamCategory?.sourceStream | findSourceStream | async as sourceStream;
+                      else noSourceStream
+                    "
+                  >
+                    {{ row | sourceStreamCategoryName | async }}
+                  </ng-container>
+                  <ng-template #noSourceStream>
+                    UNDEFINED: {{ row?.sourceStreamCategory?.categoryType | categoryTypeName }}
+                  </ng-template>
+                </a>
+              </ng-container>
+              <ng-container *ngSwitchCase="'emissions'">
+                {{ row?.sourceStreamCategory?.annualEmittedCO2Tonnes | number }} t
+              </ng-container>
+              <ng-container *ngSwitchCase="'measuredEmissions'">
+                {{ row?.measuredEmissions?.tier | appliedTier }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'status'">
+                <govuk-tag
+                  [color]="'MEASUREMENT_Category_Tier' | taskStatus: index | async | tagColor"
+                  class="app-task-list__tag"
+                >
+                  {{ 'MEASUREMENT_Category_Tier' | taskStatus: index | async | i18nSelect: statusMap }}
+                </govuk-tag>
+              </ng-container>
+            </ng-container>
+          </ng-template>
+        </govuk-table>
+        <a
+          *ngIf="(store.isEditable$ | async) === true"
+          govukLink
+          [routerLink]="['../../measurement/category-tier', (sourceStreamCategoryAppliedTiers$ | async)?.length]"
+        >
+          Add a source stream category
+        </a>
+      </ng-container>
+
+      <ng-template #addNew>
+        <li
+          *ngIf="(store.isEditable$ | async) === true"
+          app-task-item
+          link="../../measurement/category-tier/0"
+          linkText="Add a source stream category"
+          [status]="sourceStreamCategoriesStatus$ | async"
+        ></li>
+      </ng-template>
+    </div>
+  </ul>
+
+  <h2 class="govuk-heading-m">Measurement details</h2>
+
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="../../measurement/description/summary"
+      linkText="Approach description"
+      [status]="'MEASUREMENT_Description' | taskStatus | async"
+    >
+      <app-measurement-approach-description-summary-template
+        [hasBottomBorder]="false"
+      ></app-measurement-approach-description-summary-template>
+    </li>
+    <li
+      app-task-item
+      link="../../measurement/emissions/summary"
+      linkText="Determination of emissions by measurement"
+      [status]="'MEASUREMENT_Emission' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.MEASUREMENT.emissionDetermination' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../measurement/reference/summary"
+      linkText="Determination of reference period"
+      [status]="'MEASUREMENT_Reference' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.MEASUREMENT.referencePeriodDetermination' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../measurement/gasflow/summary"
+      linkText="Calculation of gas flow"
+      [status]="'MEASUREMENT_Gasflow' | taskStatus | async"
+    >
+      <app-measurement-optional-summary-template
+        [procedureOptionalForm]="
+          'monitoringApproaches.MEASUREMENT.gasFlowCalculation' | taskProcedureOptionalForm | async
+        "
+        [taskKey]="'monitoringApproaches.MEASUREMENT.gasFlowCalculation'"
+        [hasBottomBorder]="false"
+      ></app-measurement-optional-summary-template>
+    </li>
+    <li
+      app-task-item
+      link="../../measurement/biomass/summary"
+      linkText="Biomass emissions"
+      [status]="'MEASUREMENT_Biomass' | taskStatus | async"
+    >
+      <app-measurement-optional-summary-template
+        [procedureOptionalForm]="
+          'monitoringApproaches.MEASUREMENT.biomassEmissions' | taskProcedureOptionalForm | async
+        "
+        [taskKey]="'monitoringApproaches.MEASUREMENT.biomassEmissions'"
+        [hasBottomBorder]="false"
+      ></app-measurement-optional-summary-template>
+    </li>
+    <li
+      app-task-item
+      link="../../measurement/corroborating/summary"
+      linkText="Corroborating calculations"
+      [status]="'MEASUREMENT_Corroborating' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.MEASUREMENT.corroboratingCalculations' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      ></app-procedure-form-summary>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

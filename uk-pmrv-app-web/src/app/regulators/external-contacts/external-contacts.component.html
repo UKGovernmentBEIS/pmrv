@@ -1,0 +1,32 @@
+<button
+  (click)="router.navigate(['external-contacts', 'add'], { relativeTo: route })"
+  *ngIf="isEditable$ | async"
+  govukButton
+  type="button"
+>
+  Add an external contact
+</button>
+
+<govuk-table
+  (sort)="sorting$.next($event)"
+  [columns]="(isEditable$ | async) ? editableColumns : nonEditableColumns"
+  [data]="contacts$ | async"
+>
+  <ng-template let-column="column" let-row="row">
+    <ng-container [ngSwitch]="column.field">
+      <ng-container *ngSwitchCase="'name'">
+        <a *ngIf="isEditable$ | async; else bareField" [routerLink]="['external-contacts', row.id]" govukLink>
+          {{ row[column.field] }}
+        </a>
+      </ng-container>
+      <ng-container *ngSwitchCase="'email'">
+        <a govukLink href="mailto:{{ row[column.field] }}">{{ row[column.field] }}</a>
+      </ng-container>
+      <ng-container *ngSwitchCase="null">
+        <a [routerLink]="['external-contacts', row.id, 'delete']" govukLink>Delete</a>
+      </ng-container>
+      <ng-container *ngSwitchDefault>{{ row[column.field] }}</ng-container>
+      <ng-template #bareField>{{ row[column.field] }}</ng-template>
+    </ng-container>
+  </ng-template>
+</govuk-table>

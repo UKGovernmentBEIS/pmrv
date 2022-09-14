@@ -1,0 +1,28 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    submitText="Continue"
+    caption="Calculation"
+    heading="Sampling analysis"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-boolean-radio-group
+      controlName="exist"
+      legend="Do you undertake sampling and analysis of any of the parameters used in the calculation of your CO2 emissions?"
+    >
+      <div govukConditionalContent>
+        <app-procedure-form formGroupName="analysis">
+          <div class="govuk-body">
+            <p>
+              Provide details about the methods to be used for analysing fuels and materials for the determination of
+              all relevant calculation factors where applicable to the selected tier.
+            </p>
+          </div>
+        </app-procedure-form>
+      </div>
+    </app-boolean-radio-group>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Calculation approach" reviewGroupUrl="calculation"></app-approach-return-link>
+</app-permit-task>

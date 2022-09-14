@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        logicalFilePath="v0.1.0/changelog_aer.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_CREATE_AER_SEQUENCE" author="P70383">
+        <createSequence sequenceName="aer_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS aer_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CREATE_AER_TABLE" author="P70383">
+        <comment>Create aer TABLE</comment>
+        <createTable tableName="aer" remarks="Represents an aer">
+            <column name="id" type="varchar(20)" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="aer_pk" nullable="false"/>
+            </column>
+            <column name="data" type="jsonb" remarks="aer representation as json">
+                <constraints nullable="false" />
+            </column>
+            <column name="account_id" type="bigint" remarks="The aer's account id">
+                <constraints nullable="false" />
+            </column>
+            <column name="year" type="int" remarks="The aer's year">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS aer CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

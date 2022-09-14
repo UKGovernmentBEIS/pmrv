@@ -1,0 +1,32 @@
+<app-permit-task
+  [notification]="notification"
+  [breadcrumb]="true"
+  reviewGroupTitle="Fuels and equipment inventory"
+  reviewGroupUrl="fuels"
+>
+  <app-page-heading caption="Fuels and equipment inventory">Source streams (fuels and materials)</app-page-heading>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">List of source streams</span>
+  </h2>
+
+  <dl *ngFor="let sourceStream of 'sourceStreams' | task | async" appGroupedSummaryList govuk-summary-list>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Source stream</dt>
+      <dd govukSummaryListRowValue>
+        {{ sourceStream.reference }}
+        {{ sourceStream | sourceStreamDescription }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Type</dt>
+      <dd govukSummaryListRowValue>{{ sourceStream.type | sourceStreamType }}</dd>
+    </div>
+  </dl>
+
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

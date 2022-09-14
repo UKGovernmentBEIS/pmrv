@@ -1,0 +1,114 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Calculation approach">
+  <app-site-emissions></app-site-emissions>
+
+  <h2 class="govuk-heading-m">Calculation emission sources</h2>
+
+  <ul app-task-item-list>
+    <div class="overflow-auto">
+      <ng-container *ngIf="(sourceStreamCategoryAppliedTiers$ | async)?.length > 0; else addNew">
+        <govuk-table [columns]="columns" [data]="sourceStreamCategoryAppliedTiers$ | async">
+          <ng-template let-column="column" let-row="row" let-index="index">
+            <ng-container [ngSwitch]="column.field">
+              <ng-container *ngSwitchCase="'category'">
+                <a govukLink [routerLink]="['../../calculation/category-tier', index]">
+                  <ng-container
+                    *ngIf="
+                      row?.sourceStreamCategory?.sourceStream | findSourceStream | async as sourceStream;
+                      else noSourceStream
+                    "
+                  >
+                    {{ sourceStream | tierSourceStreamName: row.sourceStreamCategory }}
+                  </ng-container>
+                  <ng-template #noSourceStream>
+                    UNDEFINED: {{ row?.sourceStreamCategory?.categoryType | categoryTypeName }}
+                  </ng-template>
+                </a>
+              </ng-container>
+              <ng-container *ngSwitchCase="'emissions'">
+                {{ row?.sourceStreamCategory?.annualEmittedCO2Tonnes | number }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'activityData'">
+                {{ (row?.activityData?.tier | appliedTier) ?? notUsed }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'netCalorificValue'">
+                {{ (row?.netCalorificValue?.tier | appliedTier) ?? notUsed }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'emissionFactor'">
+                {{ (row?.emissionFactor?.tier | appliedTier) ?? notUsed }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'oxidationFactor'">
+                {{ (row?.oxidationFactor?.tier | appliedTier) ?? notUsed }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'carbonContent'">
+                {{ (row?.carbonContent?.tier | appliedTier) ?? notUsed }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'conversionFactor'">
+                {{ (row?.conversionFactor?.tier | appliedTier) ?? notUsed }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'biomassFraction'">
+                {{ (row?.biomassFraction?.tier | appliedTier) ?? notUsed }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'status'">
+                <govuk-tag
+                  [color]="'CALCULATION_Category_Tier' | taskStatus: index | async | tagColor"
+                  class="app-task-list__tag"
+                >
+                  {{ 'CALCULATION_Category_Tier' | taskStatus: index | async | i18nSelect: statusMap }}
+                </govuk-tag>
+              </ng-container>
+            </ng-container>
+          </ng-template>
+        </govuk-table>
+        <a
+          *ngIf="(store.isEditable$ | async) === true"
+          govukLink
+          [routerLink]="['../../calculation/category-tier', (sourceStreamCategoryAppliedTiers$ | async)?.length]"
+        >
+          Add a source stream category
+        </a>
+      </ng-container>
+
+      <ng-template #addNew>
+        <li
+          *ngIf="(store.isEditable$ | async) === true"
+          app-task-item
+          link="../../calculation/category-tier/0"
+          linkText="Add a source stream category"
+          [status]="sourceStreamCategoriesStatus$ | async"
+        ></li>
+      </ng-template>
+    </div>
+  </ul>
+
+  <h2 class="govuk-heading-m">Calculation details</h2>
+
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="../../calculation/description/summary"
+      linkText="Approach description"
+      [status]="'CALCULATION_Description' | taskStatus | async"
+    >
+      <app-calculation-approach-description-summary-template
+        [hasBottomBorder]="false"
+      ></app-calculation-approach-description-summary-template>
+    </li>
+    <li
+      app-task-item
+      link="../../calculation/sampling-plan/summary"
+      linkText="Sampling plan"
+      [status]="'CALCULATION_Plan' | taskStatus | async"
+    >
+      <app-calculation-plan-summary-details
+        *ngIf="('CALCULATION_Plan' | taskStatus | async) === 'complete'"
+        [changePerStage]="false"
+        [hasBottomBorder]="false"
+      ></app-calculation-plan-summary-details>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

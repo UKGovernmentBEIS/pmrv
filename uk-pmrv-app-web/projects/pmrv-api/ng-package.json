@@ -1,0 +1,8 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/pmrv-api",
+  "keepLifecycleScripts": true,
+  "lib": {
+    "entryFile": "src/lib/index.ts"
+  }
+}

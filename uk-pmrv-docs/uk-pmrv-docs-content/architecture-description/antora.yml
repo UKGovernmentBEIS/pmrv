@@ -1,0 +1,18 @@
+name: architecture-description
+title: Architecture Description
+version: 1.0
+start_page: introduction:index.adoc
+nav:
+  - modules/introduction/nav.adoc
+  - modules/context/nav.adoc
+  - modules/constraints/nav.adoc
+  - modules/principles/nav.adoc
+  - modules/non-functional-view/nav.adoc
+  - modules/logical-view/nav.adoc
+  - modules/interface-view/nav.adoc
+  - modules/design-view/nav.adoc
+  - modules/data-view/nav.adoc
+  - modules/infrastructure-view/nav.adoc
+  - modules/environment-initialization/nav.adoc
+  - modules/development_flow_and_branching_model/nav.adoc
+  - modules/technologies/nav.adoc

@@ -1,0 +1,29 @@
+<div class="govuk-form-group">
+  <label [for]="identifier" [id]="'l.' + identifier" class="govuk-label">
+    {{ label }}
+  </label>
+  <span *ngIf="hint" [id]="identifier + '-hint'" class="govuk-hint">
+    {{ hint }}
+  </span>
+  <select
+    (blur)="onBlur()"
+    (change)="onChange($event)"
+    [attr.aria-controls]="conditionalId"
+    [attr.aria-expanded]="currentValue === 'OTHER'"
+    [attr.name]="identifier"
+    [formControl]="control"
+    [id]="identifier"
+    [ngClass]="widthClass"
+    class="govuk-select"
+    govukFormError
+  >
+    <ng-content></ng-content>
+  </select>
+</div>
+<div
+  [class.govuk-checkboxes__conditional--hidden]="currentValue !== 'OTHER'"
+  [id]="conditionalId"
+  class="govuk-checkboxes__conditional"
+>
+  <ng-content select="[govukConditionalContent]"></ng-content>
+</div>

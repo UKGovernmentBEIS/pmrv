@@ -1,0 +1,27 @@
+<ng-container *ngIf="data$ | async as data">
+  <govuk-error-summary *ngIf="displayErrorSummary$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading size="l">{{ (route.data | async)?.pageTitle }}</app-page-heading>
+  <p class="govuk-body">The following notes are from the regulator explaining the things you need to change.</p>
+  <app-follow-up-summary
+    class="govuk-!-display-block govuk-!-margin-bottom-8"
+    [data]="data"
+    [summaryListMapper]="summaryListMapper"
+  ></app-follow-up-summary>
+  <form
+    (ngSubmit)="submit()"
+    [formGroup]="form"
+    *ngIf="!data.followUpSectionsCompleted?.AMENDS_NEEDED && (isEditable$ | async)"
+  >
+    <div formControlName="changes" govuk-checkboxes>
+      <ng-container govukLegend>
+        <span class="govuk-visually-hidden">I have made changes and want to mark this task as complete</span>
+      </ng-container>
+      <govuk-checkbox
+        [value]="true"
+        label="I have made changes and want to mark this task as complete"
+      ></govuk-checkbox>
+    </div>
+    <button appPendingButton govukButton type="submit">Confirm and Complete</button>
+  </form>
+  <a govukLink routerLink="../">Return to: Follow up response to a notification</a>
+</ng-container>

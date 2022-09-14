@@ -1,0 +1,65 @@
+<h2
+  *ngIf="changePerStage"
+  app-summary-header
+  (changeClick)="changeClick('')"
+  [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+  class="govuk-heading-m"
+>
+  <span class="govuk-visually-hidden">Any transferred CO2 chemically bound in precipitated calcium carbonate</span>
+</h2>
+
+<ng-container *ngIf="emissionFactor?.exist !== null">
+  <dl
+    govuk-summary-list
+    [class]="cssClass"
+    [hasBorders]="false"
+    [class.summary-list--edge-border]="hasBottomBorder || emissionFactor?.exist"
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>
+        Is a tier 2 emission factor being applied to any of your Perfluorocarbon source streams?
+      </dt>
+      <dd govukSummaryListRowValue>
+        {{ emissionFactor?.exist ? 'Yes' : 'No' }}
+      </dd>
+    </div>
+  </dl>
+</ng-container>
+
+<ng-container *ngIf="emissionFactor?.exist">
+  <ng-container *ngIf="changePerStage; else scheduleMeasurements">
+    <h2
+      app-summary-header
+      (changeClick)="changeClick('schedule-measurements')"
+      [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+      class="govuk-heading-m"
+    >
+      <span>Schedule of measurements</span>
+    </h2>
+  </ng-container>
+  <ng-template #scheduleMeasurements>
+    <h3 class="govuk-heading-s">Schedule of measurements</h3>
+  </ng-template>
+  <app-procedure-form-summary
+    [details]="emissionFactor.scheduleMeasurements"
+    [class]="cssClass"
+  ></app-procedure-form-summary>
+  <ng-container *ngIf="changePerStage; else determinationInstallation">
+    <h2
+      app-summary-header
+      (changeClick)="changeClick('determination-installation')"
+      [changeRoute]="(store.isEditable$ | async) === true ? '.' : undefined"
+      class="govuk-heading-m"
+    >
+      <span>Determination of installation specific emission factors</span>
+    </h2>
+  </ng-container>
+  <ng-template #determinationInstallation>
+    <h3 class="govuk-heading-s">Determination of installation specific emission factors</h3>
+  </ng-template>
+  <app-procedure-form-summary
+    [details]="emissionFactor.determinationInstallation"
+    [class]="cssClass"
+    [hasBottomBorder]="hasBottomBorder"
+  ></app-procedure-form-summary>
+</ng-container>

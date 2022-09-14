@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0o9k979" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.1.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="PROCESS_APPLICATION_AMENDS" name="Process Amends Needed" isExecutable="true">
+    <bpmn:startEvent id="Event_0pj6y8s">
+      <bpmn:outgoing>Flow_1g70epv</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:parallelGateway id="Gateway_16ppoex">
+      <bpmn:incoming>Flow_1g70epv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pz02k1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_01l6r9g</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:endEvent id="Event_0cptmra">
+      <bpmn:incoming>Flow_0npd9d6</bpmn:incoming>
+      <bpmn:incoming>Flow_107j1d9</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0xlx6gf" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1g70epv" sourceRef="Event_0pj6y8s" targetRef="Gateway_16ppoex" />
+    <bpmn:sequenceFlow id="Flow_0pz02k1" sourceRef="Gateway_16ppoex" targetRef="WAIT_FOR_AMENDS" />
+    <bpmn:sequenceFlow id="Flow_01l6r9g" sourceRef="Gateway_16ppoex" targetRef="APPLICATION_AMENDS_SUBMIT" />
+    <bpmn:userTask id="WAIT_FOR_AMENDS" name="Regulator: Wait for Amends">
+      <bpmn:incoming>Flow_0pz02k1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0npd9d6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0npd9d6" sourceRef="WAIT_FOR_AMENDS" targetRef="Event_0cptmra" />
+    <bpmn:userTask id="APPLICATION_AMENDS_SUBMIT" name="Operator: Submit amends">
+      <bpmn:incoming>Flow_01l6r9g</bpmn:incoming>
+      <bpmn:outgoing>Flow_107j1d9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_107j1d9" sourceRef="APPLICATION_AMENDS_SUBMIT" targetRef="Event_0cptmra" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PROCESS_APPLICATION_AMENDS">
+      <bpmndi:BPMNEdge id="Flow_107j1d9_di" bpmnElement="Flow_107j1d9">
+        <di:waypoint x="480" y="280" />
+        <di:waypoint x="550" y="280" />
+        <di:waypoint x="550" y="208" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0npd9d6_di" bpmnElement="Flow_0npd9d6">
+        <di:waypoint x="480" y="100" />
+        <di:waypoint x="550" y="100" />
+        <di:waypoint x="550" y="172" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01l6r9g_di" bpmnElement="Flow_01l6r9g">
+        <di:waypoint x="300" y="215" />
+        <di:waypoint x="300" y="280" />
+        <di:waypoint x="380" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pz02k1_di" bpmnElement="Flow_0pz02k1">
+        <di:waypoint x="300" y="165" />
+        <di:waypoint x="300" y="100" />
+        <di:waypoint x="380" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1g70epv_di" bpmnElement="Flow_1g70epv">
+        <di:waypoint x="188" y="190" />
+        <di:waypoint x="275" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0pj6y8s_di" bpmnElement="Event_0pj6y8s">
+        <dc:Bounds x="152" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_16ppoex_di" bpmnElement="Gateway_16ppoex">
+        <dc:Bounds x="275" y="165" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0cptmra_di" bpmnElement="Event_0cptmra">
+        <dc:Bounds x="532" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1goyti1_di" bpmnElement="WAIT_FOR_AMENDS">
+        <dc:Bounds x="380" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fkmay8_di" bpmnElement="APPLICATION_AMENDS_SUBMIT">
+        <dc:Bounds x="380" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

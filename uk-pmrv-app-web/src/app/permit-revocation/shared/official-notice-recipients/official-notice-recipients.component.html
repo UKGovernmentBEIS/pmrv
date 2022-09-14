@@ -1,0 +1,53 @@
+<ng-container *ngIf="noticeRecipientsData">
+  <h2 app-summary-header class="govuk-heading-m govuk-!-margin-top-9">Official notice recipients</h2>
+  <dl govuk-summary-list appGroupedSummaryList class="govuk-!-margin-bottom-6">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Users</dt>
+      <dd govukSummaryListRowValue>
+        <div *ngFor="let user of operators">
+          {{ user | userInfoResolver: noticeRecipientsData.usersInfo }}
+        </div>
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Name and signature on the official notice</dt>
+      <dd govukSummaryListRowValue>
+        {{ signatory | userInfoResolver: noticeRecipientsData.usersInfo }}
+      </dd>
+    </div>
+    <div govukSummaryListRow *ngIf="noticeRecipientsData.officialNotice as officialNotice">
+      <dt govukSummaryListRowKey>Official notice</dt>
+      <dd govukSummaryListRowValue>
+        <a
+          [routerLink]="[
+            '/permit-revocation/action',
+            noticeRecipientsData.requestActionId,
+            'file-download',
+            'document',
+            officialNotice.uuid
+          ]"
+          govukLink
+          target="_blank"
+          >{{ officialNotice.name }}</a
+        >
+      </dd>
+    </div>
+    <div govukSummaryListRow *ngIf="noticeRecipientsData.withdrawnOfficialNotice as withdrawnOfficialNotice">
+      <dt govukSummaryListRowKey>Official notice</dt>
+      <dd govukSummaryListRowValue>
+        <a
+          [routerLink]="[
+            '/permit-revocation/action',
+            noticeRecipientsData.requestActionId,
+            'file-download',
+            'document',
+            withdrawnOfficialNotice.uuid
+          ]"
+          govukLink
+          target="_blank"
+          >{{ withdrawnOfficialNotice.name }}</a
+        >
+      </dd>
+    </div>
+  </dl>
+</ng-container>

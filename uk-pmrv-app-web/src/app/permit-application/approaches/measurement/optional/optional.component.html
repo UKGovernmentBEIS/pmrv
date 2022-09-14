@@ -1,0 +1,45 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Measurement"
+    [heading]="taskKey$ | async | i18nSelect: headingMap"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-boolean-radio-group
+      controlName="exist"
+      [legend]="
+        (taskKey$ | async) === 'monitoringApproaches.MEASUREMENT.gasFlowCalculation'
+          ? 'Is gas flow determined by calculation?'
+          : 'Is CO2 produced from biomass included in emissions measurements?'
+      "
+    >
+      <div govukConditionalContent>
+        <app-procedure-form formGroupName="procedureForm">
+          <ng-container [ngSwitch]="taskKey$ | async">
+            <ng-container *ngSwitchCase="'monitoringApproaches.MEASUREMENT.gasFlowCalculation'">
+              <div class="govuk-body">
+                <h2>Provide gas flow details</h2>
+                <p>Provide details of the procedures used for this calculation for each relevant emission source</p>
+                <p>Get help with <a [routerLink]="" govukLink>Calculation of gas flow</a>.</p>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="'monitoringApproaches.MEASUREMENT.biomassEmissions'">
+              <div class="govuk-body">
+                <h2>Biomass emissions deduction</h2>
+                <p>
+                  Provide details about the procedure of how biomass CO2 is determined and subtracted from the measured
+                  CO2 emissions.
+                </p>
+                <p>Get help with <a [routerLink]="" govukLink>Biomass emissions</a>.</p>
+              </div>
+            </ng-container>
+          </ng-container>
+        </app-procedure-form>
+      </div>
+    </app-boolean-radio-group>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Measurement" reviewGroupUrl="measurement"></app-approach-return-link>
+</app-permit-task>

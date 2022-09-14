@@ -1,0 +1,17 @@
+<dl *ngIf="(hasAttachments$ | async) === false; else attachments" govuk-summary-list [class]="cssClass">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Site Diagram</dt>
+    <dd govukSummaryListRowValue>No</dd>
+  </div>
+</dl>
+<ng-template #attachments>
+  <dl govuk-summary-list [class]="cssClass">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Site Diagram</dt>
+      <dd govukSummaryListRowValue>
+        <app-summary-download-files [files]="store.getDownloadUrlFiles(task$ | async)">
+        </app-summary-download-files>
+      </dd>
+    </div>
+  </dl>
+</ng-template>

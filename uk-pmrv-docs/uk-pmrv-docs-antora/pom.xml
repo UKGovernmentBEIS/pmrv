@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>uk.gov.pmrv</groupId>
+	<artifactId>uk-pmrv-docs-content</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>uk-pmrv-docs-asciidoc</name>
+	<description>UK PMRV Asciidoc Documentation</description>
+	
+	<properties>
+  		<maven.build.timestamp.format>EEEE, dd MMMM yyyy</maven.build.timestamp.format>
+	</properties>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>5.2.1</version>
+				<executions>
+					<execution>
+						<id>generate-ascii-docs</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<globalProperties>
+								<apiDocs>true</apiDocs>
+								<apiModels>true</apiModels>
+								<apiTests>false</apiTests>
+								<modelTests>false</modelTests>
+								<verbose>false</verbose>
+							</globalProperties>
+							<inputSpec>../pmrv-api.json</inputSpec>
+							<output>../swagger</output>
+							<generatorName>asciidoc</generatorName>
+							<generateApiDocumentation>true</generateApiDocumentation>
+							<generateModelDocumentation>true</generateModelDocumentation>
+							<generateSupportingFiles>true</generateSupportingFiles>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>${project.artifactId}</artifactId>
+							<configOptions>
+								<useIntroduction>true</useIntroduction>
+								<delegatePattern>false</delegatePattern>
+								<useMethodAndPath>false</useMethodAndPath>
+								<prependFormOrBodyParameters>false</prependFormOrBodyParameters>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

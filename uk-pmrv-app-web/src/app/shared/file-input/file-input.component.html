@@ -1,0 +1,24 @@
+<div class="moj-multi-file-upload moj-multi-file-upload--enhanced">
+  <app-file-upload-list
+    [listTitle]="listTitle"
+    (fileDelete)="onFileDeleteClick()"
+    [files]="uploadedFiles$ | async"
+    [isDisabled]="isDisabled"
+  ></app-file-upload-list>
+
+  <label [for]="id" class="govuk-label">{{ label }}</label>
+  <span *ngIf="hint" [id]="id + '-hint'" class="govuk-hint">{{ hint }}</span>
+  <govuk-error-message *ngIf="shouldDisplayErrors" [errors]="control.errors" [identifier]="id"> </govuk-error-message>
+  <input
+    #input
+    (blur)="onFileBlur()"
+    (change)="onFileChange($event)"
+    [accept]="accepted"
+    [class.govuk-file-upload--error]="shouldDisplayErrors"
+    [disabled]="isDisabled"
+    [id]="id"
+    [name]="id"
+    class="govuk-file-upload"
+    type="file"
+  />
+</div>

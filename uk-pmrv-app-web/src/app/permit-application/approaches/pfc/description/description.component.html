@@ -1,0 +1,19 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Perfluorocarbons"
+    heading="Approach description"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div
+      formControlName="approachDescription"
+      govuk-textarea
+      [maxLength]="30000"
+      label="Describe the approach used to determine perfluorocarbons (PFC) emissions and to convert these to annual carbon dioxide equivalent (CO2e) emissions"
+    ></div>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Perfluorocarbons" reviewGroupUrl="pfc"></app-approach-return-link>
+</app-permit-task>

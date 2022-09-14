@@ -1,0 +1,162 @@
+<h2 class="govuk-heading-m">Operator confirmation of responsibility</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>
+      The applicant has confirmed that the legal entity holding the permit undertakes to comply with these conditions
+    </dt>
+    <dd govukSummaryListRowValue>
+      <ul class="unstyled-list">
+        <li>
+          Manage site operations through having day-to-day control of plant operation including the manner and rate of
+          operation
+        </li>
+        <li>Ensure that permit conditions are effectively complied with</li>
+        <li>Control, monitor and report specified emissions</li>
+      </ul>
+    </dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  class="govuk-heading-m"
+  [changeRoute]="taskId ? ['/installation-account', taskId, 'application', 'legal-entity'] : null"
+>
+  Identity of the legal entity operating the permit
+</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>New or existing organisation</dt>
+    <dd govukSummaryListRowValue>{{ item.legalEntity.id ? 'Existing' : 'New' }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Type of the operator</dt>
+    <dd govukSummaryListRowValue>{{ item.legalEntity.type | i18nSelect: legalEntityTypeMap }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Name of the operator</dt>
+    <dd govukSummaryListRowValue>{{ item.legalEntity.name }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Company registration number</dt>
+    <dd govukSummaryListRowValue>
+      {{ item.legalEntity.referenceNumber || item.legalEntity.noReferenceNumberReason }}
+    </dd>
+  </div>
+  <ng-container
+    *ngIf="item.legalEntity.address"
+    [ngTemplateOutletContext]="{ $implicit: item.legalEntity.address }"
+    [ngTemplateOutlet]="address"
+  >
+  </ng-container>
+</dl>
+
+<h2 class="govuk-heading-m">Installation details type</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Installation type</dt>
+    <dd govukSummaryListRowValue>{{ item.location.type | titlecase }}</dd>
+  </div>
+</dl>
+
+<h2
+  app-summary-header
+  class="govuk-heading-m"
+  [changeRoute]="
+    taskId ? ['/installation-account', taskId, 'application', 'installation', item.location.type | lowercase] : null
+  "
+>
+  Installation details for {{ item.location.type | titlecase }}
+</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <ng-container *ngIf="item.location.type === 'ONSHORE'; else offshoreDetails">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Installation name</dt>
+      <dd govukSummaryListRowValue>{{ item.name }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Site name</dt>
+      <dd govukSummaryListRowValue>{{ item.siteName }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>UK Ordnance Survey grid reference</dt>
+      <dd govukSummaryListRowValue>{{ item.location?.gridReference }}</dd>
+    </div>
+    <ng-container
+      *ngIf="item.location.address"
+      [ngTemplateOutletContext]="{ $implicit: item.location.address }"
+      [ngTemplateOutlet]="address"
+    >
+    </ng-container>
+  </ng-container>
+  <ng-template #offshoreDetails>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Installation name</dt>
+      <dd govukSummaryListRowValue>{{ item.name }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Site name</dt>
+      <dd govukSummaryListRowValue>{{ item.siteName }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Latitude</dt>
+      <dd govukSummaryListRowValue>{{ item.location.latitude | coordinate }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Longitude</dt>
+      <dd govukSummaryListRowValue>{{ item.location.longitude | coordinate }}</dd>
+    </div>
+  </ng-template>
+</dl>
+
+<ng-container *ngIf="item.location.type === 'ONSHORE'">
+  <h2 class="govuk-heading-m">Installation details location</h2>
+  <dl govuk-summary-list class="govuk-!-margin-bottom-9">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Location of the installation</dt>
+      <dd govukSummaryListRowValue>{{ item.competentAuthority | competentAuthorityLocation }}</dd>
+    </div>
+  </dl>
+</ng-container>
+
+<h2
+  app-summary-header
+  class="govuk-heading-m"
+  [changeRoute]="taskId ? ['/installation-account', taskId, 'application', 'ets-scheme'] : null"
+>
+  ETS scheme
+</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Emissions trading scheme which the installation will be part of</dt>
+    <dd govukSummaryListRowValue>{{ item.emissionTradingScheme | etsScheme }}</dd>
+  </div>
+</dl>
+
+<h2 class="govuk-heading-m">Estimated date on which Annex 1 activities will commence</h2>
+<dl govuk-summary-list class="govuk-!-margin-bottom-9">
+  <div class="govuk-summary-list__row--no-border" govukSummaryListRow>
+    <dt govukSummaryListRowKey>What is the date of commencement of Annex 1 activities?</dt>
+    <dd govukSummaryListRowValue>{{ item.commencementDate | govukDate }}</dd>
+  </div>
+</dl>
+<hr class="govuk-!-margin-bottom-6" />
+
+<ng-template #address let-address>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Address</dt>
+    <dd govukSummaryListRowValue>{{ address.line1 }}<span *ngIf="address.line2">,</span> {{ address.line2 }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Town or city</dt>
+    <dd govukSummaryListRowValue>{{ address.city }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Country</dt>
+    <dd govukSummaryListRowValue>{{ address.country | country }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Post code</dt>
+    <dd govukSummaryListRowValue>{{ address.postcode }}</dd>
+  </div>
+</ng-template>

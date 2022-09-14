@@ -1,0 +1,8 @@
+* xref:index.adoc[Interface view]
+** xref:pmrv-api.adoc[PMRV API]
+** xref:internal-keycloak-api.adoc[Keycloak API]
+** xref:external-apis.adoc[External Interfaces]
+*** xref:gov-uk-pay.adoc[GOV-UK Pay API]
+*** xref:pwnedpasswords.adoc[Password Check API]
+*** xref:clamav-api.adoc[ClamAV API]
+*** xref:mail-api.adoc[Mail API]

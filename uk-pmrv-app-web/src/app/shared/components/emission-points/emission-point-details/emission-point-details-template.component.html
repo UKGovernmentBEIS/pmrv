@@ -1,0 +1,27 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  [heading]="isEditing ? 'Edit emission point' : 'Add an emission point'"
+  caption="Fuels and equipment inventory"
+  submitText="Save and continue"
+>
+  <p class="govuk-body">
+    Add an emission point that emits greenhouse gases at the installation (for example exhaust outlets, stacks and
+    vents)
+  </p>
+  <govuk-details summary="What is an emission point">TBD</govuk-details>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-third">
+      <div formControlName="reference" govuk-text-input hint="For example, ‘EP1’" label="Reference"></div>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+      <div
+        formControlName="description"
+        govuk-text-input
+        hint="For example, ‘west side chimney'"
+        label="Description"
+      ></div>
+    </div>
+  </div>
+</app-wizard-step>
+<a govukLink routerLink="..">Return to: Emission points</a>

@@ -1,0 +1,117 @@
+<app-permit-task [breadcrumb]="true">
+  <app-page-heading caption="Monitoring approaches">Measurement approach</app-page-heading>
+
+  <div class="govuk-body">
+    <p>
+      A measurement-based approach determines emissions from emission sources by continuously measuring the
+      concentration of relevant greenhouse gas in the flue gas and of the flue-gas flow, including the monitoring of CO2
+      transfers between installations where the CO2 concentration and the flow of the transferred gas are measured.
+    </p>
+    <p>Get help with <a [routerLink]="" govukLink>source stream categories</a>.</p>
+  </div>
+
+  <app-site-emissions></app-site-emissions>
+
+  <h2 class="govuk-heading-m">Measurement source stream categories</h2>
+  <ul app-task-item-list>
+    <ng-container *ngIf="(sourceStreamCategoryAppliedTiers$ | async)?.length > 0; else addNew">
+      <div class="overflow-auto">
+        <govuk-table [columns]="columns" [data]="sourceStreamCategoryAppliedTiers$ | async">
+          <ng-template let-column="column" let-row="row" let-index="index">
+            <ng-container [ngSwitch]="column.field">
+              <ng-container *ngSwitchCase="'category'">
+                <a govukLink [routerLink]="['./category-tier', index]">
+                  <ng-container
+                    *ngIf="
+                      row?.sourceStreamCategory?.sourceStream | findSourceStream | async as sourceStream;
+                      else noSourceStream
+                    "
+                  >
+                    {{ sourceStream.reference }}
+                    {{ sourceStream | sourceStreamDescription }}:
+                    {{ row?.sourceStreamCategory?.categoryType | categoryTypeName }}
+                  </ng-container>
+                  <ng-template #noSourceStream>
+                    UNDEFINED: {{ row?.sourceStreamCategory?.categoryType | categoryTypeName }}
+                  </ng-template>
+                </a>
+              </ng-container>
+              <ng-container *ngSwitchCase="'emissions'">
+                {{ row?.sourceStreamCategory?.annualEmittedCO2Tonnes | number }} t ({{
+                  (row?.sourceStreamCategory?.annualEmittedCO2Tonnes ?? 0) / (sumOfAnnualEmitted$ | async) | percent
+                }})
+              </ng-container>
+              <ng-container *ngSwitchCase="'status'">
+                <govuk-tag
+                  [color]="'MEASUREMENT_Category_Tier' | taskStatus: index | async | tagColor"
+                  class="app-task-list__tag"
+                >
+                  {{ 'MEASUREMENT_Category_Tier' | taskStatus: index | async | i18nSelect: statusMap }}
+                </govuk-tag>
+              </ng-container>
+            </ng-container>
+          </ng-template>
+        </govuk-table>
+      </div>
+      <a
+        *ngIf="(store.isEditable$ | async) === true"
+        govukLink
+        [routerLink]="['category-tier', (sourceStreamCategoryAppliedTiers$ | async)?.length]"
+      >
+        Add a source stream category
+      </a>
+    </ng-container>
+
+    <ng-template #addNew>
+      <li
+        *ngIf="(store.isEditable$ | async) === true"
+        app-task-item
+        link="category-tier/0"
+        linkText="Add a source stream category"
+        [status]="sourceStreamCategoriesStatus$ | async"
+      ></li>
+    </ng-template>
+  </ul>
+
+  <h2 class="govuk-heading-m">Measurement approach details</h2>
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="./description/summary"
+      linkText="Approach description"
+      [status]="'MEASUREMENT_Description' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./emissions/summary"
+      linkText="Determination of emissions by measurement"
+      [status]="'MEASUREMENT_Emission' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./reference/summary"
+      linkText="Determination of reference period"
+      [status]="'MEASUREMENT_Reference' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./gasflow/summary"
+      linkText="Calculation of gas flow"
+      [status]="'MEASUREMENT_Gasflow' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./biomass/summary"
+      linkText="Biomass emissions"
+      [status]="'MEASUREMENT_Biomass' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./corroborating/summary"
+      linkText="Corroborating calculations"
+      [status]="'MEASUREMENT_Corroborating' | taskStatus | async"
+    ></li>
+  </ul>
+
+  <app-list-return-link></app-list-return-link>
+</app-permit-task>

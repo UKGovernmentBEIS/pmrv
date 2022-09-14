@@ -1,0 +1,54 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    submitText="Continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <span class="govuk-caption-l">Grant</span>
+
+    <app-page-heading>Provide annual emissions targets for the current phase</app-page-heading>
+    <div class="govuk-hint">The annual emissions targets should be sequential starting from the current year</div>
+
+    <div formArrayName="annualEmissionsTargets">
+      <fieldset
+        *ngFor="let permit of annualEmissionsTargets.controls; index as i"
+        [formGroupName]="i"
+        govukFieldset
+        id="annual-emissions-targets-{{ i }}"
+      >
+        <legend govukLegend></legend>
+        <button
+          (click)="annualEmissionsTargets.removeAt(i)"
+          *ngIf="annualEmissionsTargets.length > 1"
+          [heading]="heading"
+          appAddAnother
+          govukSecondaryButton
+          type="button"
+          #removeButton
+        >
+          Remove
+        </button>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-one-quarter">
+            <div formControlName="year" govuk-text-input label="Year"></div>
+          </div>
+          <div class="govuk-grid-column-three-quarters">
+            <div formControlName="emissions" govuk-text-input label="Emissions target for the year"></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <button
+        *ngIf="(store.isEditable$ | async) === true"
+        (click)="addOtherAnnualEmissionsTarget()"
+        govukSecondaryButton
+        type="button"
+      >
+        Add another target
+      </button>
+    </div>
+  </app-wizard-step>
+
+  <a govukLink routerLink="../..">Return to: Permit determination</a>
+</app-permit-task>

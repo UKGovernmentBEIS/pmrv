@@ -1,0 +1,61 @@
+<dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Decision</dt>
+    <dd govukSummaryListRowValue>
+      {{ decision | determinationType }}
+    </dd>
+    <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+      <a govukLink [routerLink]="['..']" [state]="{ changing: true }">Change</a>
+    </dd>
+  </div>
+</dl>
+
+<dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Reason for decision</dt>
+    <dd govukSummaryListRowValue>
+      {{ reason }}
+    </dd>
+    <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+      <a govukLink [routerLink]="['..', 'reason']" [state]="{ changing: true }">Change</a>
+    </dd>
+  </div>
+</dl>
+
+<dl *ngIf="activationDate" govuk-summary-list [class]="cssClass" [hasBorders]="false">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Permit effective date</dt>
+    <dd govukSummaryListRowValue>
+      {{ activationDate | govukDate }}
+    </dd>
+    <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+      <a govukLink [routerLink]="['..', 'activation-date']" [state]="{ changing: true }">Change</a>
+    </dd>
+  </div>
+</dl>
+
+<dl *ngIf="officialNotice" govuk-summary-list [class]="cssClass" [hasBorders]="false">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Official notice text</dt>
+    <dd govukSummaryListRowValue>
+      {{ officialNotice }}
+    </dd>
+    <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+      <a govukLink [routerLink]="['..', 'official-notice']" [state]="{ changing: true }">Change</a>
+    </dd>
+  </div>
+</dl>
+
+<dl *ngIf="annualEmissionsTargets" govuk-summary-list [class]="cssClass" [hasBorders]="false">
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Εmission targets</dt>
+    <dd govukSummaryListRowValue>
+      <div *ngFor="let emission of emissions">
+        <div>{{ emission.year }} - {{ emission.emissions }} tCO2e</div>
+      </div>
+    </dd>
+    <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+      <a govukLink [routerLink]="['..', 'emissions']" [state]="{ changing: true }">Change</a>
+    </dd>
+  </div>
+</dl>

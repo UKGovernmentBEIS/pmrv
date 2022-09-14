@@ -1,0 +1,29 @@
+<app-page-heading size="l" [caption]="(route.data | async)?.caption">{{
+  (route.data | async)?.pageTitle
+}}</app-page-heading>
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  submitText="Confirm and complete"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div formControlName="reason" label="Provide a reason" [maxLength]="10000" govuk-textarea></div>
+    </div>
+  </div>
+
+  <div class="govuk-grid-row govuk-!-margin-top-4">
+    <div class="govuk-grid-column-two-thirds">
+      <h2 class="govuk-heading-m">Upload additional evidence (optional)</h2>
+      <app-multiple-file-input
+        [baseDownloadUrl]="getDownloadUrl()"
+        [label]="(isFileUploaded$ | async) ? 'Upload a different file' : 'Upload a file (optional)'"
+        formControlName="files"
+        hint="The file must be smaller than 20MB"
+      >
+      </app-multiple-file-input>
+    </div>
+  </div>
+</app-wizard-step>
+<a govukLink routerLink="../">Return to: Withdraw permit revocation</a>

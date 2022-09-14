@@ -1,0 +1,61 @@
+<app-permit-task
+  [notification]="notification"
+  [breadcrumb]="true"
+  reviewGroupTitle="Fuels and equipment inventory"
+  reviewGroupUrl="fuels"
+>
+  <app-page-heading caption="Fuels and equipment inventory">Measurement devices or methods</app-page-heading>
+
+  <h2
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    app-summary-header
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">List of measurement devices</span>
+  </h2>
+
+  <dl
+    *ngFor="let measurementDevice of 'measurementDevicesOrMethods' | task | async"
+    govuk-summary-list
+    appGroupedSummaryList
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Reference</dt>
+      <dd govukSummaryListRowValue>{{ measurementDevice.reference }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Type of measurement device or method</dt>
+      <dd govukSummaryListRowValue>
+        {{
+          measurementDevice.type === 'OTHER'
+            ? measurementDevice.otherTypeName
+            : (measurementDevice.type | measurementDevicesType)
+        }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Measurement range</dt>
+      <dd govukSummaryListRowValue>{{ measurementDevice.measurementRange }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Metering range units</dt>
+      <dd govukSummaryListRowValue>{{ measurementDevice.meteringRangeUnits }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Specified uncertainty</dt>
+      <dd govukSummaryListRowValue>
+        {{
+          measurementDevice.uncertaintySpecified
+            ? '&#177; ' + measurementDevice.specifiedUncertaintyPercentage + ' %'
+            : 'None'
+        }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Location</dt>
+      <dd govukSummaryListRowValue>{{ measurementDevice.location }}</dd>
+    </div>
+  </dl>
+
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

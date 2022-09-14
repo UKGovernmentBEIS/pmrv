@@ -1,0 +1,25 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  [heading]="isEditing ? 'Edit emission source' : 'Add an emission source'"
+  [caption]="caption"
+  submitText="Save and continue"
+>
+  <p class="govuk-body">
+    You do not need to include certain activities that result in greenhouse gas emissions, for example truly mobile
+    sources, like vehicle emissions.
+  </p>
+  <p class="govuk-body">
+    You may need to include a fuel used in an <a govukLink href="#">excluded activity</a>, if that fuel is also part of
+    a regulated activity.
+  </p>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-third">
+      <div formControlName="reference" govuk-text-input hint="For example, ‘S1’" label="Reference"></div>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+      <div formControlName="description" govuk-text-input hint="For example, ‘Boiler‘" label="Description"></div>
+    </div>
+  </div>
+</app-wizard-step>
+<a govukLink routerLink="..">Return to: Emission sources</a>

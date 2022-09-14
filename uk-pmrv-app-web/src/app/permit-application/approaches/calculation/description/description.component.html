@@ -1,0 +1,27 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Calculation"
+    heading="Approach description"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-body">
+      <p>Include:</p>
+      <ul>
+        <li>list the relevant information needed here</li>
+      </ul>
+      <p>Get help with <a [routerLink]="" govukLink>Calculation</a>.</p>
+    </div>
+
+    <div
+      formControlName="approachDescription"
+      govuk-textarea
+      [maxLength]="30000"
+      label="Describe the calculation method used to determine the annual CO2 emissions"
+    ></div>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Calculation approach" reviewGroupUrl="calculation"></app-approach-return-link>
+</app-permit-task>

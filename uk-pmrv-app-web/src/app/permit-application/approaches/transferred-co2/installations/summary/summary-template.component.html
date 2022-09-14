@@ -1,0 +1,34 @@
+<dl
+  *ngFor="
+    let installation of ('TRANSFERRED_CO2' | monitoringApproachTask | async).receivingTransferringInstallations;
+    let i = index
+  "
+  govuk-summary-list
+  [class.summary-list--edge-border]="hasBottomBorder"
+  [hasBorders]="false"
+>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Installation type</dt>
+    <dd govukSummaryListRowValue>{{ installation.type | installationType }}</dd>
+    <dd govukSummaryListRowActions *ngIf="!preview && (store.isEditable$ | async) === true">
+      <a [routerLink]="'' + i" govukLink>Change</a> |
+      <a [routerLink]="['delete', '' + i]" govukLink>Delete</a>
+    </dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Installation identification code</dt>
+    <dd govukSummaryListRowValue>{{ installation.installationIdentificationCode }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Operator</dt>
+    <dd govukSummaryListRowValue>{{ installation.operator }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Installation name</dt>
+    <dd govukSummaryListRowValue>{{ installation.installationName }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Source of CO2</dt>
+    <dd govukSummaryListRowValue>{{ installation.co2source }}</dd>
+  </div>
+</dl>

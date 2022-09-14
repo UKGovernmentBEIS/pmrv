@@ -1,0 +1,19 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    heading="Describe in detail what you are changing and the reasons for the changes"
+    submitText="Continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div
+      formControlName="reason"
+      govuk-textarea
+      [maxLength]="10000"
+      hint="This will help the regulator to understand the changes being proposed and the reasons for these changes. Include
+      any effects of the changes on the capacity of the installation or of equipment within the installation."
+    ></div>
+  </app-wizard-step>
+
+  <app-list-return-link></app-list-return-link>
+</app-permit-task>

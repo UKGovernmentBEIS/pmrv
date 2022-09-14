@@ -1,0 +1,27 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  caption="Permit revocation"
+  heading="{{ (route.data | async)?.pageTitle }}"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <span class="govuk-hint"
+    >The cost for a permit revocation is currently {{ feeAmount$ | async | currency: 'GBP' }}</span
+  >
+  <div formControlName="feeCharged" govuk-radio>
+    <govuk-radio-option [value]="true" label="Yes">
+      <ng-container govukConditionalContent>
+        <div
+          formControlName="feeDate"
+          govuk-date-input
+          label="Set a due date for the payment"
+          hint="The date must be after the effective date of notice"
+        ></div>
+        <div govuk-textarea formControlName="feeDetails" label="Payment details" [maxLength]="10000"></div>
+      </ng-container>
+    </govuk-radio-option>
+    <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+  </div>
+</app-wizard-step>
+<a govukLink routerLink="../../">Return to: Permit revocation task list</a>

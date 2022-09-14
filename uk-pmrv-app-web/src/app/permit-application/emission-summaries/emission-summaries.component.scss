@@ -1,0 +1,13 @@
+@use '~govuk-frontend/govuk/base' as govuk;
+
+.error {
+  color: govuk.$govuk-error-colour;
+  font-weight: bold;
+}
+
+.missing-row-key {
+  border-left: govuk.govuk-spacing(1) solid govuk.$govuk-error-colour;
+}
+.missing-row-key span {
+  padding-left: govuk.govuk-spacing(2);
+}

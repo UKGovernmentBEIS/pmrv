@@ -1,0 +1,73 @@
+<ng-container *ngIf="installationOperatorDetails as details">
+  <h2 *ngIf="!hideSubheadings" class="govuk-heading-m">Installation details</h2>
+  <dl govuk-summary-list [hasBorders]="false" [class]="cssClass">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Installation name</dt>
+      <dd govukSummaryListRowValue>{{ details.installationName }}</dd>
+    </div>
+    <div govukSummaryListRow *ngIf="details.siteName">
+      <dt govukSummaryListRowKey>Site name</dt>
+      <dd govukSummaryListRowValue>{{ details.siteName }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <ng-container *ngIf="installationLocation.type === 'ONSHORE'; else offshoreDetails">
+        <dt govukSummaryListRowKey>Installation address</dt>
+        <dd govukSummaryListRowValue>
+          <div>{{ installationLocation?.gridReference }}</div>
+          <div>
+            {{ installationLocation.address.line1
+            }}<ng-container *ngIf="installationLocation.address.line2"
+              >, {{ installationLocation.address.line2 }}</ng-container
+            >
+          </div>
+          <div>{{ installationLocation.address.city }}</div>
+          <div>{{ installationLocation.address.postcode }}</div>
+          <div>{{ installationLocation.address.country | country }}</div>
+        </dd>
+      </ng-container>
+
+      <ng-template #offshoreDetails>
+        <dt govukSummaryListRowKey>Coordinates</dt>
+        <dd govukSummaryListRowValue>
+          <div>Latitude</div>
+          <div>{{ installationLocation.latitude | coordinate }}</div>
+          <div>Longitude</div>
+          <div>{{ installationLocation.longitude | coordinate }}</div>
+        </dd>
+      </ng-template>
+    </div>
+  </dl>
+
+  <h2 *ngIf="!hideSubheadings" class="govuk-heading-m govuk-!-margin-top-6">Organisation details</h2>
+  <dl govuk-summary-list [hasBorders]="false" [class]="cssClass">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Operator name</dt>
+      <dd govukSummaryListRowValue>{{ details.operator }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Legal status</dt>
+      <dd govukSummaryListRowValue>{{ details.operatorType | legalEntityType }}</dd>
+      <dd govukSummaryListRowActions></dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Companies registration number</dt>
+      <dd govukSummaryListRowValue>{{ details.companyReferenceNumber }}</dd>
+      <dd govukSummaryListRowActions></dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Operator address</dt>
+      <dd govukSummaryListRowValue>
+        <div>
+          {{ details.operatorDetailsAddress.line1
+          }}<ng-container *ngIf="details.operatorDetailsAddress.line2"
+            >, {{ details.operatorDetailsAddress.line2 }}
+          </ng-container>
+        </div>
+        <div>{{ details.operatorDetailsAddress.city }}</div>
+        <div>{{ details.operatorDetailsAddress.postcode }}</div>
+        <div>{{ details.operatorDetailsAddress.country | country }}</div>
+      </dd>
+      <dd govukSummaryListRowActions></dd>
+    </div>
+  </dl>
+</ng-container>

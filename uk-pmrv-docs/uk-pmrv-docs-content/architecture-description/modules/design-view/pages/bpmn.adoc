@@ -1,0 +1,4 @@
+= BPMN Workflow engine
+
+https://camunda.com/[Camunda] workflow engine has been chosen for orchestrating and managing business processes in PMRV. +
+Camunda is used as embedded application inside PMRV and bpmn files, describing business workflows are stored as resources in code.

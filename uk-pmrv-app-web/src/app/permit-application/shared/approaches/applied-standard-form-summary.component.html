@@ -1,0 +1,40 @@
+<ng-container *ngIf="appliedStandard">
+  <dl govuk-summary-list [class]="cssClass" [hasBorders]="false">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Parameter</dt>
+      <dd class="pre-wrap" govukSummaryListRowValue>
+        {{ appliedStandard.parameter }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Applied standard</dt>
+      <dd class="pre-wrap" govukSummaryListRowValue>
+        {{ appliedStandard.appliedStandard }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Applied standard deviations</dt>
+      <dd class="pre-wrap" govukSummaryListRowValue>
+        {{ appliedStandard.deviationFromAppliedStandardExist ? 'Yes' : 'No' }}
+        <p *ngIf="appliedStandard.deviationFromAppliedStandardExist">
+          {{ appliedStandard.deviationFromAppliedStandardDetails }}
+        </p>
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Laboratory name</dt>
+      <dd class="pre-wrap" govukSummaryListRowValue>
+        {{ appliedStandard.laboratoryName }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>ISO17025 accredited</dt>
+      <dd class="pre-wrap" govukSummaryListRowValue>
+        {{ appliedStandard.laboratoryAccredited ? 'Yes' : 'No' }}
+        <p *ngIf="!appliedStandard.laboratoryAccredited">
+          {{ appliedStandard.laboratoryAccreditationEvidence }}
+        </p>
+      </dd>
+    </div>
+  </dl>
+</ng-container>

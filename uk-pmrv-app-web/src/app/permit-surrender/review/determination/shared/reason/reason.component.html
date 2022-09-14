@@ -1,0 +1,27 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <span class="govuk-caption-l">
+    <ng-container [ngSwitch]="determinationType$ | async">
+      <ng-container *ngSwitchCase="'GRANTED'"> Grant permit surrender </ng-container>
+      <ng-container *ngSwitchCase="'REJECTED'"> Reject permit surrender </ng-container>
+      <ng-container *ngSwitchCase="'DEEMED_WITHDRAWN'"> Deem withdrawn </ng-container>
+    </ng-container>
+  </span>
+
+  <app-page-heading>
+    <ng-container [ngSwitch]="determinationType$ | async">
+      <ng-container *ngSwitchCase="'GRANTED'"> Provide a note to support the grant decision </ng-container>
+      <ng-container *ngSwitchCase="'REJECTED'"> Provide a reason to support the rejection decision </ng-container>
+      <ng-container *ngSwitchCase="'DEEMED_WITHDRAWN'"> Provide a reason to support your decision </ng-container>
+    </ng-container>
+  </app-page-heading>
+  <div class="govuk-hint">This cannot be viewed by the operator</div>
+
+  <div formControlName="reason" govuk-textarea [maxLength]="10000"></div>
+</app-wizard-step>
+
+<a govukLink routerLink="../../..">Return to: Permit surrender review</a>

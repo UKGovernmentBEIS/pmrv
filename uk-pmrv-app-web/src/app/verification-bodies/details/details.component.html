@@ -1,0 +1,13 @@
+<app-page-heading>Verification body details</app-page-heading>
+<govuk-tabs>
+  <ng-template govukTab id="details" label="Details">
+    <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+    <form (ngSubmit)="save()" [formGroup]="form">
+      <app-form></app-form>
+      <button appPendingButton govukButton type="submit">Save</button>
+    </form>
+  </ng-template>
+  <ng-template govukTab id="contacts" label="Contacts">
+    <app-contacts [verificationBodyId]="verificationBodyId$"></app-contacts>
+  </ng-template>
+</govuk-tabs>

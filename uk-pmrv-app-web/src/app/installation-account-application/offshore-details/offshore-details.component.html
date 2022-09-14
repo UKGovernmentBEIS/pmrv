@@ -1,0 +1,49 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  caption="Installation details"
+  heading="Enter the offshore installation details"
+>
+  <fieldset govukFieldset id="installation-name-fieldset">
+    <legend govukLegend>Installation name</legend>
+    <div
+      appAsyncValidationField
+      formControlName="name"
+      govuk-text-input
+      hint="This is the name that will be used to find the account. This must not be the same as another registered installation name, unless you receive an existing permit as part of a transfer"
+      label="Name"
+    ></div>
+  </fieldset>
+  <div
+    formControlName="siteName"
+    govuk-text-input
+    hint="Enter the site name of the installation"
+    label="Site name"
+  ></div>
+  <h3 class="govuk-heading-m">Coordinates</h3>
+  <p class="govuk-body">Enter the geographic coordinates of the installation</p>
+  <fieldset formGroupName="latitude" govukFieldset id="latitude-fieldset">
+    <legend govukLegend>Latitude</legend>
+    <div formControlName="degree" govuk-text-input inputType="number" label="Degree"></div>
+    <div formControlName="minute" govuk-text-input inputType="number" label="Minute"></div>
+    <div formControlName="second" govuk-text-input inputType="number" label="Second"></div>
+    <div
+      [options]="latitudeDirections"
+      formControlName="cardinalDirection"
+      govuk-select
+      label="Cardinal direction"
+    ></div>
+  </fieldset>
+  <fieldset formGroupName="longitude" govukFieldset id="longitude-fieldset">
+    <legend govukLegend>Longitude</legend>
+    <div formControlName="degree" govuk-text-input inputType="number" label="Degree"></div>
+    <div formControlName="minute" govuk-text-input inputType="number" label="Minute"></div>
+    <div formControlName="second" govuk-text-input inputType="number" label="Second"></div>
+    <div
+      [options]="longitudeDirections"
+      formControlName="cardinalDirection"
+      govuk-select
+      label="Cardinal direction"
+    ></div>
+  </fieldset>
+</app-wizard-step>

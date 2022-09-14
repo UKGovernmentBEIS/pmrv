@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        logicalFilePath="v0.1.0/changelog_legal_entity.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_LEGAL_ENTITY_SEQUENCE" author="P70383">
+        <createSequence sequenceName="legal_entity_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS legal_entity_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_LEGAL_ENTITY" author="P70383">
+        <createTable tableName="legal_entity" remarks="Represents a legal entity">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="legal_entity_pk" nullable="false"/>
+            </column>
+            <column name="location_id" type="bigint" remarks="The location id">
+                <constraints foreignKeyName="legal_entity_location_fk" references="location(id)" nullable="false"/>
+            </column>
+            <column name="type" type="varchar(255)" remarks="The legal entity type">
+                <constraints nullable="false" />
+            </column>
+            <column name="name" type="varchar(255)" remarks="The legal entity name">
+                <constraints nullable="false" />
+            </column>
+            <column name="reference_number" type="varchar(16)" remarks="The companies house reference number">
+                <constraints nullable="true" />
+            </column>
+            <column name="no_reference_number" type="varchar(500)" remarks="The reason for no companies house reference number">
+                <constraints nullable="true" />
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS legal_entity CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ADD_UNIQUE_CONSTRAINT_LEGAL_ENTITY" author="P70366">
+        <addUniqueConstraint tableName="legal_entity" columnNames="name" constraintName="legal_entity_name_uc"/>
+        <rollback>
+            <dropUniqueConstraint tableName="legal_entity" constraintName="legal_entity_name_uc"/>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_LEGAL_ENTITY_ADD_STATUS_COLUMN" author="kliropog">
+        <addColumn tableName="LEGAL_ENTITY">
+            <column name="status" type="varchar(255)" remarks="The legal entity status">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE LEGAL_ENTITY
+                DROP COLUMN IF EXISTS status;
+            </sql>
+        </rollback>
+     </changeSet>
+     
+     <changeSet id="0_1_0_LEGAL_ENTITY_STATUS_COLUMN_POPULATE_EXISTING" author="kliropog">
+     	<comment>Populate status column for existing legal entities</comment>
+        <sql>
+        	UPDATE LEGAL_ENTITY
+        	SET status = 'ACTIVE'
+        	WHERE status is null;
+        </sql>
+     </changeSet>
+     
+     <changeSet id="0_1_0_LEGAL_ENTITY_STATUS_COLUMN_ADD_NOT_NULL_CONSTRAINT" author="kliropog" >
+		<addNotNullConstraint tableName="LEGAL_ENTITY" columnName="status" />
+		<rollback>
+            <dropNotNullConstraint tableName="LEGAL_ENTITY" columnName="status"/>
+        </rollback>
+	</changeSet>
+	
+	<changeSet id="0_1_0_CREATE_INDEXES_FOR_LE_SEARCHABLE_COLUMNS" author="P35066">
+        <sql>
+			CREATE INDEX trgm_gin_idx_le_name ON legal_entity USING gin (name gin_trgm_ops);
+        </sql>
+        <rollback>
+            <sql>
+                DROP INDEX trgm_gin_idx_le_name;
+            </sql>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

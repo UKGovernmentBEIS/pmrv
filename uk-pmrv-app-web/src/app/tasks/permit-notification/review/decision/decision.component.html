@@ -1,0 +1,87 @@
+<govuk-notification-banner *ngIf="(showNotificationBanner$ | async) === true" type="success">
+  <h1 class="govuk-notification-banner__heading">Details updated</h1>
+</govuk-notification-banner>
+
+<app-page-heading>Details of the change</app-page-heading>
+
+<app-permit-notification-summary-details
+  *ngIf="notification$ | async as notification"
+  cssClass="summary-list--edge-border"
+  [allowChange]="false"
+  [files]="permitNotificationService.downloadUrlFiles$ | async"
+  [notification]="notification"
+  [sectionHeading]="'Response details'"
+></app-permit-notification-summary-details>
+
+<ng-container *ngIf="(showSummary$ | async) === false; else summaryReviewDecision">
+  <ng-container *ngIf="(isEditable$ | async) === true">
+    <form (ngSubmit)="onSubmit()" [formGroup]="form">
+      <div class="govuk-!-margin-top-6">
+        <govuk-error-summary *ngIf="isErrorSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+
+        <app-boolean-radio-group
+          controlName="type"
+          legend="What is your decision for the information submitted?"
+          hint="Take into account any additional information shared"
+          yesValue="ACCEPTED"
+          noValue="REJECTED"
+          yesLabel="Accepted"
+          noLabel="Rejected"
+        >
+          <div govukConditionalContent>
+            <div
+              formControlName="followUpResponseRequired"
+              govuk-radio
+              legend="Do you require a response from the operator?"
+            >
+              <govuk-radio-option [value]="true" label="Yes">
+                <ng-container govukConditionalContent>
+                  <div
+                    govuk-textarea
+                    [maxLength]="10000"
+                    formControlName="followUpRequest"
+                    label="Explain what the operator should cover in their response"
+                    hint="This will help the operator write a useful reply"
+                  ></div>
+
+                  <div
+                    formControlName="followUpResponseExpirationDate"
+                    label="Date response is needed"
+                    hint="You can change this later"
+                    govuk-date-input
+                  ></div>
+                </ng-container>
+              </govuk-radio-option>
+              <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+            </div>
+          </div>
+        </app-boolean-radio-group>
+      </div>
+
+      <h2 class="govuk-heading-m">Provide a summary of your decision to be included in the official notice</h2>
+      <div govuk-textarea [maxLength]="10000" formControlName="officialNotice"></div>
+
+      <h2 class="govuk-heading-m">Notes</h2>
+      <div govuk-textarea [maxLength]="10000" formControlName="notes" hint="The operator cannot view this"></div>
+      <button appPendingButton govukButton type="submit">Confirm</button>
+    </form>
+  </ng-container>
+</ng-container>
+
+<ng-template #summaryReviewDecision>
+  <h2
+    app-summary-header
+    class="govuk-heading-m"
+    (changeClick)="changeDecisionClick()"
+    [changeRoute]="(isEditable$ | async) ? '.' : null"
+  >
+    Decision details
+  </h2>
+  <app-permit-notification-review-decision-summary-details
+    *ngIf="reviewDecision$ | async as reviewDecision"
+    [reviewDecision]="reviewDecision"
+  >
+  </app-permit-notification-review-decision-summary-details>
+
+  <a govukLink [routerLink]="returnTo.link">Return to: {{ returnTo.text }}</a>
+</ng-template>

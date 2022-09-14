@@ -1,0 +1,14 @@
+<app-page-heading size="xl">{{ title$ | async }}</app-page-heading>
+<app-archive
+  *ngIf="allowedActions$ | async | includes: 'SYSTEM_MESSAGE_DISMISS'"
+  [taskId]="taskId$ | async"
+  type="SYSTEM_MESSAGE_DISMISS"
+  warningText="You can close this task."
+  buttonText="Close this task"
+  (submitted)="archived()"
+></app-archive>
+<div class="info govuk-!-margin-bottom-3">
+  <h4 class="initiator govuk-heading-m">PMRV system message</h4>
+  <p class="govuk-body govuk-!-font-size-16"><strong>Date:</strong> {{ date$ | async | govukDate: 'datetime' }}</p>
+</div>
+<div [data]="data$ | async" markdown></div>

@@ -1,0 +1,172 @@
+<ng-container *ngIf="(confirmedAddedRegulator$ | async) === null; else regulatorAdded">
+  <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading>{{ (userId$ | async) ? 'User details' : 'Add a new user' }}</app-page-heading>
+  <form (ngSubmit)="submitForm()" [formGroup]="form">
+    <div formGroupName="user">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <div
+            autoComplete="given-name"
+            formControlName="firstName"
+            govuk-text-input
+            label="First name"
+            widthClass="govuk-!-width-one-half"
+          ></div>
+          <div
+            autoComplete="family-name"
+            formControlName="lastName"
+            govuk-text-input
+            label="Last name"
+            widthClass="govuk-!-width-one-half"
+          ></div>
+          <div
+            autoComplete="tel-national"
+            formControlName="phoneNumber"
+            govuk-text-input
+            label="Telephone number"
+            widthClass="govuk-!-width-one-half"
+          ></div>
+          <div
+            autoComplete="mobile tel-national"
+            formControlName="mobileNumber"
+            govuk-text-input
+            label="Mobile number (optional)"
+            widthClass="govuk-!-width-one-half"
+          ></div>
+          <div
+            autoComplete="email"
+            formControlName="email"
+            govuk-text-input
+            label="Email address"
+            widthClass="govuk-!-width-one-half"
+          ></div>
+          <div
+            autoComplete="organization-title"
+            formControlName="jobTitle"
+            govuk-text-input
+            label="Job title"
+            widthClass="govuk-!-width-one-half"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-s">Files uploaded</h2>
+      <span class="govuk-hint"
+        >The file must be:
+        <ul>
+          <li>a BMP file</li>
+          <li>no more than 240 x 140 pixels</li>
+          <li>no more than 200KB</li>
+        </ul>
+      </span>
+      <app-file-input
+        [downloadUrl]="getDownloadUrl"
+        formControlName="signature"
+        hint="Upload a file"
+        label="Signature"
+      ></app-file-input>
+    </div>
+
+    <div *ngIf="allowEditPermissions$ | async as permissions" class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <h2 class="govuk-heading-s">Set base permissions</h2>
+        <div class="govuk-button-group">
+          <button
+            (click)="setBasePermissions('regulator_admin_team')"
+            govukSecondaryButton
+            id="regulator_admin_team"
+            type="button"
+          >
+            Admin team
+          </button>
+          <button
+            (click)="setBasePermissions('regulator_technical_officer')"
+            govukSecondaryButton
+            id="regulator_technical_officer"
+            type="button"
+          >
+            Technical officer
+          </button>
+          <button
+            (click)="setBasePermissions('regulator_team_leader')"
+            govukSecondaryButton
+            id="regulator_team_leader"
+            type="button"
+          >
+            Team leader
+          </button>
+          <button (click)="setBasePermissions('ca_super_user')" govukSecondaryButton id="ca_super_user" type="button">
+            CA super-user
+          </button>
+          <button
+            (click)="setBasePermissions('pmrv_super_user')"
+            govukSecondaryButton
+            id="pmrv_super_user"
+            type="button"
+          >
+            PMRV super-user
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <h2 class="govuk-heading-s">Customize Permissions</h2>
+
+        <div [formGroupName]="'permissions'">
+          <govuk-table [columns]="tableColumns" [data]="tableRows">
+            <ng-template let-column="column" let-row="row">
+              <ng-container *ngIf="column.field === 'task' || column.field === 'type'">
+                {{ row[column.field] }}
+              </ng-container>
+
+              <ng-container *ngIf="allowEditPermissions$ | async; else nonEditable">
+                <ng-container *ngIf="permissionGroups$ | async as permissionGroups">
+                  <div
+                    *ngIf="permissionGroups[row.permission] | includes: column.field"
+                    [formControlName]="row.permission"
+                    [index]="column.field"
+                    [value]="column.field"
+                    app-radio-option
+                  >
+                    <ng-container label>
+                      <span class="govuk-visually-hidden">{{ column.header }}</span>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </ng-container>
+              <ng-template #nonEditable>
+                <ng-container *ngIf="userPermissions$ | async as userPermissions">
+                  <div
+                    *ngIf="userPermissions[row.permission] === column.field"
+                    [id]="'check-' + row.permission + '-' + column.field"
+                  >
+                    <strong>&#10004;</strong>
+                  </div>
+                </ng-container>
+              </ng-template>
+            </ng-template>
+          </govuk-table>
+        </div>
+      </div>
+    </div>
+
+    <app-two-fa-link *ngIf="isLoggedUser$ | async"></app-two-fa-link>
+
+    <button appPendingButton govukButton type="submit">
+      {{ userId$ | async | submitIfEmpty }}
+    </button>
+  </form>
+</ng-container>
+
+<ng-template #regulatorAdded>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <govuk-panel>An account confirmation email has been sent to {{ confirmedAddedRegulator$ | async }}</govuk-panel>
+      <h2 class="govuk-heading-m">What happens next</h2>
+      <p class="govuk-body">The new user will be able to log in once they confirm their account</p>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,20 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <span class="govuk-caption-l">Confirm cessation of regulated activities</span>
+  <app-page-heading>What text should appear in the official notice following the cessation?</app-page-heading>
+  <div govuk-radio formControlName="noticeType" hint="Explain how this is used and where its included">
+    <govuk-radio-option
+      [label]="officialNoticeTypeMap['SATISFIED_WITH_REQUIREMENTS_COMPLIANCE']"
+      value="SATISFIED_WITH_REQUIREMENTS_COMPLIANCE"
+    ></govuk-radio-option>
+    <govuk-radio-option
+      [label]="officialNoticeTypeMap['NO_PROSPECT_OF_FURTHER_ALLOWANCES']"
+      value="NO_PROSPECT_OF_FURTHER_ALLOWANCES"
+    ></govuk-radio-option>
+  </div>
+</app-wizard-step>
+<a govukLink routerLink="../..">Return to: Cessation</a>

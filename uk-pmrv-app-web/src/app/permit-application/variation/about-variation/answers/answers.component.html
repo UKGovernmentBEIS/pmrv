@@ -1,0 +1,18 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <app-page-heading>Check your answers</app-page-heading>
+    <app-about-variation-summary-details></app-about-variation-summary-details>
+    <div class="govuk-button-group">
+      <button
+        appPendingButton
+        govukButton
+        type="button"
+        (click)="confirm()"
+        *ngIf="(store | async).isEditable === true"
+      >
+        Confirm and complete
+      </button>
+    </div>
+    <app-list-return-link></app-list-return-link>
+  </div>
+</div>

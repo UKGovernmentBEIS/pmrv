@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+		logicalFilePath="v0.1.0/changelog_verification_body.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="0_1_0_CREATE_TABLE_NOTIFICATION_SYSTEM_MESSAGE" author="pafilisa@unisystems.gr">
+
+        <comment>CREATE verification_body TABLE</comment>
+        <sql>
+            CREATE SEQUENCE verification_body_seq MINVALUE 0 MAXVALUE 999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 1 NO CYCLE;
+
+            CREATE TABLE verification_body (
+            id bigint,
+            name VARCHAR(255) NOT NULL);
+
+            ALTER TABLE verification_body ADD CONSTRAINT verification_body_pk PRIMARY KEY (id);
+
+            COMMENT ON TABLE verification_body IS 'Stores information about verification bodies';
+            COMMENT ON COLUMN verification_body.name IS 'The verification body name';
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS verification_body CASCADE;
+                DROP SEQUENCE IF EXISTS verification_body_seq;
+            </sql>
+        </rollback>
+
+    </changeSet>
+
+    <changeSet id="0_1_0_VERIFICATION_BODY_UPDATE_TABLE_WITH_ADDRESS_STATUS_CREATED_DATE" author="P70383">
+        <preConditions onFail="WARN">
+            <sqlCheck expectedResult="1">SELECT count(*) FROM information_schema.tables where table_name = 'verification_body';</sqlCheck>
+        </preConditions>
+        <comment>Update verification_body TABLE</comment>
+        <addColumn tableName="verification_body">
+            <column name="status" type="varchar(255)" remarks="The status">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="verification_body">
+            <column name="line1" type="varchar(255)" remarks="The line 1 address">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="verification_body">
+            <column name="line2" type="varchar(255)" remarks="The line 2 address">
+                <constraints nullable="true" />
+            </column>
+        </addColumn>
+        <addColumn tableName="verification_body">
+            <column name="city" type="varchar(255)" remarks="The city">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="verification_body">
+            <column name="country" type="varchar(8)" remarks="The country">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="verification_body">
+            <column name="postcode" type="varchar(64)" remarks="The postcode">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <addColumn tableName="verification_body">
+            <column name="created_date" type="timestamp" remarks="The created date">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE verification_body
+                DROP COLUMN IF EXISTS status,
+                DROP COLUMN IF EXISTS line1,
+                DROP COLUMN IF EXISTS line2,
+                DROP COLUMN IF EXISTS city,
+                DROP COLUMN IF EXISTS country,
+                DROP COLUMN IF EXISTS postcode,
+                DROP COLUMN IF EXISTS created_date;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_VB_ACCREDITATION_REF_NUM_CREATE_TABLE" author="P70383">
+        <comment>Create vb_accreditation_ref_num TABLE</comment>
+        <createTable tableName="vb_accreditation_ref_num" remarks="Represents a verification body accreditation reference number">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="vb_accreditation_ref_num_pk" nullable="false"/>
+            </column>
+            <column name="verification_body_id" type="bigint" remarks="The verification body id where accreditation belongs to (foreign key to verification body table)">
+                <constraints foreignKeyName="vb_accreditation_ref_num_verification_body_fk" references="verification_body(id)" nullable="false"/>
+            </column>
+            <column name="type" type="varchar(255)" remarks="The type of the accreditation">
+                <constraints nullable="false" />
+            </column>
+            <column name="reference_number" type="varchar(255)" remarks="The accreditation reference number">
+                <constraints nullable="false" unique="true" uniqueConstraintName="vb_accreditation_ref_num_reference_number_uc" />
+            </column>
+            <column name="is_available" type="boolean" defaultValueBoolean="false"/>
+        </createTable>
+        <addUniqueConstraint
+                columnNames="verification_body_id, type"
+                constraintName="vb_accreditation_ref_num_uc"
+                tableName="vb_accreditation_ref_num"/>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS vb_accreditation_ref_num CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_VB_ACCREDITATION_REF_NUM_CREATE_SEQUENCE" author="P70383">
+        <createSequence sequenceName="vb_accreditation_ref_num_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+        <rollback>
+            <sql>
+                DROP SEQUENCE IF EXISTS vb_accreditation_ref_num_seq;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_VERIFICATION_BODY_RENAME_ADDRESS_COLUMNS" author="P70383">
+        <renameColumn tableName="verification_body" oldColumnName="line1" newColumnName="addr_line1"/>
+        <renameColumn tableName="verification_body" oldColumnName="line2" newColumnName="addr_line2"/>
+        <renameColumn tableName="verification_body" oldColumnName="city" newColumnName="addr_city"/>
+        <renameColumn tableName="verification_body" oldColumnName="country" newColumnName="addr_country"/>
+        <renameColumn tableName="verification_body" oldColumnName="postcode" newColumnName="addr_postcode"/>
+        <rollback>
+            <sql>
+                ALTER TABLE verification_body RENAME COLUMN addr_line1 TO line1;
+                ALTER TABLE verification_body RENAME COLUMN addr_line2 TO line2;
+                ALTER TABLE verification_body RENAME COLUMN addr_city TO city;
+                ALTER TABLE verification_body RENAME COLUMN addr_country TO country;
+                ALTER TABLE verification_body RENAME COLUMN addr_postcode TO postcode;
+            </sql>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_RENAME_VB_ACCREDITATION_REF_NUM_TABLE_TO_VERIFICATION_BODY_ACCREDITATION" author="P35066">
+    	<renameTable newTableName="verification_body_accreditation" oldTableName="vb_accreditation_ref_num" />
+    	<rollback>
+    		<renameTable newTableName="vb_accreditation_ref_num" oldTableName="verification_body_accreditation" />
+    	</rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_RENAME_VERIFICATION_BODY_ACCREDITATION_TYPE_COLUMN_TO_EMISSION_TRADING_SCHEME" author="P35066">
+    	<renameColumn tableName="verification_body_accreditation" newColumnName="emission_trading_scheme" oldColumnName="type" />
+    	<rollback>
+    		<renameColumn tableName="verification_body_accreditation" newColumnName="type" oldColumnName="emission_trading_scheme" />
+    	</rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_RENAME_VB_ACCREDITATION_REF_NUM_SEQUENCE_TO_VERIFICATION_BODY_ACCREDITATION_SEQ" author="P35066">
+    	<renameSequence newSequenceName=" verification_body_accreditation_seq" oldSequenceName="vb_accreditation_ref_num_seq" />
+    	<rollback>
+    		<renameSequence newSequenceName="vb_accreditation_ref_num_seq" oldSequenceName="verification_body_accreditation_seq" />
+    	</rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_trim_space_from_verification_body_accreditation_sequence_name" author="P35066">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">select count(1) from information_schema.sequences where sequence_name = ' verification_body_accreditation_seq'</sqlCheck>
+        </preConditions>
+        <renameSequence newSequenceName="verification_body_accreditation_seq" oldSequenceName=" verification_body_accreditation_seq" />
+        <rollback>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_VERIFICATION_BODY_UPDATE_TABLE_WITH_ACCREDITATION_REFERENCE_NUMBER_COLUMN" author="pafilisa@unisystems.gr">
+        <preConditions onFail="WARN">
+            <sqlCheck expectedResult="1">SELECT count(*) FROM information_schema.tables where table_name = 'verification_body';</sqlCheck>
+        </preConditions>
+        <addColumn tableName="verification_body">
+            <column name="accreditation_reference_number" type="varchar(255)" remarks="The accreditation reference number">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE verification_body
+                DROP COLUMN IF EXISTS accreditation_reference_number;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_VERIFICATION_BODY_ACCREDITATION_REFERENCE_NUMBER" author="pafilisa@unisystems.gr">
+        <sql>
+            update verification_body vb
+               set accreditation_reference_number = vb_accr.reference_number
+              from verification_body_accreditation vb_accr
+             where vb.id = vb_accr.verification_body_id;
+        </sql>
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_VERIFICATION_BODY_ACCREDITATION_REFERENCE_NUMBER_COLUMN_ADD_NOT_NULL_CONSTRAINT" author="pafilisa@unisystems.gr" >
+        <addNotNullConstraint tableName="verification_body" columnName="accreditation_reference_number" />
+        <rollback>
+            <dropNotNullConstraint tableName="verification_body" columnName="accreditation_reference_number"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_VERIFICATION_BODY_ACCREDITATION_REFERENCE_NUMBER_COLUMN_ADD_UNIQUE_CONSTRAINT" author="pafilisa@unisystems.gr">
+        <addUniqueConstraint tableName="verification_body" columnNames="accreditation_reference_number" constraintName="verification_body_accreditation_ref_num_uc"/>
+        <rollback>
+            <dropUniqueConstraint tableName="verification_body" constraintName="verification_body_accreditation_ref_num_uc"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_VERIFICATION_BODY_EMISSION_TRADING_SCHEME_CREATE_TABLE" author="pafilisa@unisystems.gr">
+        <createTable tableName="verification_body_emission_trading_scheme" remarks="Represents a verification body emission trading scheme">
+            <column name="verification_body_id" type="bigint" remarks="The verification body id (foreign key to verification body table)">
+                <constraints foreignKeyName="verification_body_emission_trading_scheme_fk" references="verification_body(id)" nullable="false"/>
+            </column>
+            <column name="emission_trading_scheme" type="varchar(255)" remarks="The emission trading scheme">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS verification_body_emission_trading_scheme CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ADD_VERIFICATION_BODY_EMISSION_TRADING_SCHEME_UNIQUE_CONSTRAINT" author="pafilisa@unisystems.gr">
+        <addUniqueConstraint tableName="verification_body_emission_trading_scheme"
+                             columnNames="verification_body_id, emission_trading_scheme"
+                             constraintName="verification_body_emission_trading_scheme_uc"/>
+        <rollback>
+            <dropUniqueConstraint tableName="verification_body_emission_trading_scheme" constraintName="verification_body_emission_trading_scheme_uc"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_POPULATE_VERIFICATION_BODY_EMISSION_TRADING_SCHEME_TABLE_WITH_VALUES" author="pafilisa@unisystems.gr">
+        <sql>
+            INSERT INTO verification_body_emission_trading_scheme
+            SELECT verification_body_id, emission_trading_scheme from verification_body_accreditation;
+        </sql>
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_1_DROP_VERIFICATION_BODY_ACCREDITATION_TABLE" author="pafilisa@unisystems.gr">
+        <preConditions onFail="MARK_RAN"><tableExists tableName="verification_body_accreditation"/></preConditions>
+        <dropTable cascadeConstraints="true" tableName="verification_body_accreditation"/>
+        <rollback></rollback>
+    </changeSet>
+
+    <changeSet id="0_1_1_DROP_VERIFICATION_BODY_ACCREDITATION_SEQUENCE" author="pafilisa@unisystems.gr">
+        <preConditions onFail="MARK_RAN"><sequenceExists sequenceName="verification_body_accreditation_seq"/></preConditions>
+        <dropSequence sequenceName="verification_body_accreditation_seq"/>
+        <rollback></rollback>
+    </changeSet>
+
+</databaseChangeLog>

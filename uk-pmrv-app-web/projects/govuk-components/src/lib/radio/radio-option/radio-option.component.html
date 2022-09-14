@@ -1,0 +1,34 @@
+<ng-template #optionTemplate>
+  <div class="govuk-radios__item">
+    <input
+      (blur)="onBlur()"
+      (change)="onChange(value)"
+      [attr.aria-controls]="conditional ? identifier + '-conditional' : null"
+      [attr.aria-labelledby]="hint ? identifier + '-item-hint' : null"
+      [attr.name]="groupIdentifier"
+      [checked]="isChecked"
+      [disabled]="isDisabled"
+      [id]="identifier"
+      [value]="value"
+      class="govuk-radios__input"
+      type="radio"
+    />
+    <label [for]="identifier" class="govuk-label govuk-radios__label">
+      <ng-container *ngIf="label; else customLabel">{{ label }}</ng-container>
+      <ng-template #customLabel>
+        <ng-content select="[govukLabel]"></ng-content>
+      </ng-template>
+    </label>
+    <div *ngIf="hint" [id]="identifier + '-item-hint'" class="govuk-radios__hint govuk-hint" [innerHTML]="hint"></div>
+  </div>
+</ng-template>
+<ng-template #conditionalTemplate>
+  <div
+    *ngIf="conditional"
+    [class.govuk-radios__conditional--hidden]="!isChecked"
+    [id]="identifier + '-conditional'"
+    class="govuk-radios__conditional"
+  >
+    <ng-content select="[govukConditionalContent]"></ng-content>
+  </div>
+</ng-template>

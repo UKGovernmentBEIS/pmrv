@@ -1,0 +1,16 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  caption="Permit revocation"
+  heading="{{ (route.data | async)?.pageTitle }}"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <div
+    formControlName="effectiveDate"
+    hint="A notice must be sent at least 28 days before the chosen date to allow the operator to lodge an appeal if they
+    wish."
+    govuk-date-input
+  ></div>
+</app-wizard-step>
+<a govukLink routerLink="../../">Return to: Permit revocation task list</a>

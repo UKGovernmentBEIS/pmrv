@@ -1,0 +1,31 @@
+<app-permit-task [breadcrumb]="true">
+  <app-page-heading caption="Monitoring approaches">Inherent CO2</app-page-heading>
+
+  <div class="govuk-body">
+    <p>Text explaining this set of tasks as a whole</p>
+    <p>Get help with <a [routerLink]="" govukLink>Inherent CO2</a>.</p>
+  </div>
+
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="./description/summary"
+      linkText="Approach description"
+      [status]="'INHERENT_CO2_Description' | taskStatus | async"
+    >
+      <dl
+        *ngIf="('INHERENT_CO2_Description' | taskStatus | async) === 'complete'"
+        class="govuk-summary-list govuk-summary-list--no-border govuk-!-margin-bottom-0"
+      >
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Approach description</dt>
+          <dd class="pre-wrap" govukSummaryListRowValue>
+            {{ ('INHERENT_CO2' | monitoringApproachTask | async).approachDescription }}
+          </dd>
+        </div>
+      </dl>
+    </li>
+  </ul>
+
+  <app-list-return-link></app-list-return-link>
+</app-permit-task>

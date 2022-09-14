@@ -1,0 +1,48 @@
+<app-page-heading size="xl">Manage verification bodies</app-page-heading>
+<button *ngIf="isEditable$ | async" govukSecondaryButton id="add-verification-body" routerLink="add" type="button">
+  Add a new verification body
+</button>
+<form (ngSubmit)="saveVerificationBodies()" [formGroup]="verificationBodiesForm" id="verification-bodies-form">
+  <govuk-table [columns]="(isEditable$ | async) ? editableCols : nonEditableCols" [data]="verificationBodies$ | async">
+    <ng-template let-column="column" let-index="index" let-row="row">
+      <ng-container formArrayName="verificationBodies">
+        <ng-container [formGroupName]="index" [ngSwitch]="column.field">
+          <ng-container *ngSwitchCase="'name'">
+            <ng-container *ngIf="isEditable$ | async; else bareName">
+              <a [routerLink]="row.id" govukLink>{{ row[column.field] }}</a>
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'status'">
+            <ng-container *ngIf="verificationBodies.at(index).value.status !== 'PENDING'; else pendingStatus">
+              <ng-container *ngIf="isEditable$ | async; else bareAccountStatus">
+                <div
+                  [options]="accountStatuses"
+                  formControlName="status"
+                  govuk-select
+                  widthClass="govuk-!-width-full"
+                ></div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="'deleteBtn'">
+            <a [routerLink]="[row.id, 'delete']" govukLink>Delete</a>
+          </ng-container>
+
+          <ng-container *ngSwitchDefault>
+            {{ row[column.field] }}
+          </ng-container>
+        </ng-container>
+        <ng-template #bareName>{{ row[column.field] }}</ng-template>
+        <ng-template #pendingStatus>Awaiting confirmation</ng-template>
+        <ng-template #bareAccountStatus>{{ row[column.field] | titlecase }}</ng-template>
+      </ng-container>
+    </ng-template>
+  </govuk-table>
+
+  <div *ngIf="(isEditable$ | async) && (verificationBodies$ | async)?.length > 0" class="govuk-button-group">
+    <button appPendingButton govukButton type="submit">Save</button>
+    <button (click)="refresh$.next()" govukSecondaryButton type="button">Discard changes</button>
+  </div>
+</form>

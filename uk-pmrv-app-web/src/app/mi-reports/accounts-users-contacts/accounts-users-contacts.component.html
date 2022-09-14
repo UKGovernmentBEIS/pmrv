@@ -1,0 +1,36 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-three-quarters">
+    <div><p class="govuk-body" tabindex="-1">Filters</p></div>
+  </div>
+  <div class="govuk-grid-column-one-quarter">
+    <button govukButton type="button" (click)="generateReport()" class="start-new-process">Execute</button>
+  </div>
+</div>
+<div *ngIf="pageItems$ | async as items; else noResults">
+  <ng-container *ngIf="items.length; else noResults">
+    <div class="overflow-auto overflow-auto-table">
+      <govuk-table [columns]="tableColumns" [data]="items">
+        <ng-template let-column="column" let-row="row">
+          <ng-container [ngSwitch]="column.field">
+            <ng-container *ngSwitchCase="'accountType'">{{ row[column.field] | accountType }}</ng-container>
+            <ng-container *ngSwitchCase="'accountStatus'">{{ row[column.field] | accountStatus }}</ng-container>
+            <ng-container *ngSwitchCase="'lastLogon'">{{ row[column.field] | govukDate }}</ng-container>
+            <ng-container *ngSwitchDefault>{{ row[column.field] }}</ng-container>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+    </div>
+    <app-pagination
+      [count]="totalNumOfItems$ | async"
+      (currentPageChange)="currentPage$.next($event)"
+      [pageSize]="pageSize"
+    ></app-pagination>
+  </ng-container>
+</div>
+<ng-template #noResults>
+  <div class="govuk-grid-row noResults">
+    <div class="govuk-grid-column-full">
+      <p class="govuk-body" tabindex="-1">There are no results to show</p>
+    </div>
+  </div>
+</ng-template>

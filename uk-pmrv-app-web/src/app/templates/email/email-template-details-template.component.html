@@ -1,0 +1,33 @@
+<h1 class="govuk-heading-m">Details</h1>
+<dl govuk-summary-list>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Attached documents</dt>
+    <dd govukSummaryListRowValue>
+      <ng-container *ngIf="emailTemplate.documentTemplates?.length > 0; else noDocuments">
+        <ng-container *ngFor="let documentTemplate of emailTemplate.documentTemplates">
+          <a routerLink="." govukLink (click)="navigateToDocumentTemplate(documentTemplate.id)"
+            >View {{ documentTemplate.name }} document template</a
+          >
+          <br />
+        </ng-container>
+      </ng-container>
+      <ng-template #noDocuments>None</ng-template>
+    </dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Event trigger</dt>
+    <dd govukSummaryListRowValue>{{ emailTemplate.eventTrigger }}</dd>
+  </div>
+  <div govukSummaryListRow *ngIf="emailTemplate.operatorType">
+    <dt govukSummaryListRowKey>Operator</dt>
+    <dd govukSummaryListRowValue>{{ emailTemplate.operatorType | operatorType }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Workflow</dt>
+    <dd govukSummaryListRowValue>{{ emailTemplate.workflow }}</dd>
+  </div>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>Last changed</dt>
+    <dd govukSummaryListRowValue>{{ emailTemplate.lastUpdatedDate | govukDate }}</dd>
+  </div>
+</dl>

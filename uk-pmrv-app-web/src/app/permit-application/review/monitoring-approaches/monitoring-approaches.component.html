@@ -1,0 +1,18 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Define monitoring approaches">
+  <ul app-task-item-list>
+    <li
+      *ngIf="'monitoringApproaches' | taskStatus | async as status"
+      app-task-item
+      link="../../monitoring-approaches"
+      linkText="Define monitoring approaches"
+      [status]="status"
+    >
+      <app-approaches-summary-template [hasBottomBorder]="false"></app-approaches-summary-template>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

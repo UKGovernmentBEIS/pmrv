@@ -1,0 +1,138 @@
+<div *ngIf="(authService.isLoggedIn | async) === false; else welcome">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <app-page-heading>Manage your UK Emissions Trading Scheme reporting - GOV.UK</app-page-heading>
+
+      <div class="govuk-body">
+        <p>
+          This service is for operators, regulators and verifiers who carry out activities covered by the UK Emissions
+          Trading Scheme (UK ETS) or the Carbon Offsetting and Reduction Scheme for International Aviation (CORSIA).
+          Installations in Northern Ireland will also use this service for EU ETS reporting.
+        </p>
+
+        <p>Operators and aircraft operators should use this service to:</p>
+        <ul>
+          <li>apply for an emissions monitoring plan or permit</li>
+          <li>manage emissions monitoring plans and permits</li>
+          <li>submit annual reports</li>
+        </ul>
+
+        <p>Regulators should use this service to assess applications and reports.</p>
+        <p>Verifiers should use this service to verify reports.</p>
+        <br />
+
+        <h2 class="govuk-heading-m">Who the UK ETS applies to</h2>
+        <p>
+          Installations where combustion units exceed a total rated thermal input of 20 megawatts (MW) are part of the
+          UK ETS and must apply for a permit.
+        </p>
+        <br />
+
+        <h2 class="govuk-heading-m">Apply for access to the service</h2>
+        <p>Installation operators can create a sign in immediately.</p>
+        <p>
+          If you are an aircraft operator carrying out activities covered by the UK ETS or CORSIA, you must
+          <a
+            govukLink
+            href="https://www.gov.uk/guidance/uk-ets-apply-for-an-emissions-monitoring-plan-emp#find-out-who-your-regulator-is"
+            >ask the relevant regulator</a
+          >
+          to create a sign in for you.
+        </p>
+        <br />
+
+        <h2 class="govuk-heading-m">Before you start</h2>
+        <p>To create a sign in, you'll need:</p>
+        <ul>
+          <li>your work email address</li>
+          <li>a mobile phone or tablet to set up two-factor authentication</li>
+        </ul>
+
+        <p>You'll be asked to enter information including:</p>
+        <ul>
+          <li>your company details, including email address and phone number</li>
+          <li>the installation details</li>
+        </ul>
+        <br />
+
+        <h2 class="govuk-heading-s">I already have a sign in</h2>
+        <p>
+          You'll need your password and two-factor authentication app, for example FreeOTP, to sign in to the service.
+        </p>
+        <a class="govuk-button govuk-button--start" routerLink="." (click)="authService.login()" draggable="false">
+          Sign in
+          <img class="govuk-button__start-icon" src="/assets/images/start-button-arrow.svg" alt="" />
+        </a>
+        <br />
+
+        <h2 class="govuk-heading-s">I need to create a sign in</h2>
+        <p>
+          You can apply online for a sign in. You'll need a smartphone that can download a third party app to complete
+          this process.
+        </p>
+        <a class="govuk-button govuk-button--secondary govuk-button--start" routerLink="registration" draggable="false">
+          Create sign in
+          <img class="govuk-button__start-icon" src="/assets/images/start-button-arrow.svg" alt="" />
+        </a>
+      </div>
+    </div>
+    <div class="govuk-grid-column-one-third">
+      <app-related-content>
+        <ul class="govuk-list govuk-!-font-size-16 govuk-list--spaced">
+          <li>
+            <a
+              govukLink
+              href="https://www.gov.uk/government/publications/participating-in-the-uk-ets/participating-in-the-uk-ets#registry"
+            >
+              Participating in UK ETS
+            </a>
+          </li>
+        </ul>
+      </app-related-content>
+    </div>
+  </div>
+  <div class="govuk-!-margin-bottom-9"></div>
+  <app-back-to-top></app-back-to-top>
+</div>
+<ng-template #welcome>
+  <ng-container *ngIf="authService.userStatus | async as userStatus">
+    <ng-container [ngSwitch]="userStatus.loginStatus">
+      <ng-container *ngSwitchCase="'NO_AUTHORITY'" [ngTemplateOutlet]="apply"></ng-container>
+      <ng-container *ngSwitchCase="'ENABLED'" [ngTemplateOutlet]="apply"></ng-container>
+      <ng-container *ngSwitchCase="'DISABLED'">
+        <ng-container [ngSwitch]="userStatus.roleType">
+          <ng-container *ngSwitchCase="'OPERATOR'" [ngTemplateOutlet]="apply"></ng-container>
+          <ng-container *ngSwitchDefault>
+            <app-page-heading>
+              Your user account has been disabled. Please contact your admin to gain access to your account.
+            </app-page-heading>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="'ACCEPTED'">
+        <app-page-heading>
+          Your user account needs activation. Please contact your admin to gain access to your account.
+        </app-page-heading>
+      </ng-container>
+      <ng-container *ngSwitchCase="'TEMP_DISABLED'">
+        <app-page-heading>The Verification body your user account belongs to is disabled.</app-page-heading>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>
+<ng-template #apply>
+  <div class="govuk-body">
+    <h1 *ngIf="authService.userProfile | async as user">Welcome {{ user.firstName }} {{ user.lastName }}</h1>
+    <ng-container>
+      <div *ngIf="isNotEnabled$ | async" class="govuk-body">
+        To access the service you'll need to create a new installation account.
+      </div>
+      <a (click)="store.reset()" govukButton routerLink="installation-account">Apply for a new installation account</a>
+      <div class="govuk-body govuk-!-font-weight-bold">If you want to be added to an existing installation account</div>
+      <div class="govuk-body">
+        You can request to be added to an existing installation account by contacting the relevant installation
+        administrator.
+      </div>
+    </ng-container>
+  </div>
+</ng-template>

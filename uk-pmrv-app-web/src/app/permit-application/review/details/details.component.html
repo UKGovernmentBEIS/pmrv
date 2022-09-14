@@ -1,0 +1,56 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Installation details">
+  <ul app-task-item-list>
+    <li app-task-item linkText="Installation and operator details" status="complete" [hasContent]="true">
+      <app-installation-details-summary
+        [installationOperatorDetails]="installationOperatorDetails$ | async"
+        [hideSubheadings]="true"
+        cssClass="govuk-!-margin-bottom-0 govuk-summary-list--no-border"
+      ></app-installation-details-summary>
+    </li>
+    <li
+      *ngIf="'environmentalPermitsAndLicences' | taskStatus | async as status"
+      app-task-item
+      link="../../other-permits/summary"
+      linkText="Environmental permits and licenses"
+      [status]="status"
+      [hasContent]="true"
+    >
+      <app-permits-summary-template [hasBottomBorder]="false"></app-permits-summary-template>
+    </li>
+    <li
+      *ngIf="'installationDescription' | taskStatus | async as status"
+      app-task-item
+      link="../../description/summary"
+      linkText="Description of the installation"
+      [status]="status"
+      [hasContent]="true"
+    >
+      <app-description-summary-template [hasBottomBorder]="false"></app-description-summary-template>
+    </li>
+    <li
+      *ngIf="'regulatedActivities' | taskStatus | async as status"
+      app-task-item
+      link="../../regulated-activities/summary"
+      linkText="Regulated activity"
+      [status]="status"
+      [hasContent]="true"
+    >
+      <app-regulated-activities-summary-template [hasBottomBorder]="false"></app-regulated-activities-summary-template>
+    </li>
+    <li
+      *ngIf="'estimatedAnnualEmissions' | taskStatus | async as status"
+      app-task-item
+      link="../../category/summary"
+      linkText="Estimated annual CO2e"
+      [status]="status"
+      [hasContent]="true"
+    >
+      <app-emissions-summary-template [hasBorders]="false" [isPreview]="true"></app-emissions-summary-template>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

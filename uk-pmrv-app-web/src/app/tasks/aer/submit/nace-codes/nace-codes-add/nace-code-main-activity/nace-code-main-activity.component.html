@@ -1,0 +1,18 @@
+<app-aer-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Add a NACE code"
+    heading="Select the relevant category for the main activity at the installation"
+    submitText="Continue"
+  >
+    <div formControlName="mainActivity" govuk-radio>
+      <govuk-radio-option
+        *ngFor="let option of mainActivities | keyvalue: originalOrder"
+        [value]="option.key"
+        [label]="option.value"
+      ></govuk-radio-option>
+    </div>
+  </app-wizard-step>
+  <a govukLink routerLink="..">Return to: report task list</a>
+</app-aer-task>

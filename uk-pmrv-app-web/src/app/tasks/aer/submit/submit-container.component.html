@@ -1,0 +1,112 @@
+<app-base-task-container-component
+  [header]="aerTitle$ | async"
+  [customContentTemplate]="customContentTemplate"
+  expectedTaskType="AER_APPLICATION_SUBMIT"
+>
+</app-base-task-container-component>
+
+<ng-template #customContentTemplate>
+  <ol class="app-task-list">
+    <li app-task-section title="Installation details">
+      <ul app-task-item-list>
+        <li
+          app-task-item
+          link="./installation-details"
+          linkText="Installation and operator details"
+          [status]="'complete'"
+        ></li>
+        <li
+          app-task-item
+          link="./prtr/summary"
+          linkText="Pollutant Release and Transfer Register codes (PRTR)"
+          [status]="'pollutantRegisterActivities' | taskStatus | async"
+        ></li>
+        <li app-task-item link="./nace-codes" linkText="NACE codes" [status]="'naceCodes' | taskStatus | async"></li>
+        <li
+          app-task-item
+          link="./regulated-activities"
+          linkText="Regulated activities carried out at the installation"
+          [status]="'regulatedActivities' | taskStatus | async"
+        ></li>
+        <li
+          app-task-item
+          link="./monitoring-plan"
+          linkText="Monitoring plan versions during the reporting year"
+          [status]="'not started'"
+        ></li>
+        <li
+          app-task-item
+          link="./monitoring-approaches"
+          linkText="Monitoring approaches used during the reporting year"
+          [status]="'monitoringApproachTypes' | taskStatus | async"
+        ></li>
+      </ul>
+    </li>
+
+    <li app-task-section title="Fuels and equipment inventory">
+      <ul app-task-item-list>
+        <li
+          app-task-item
+          link="./source-streams"
+          linkText="Source streams (fuels and materials)"
+          [status]="'sourceStreams' | taskStatus | async"
+        ></li>
+        <li
+          app-task-item
+          link="./emission-sources"
+          linkText="Emission sources"
+          [status]="'emissionSources' | taskStatus | async"
+        ></li>
+        <li
+          *ngIf="isMeasurementOrN2OApproachesSelected$ | async"
+          app-task-item
+          link="./emission-points"
+          linkText="Emission points"
+          [status]="'emissionPoints' | taskStatus | async"
+        ></li>
+      </ul>
+    </li>
+
+    <li app-task-section title="Total emissions for the year">
+      <ul app-task-item-list>
+        <li
+          *ngFor="let approach of monitoringApproaches"
+          app-task-item
+          [link]="approach.link"
+          [linkText]="approach.linkText"
+          [status]="'not started'"
+        ></li>
+        <li app-task-item link="./emissions-summary" linkText="Emissions summary"></li>
+      </ul>
+    </li>
+
+    <li app-task-section title="Additional information">
+      <ul app-task-item-list>
+        <li
+          app-task-item
+          link="./abbreviations/summary"
+          linkText="Abbreviations and definitions"
+          [status]="'abbreviations' | taskStatus | async"
+        ></li>
+        <li
+          app-task-item
+          link="./additional-documents/summary"
+          linkText="Additional documents and information"
+          [status]="'additionalDocuments' | taskStatus | async"
+        ></li>
+        <li
+          app-task-item
+          link="./confidentiality-statement/summary"
+          linkText="Confidentiality statement"
+          [status]="'confidentialityStatement' | taskStatus | async"
+        ></li>
+      </ul>
+    </li>
+
+    <li app-task-section title="Send report">
+      <ul app-task-item-list>
+        <li app-task-item link="./send-report" linkText="Send report" [status]="'not started'"></li>
+      </ul>
+    </li>
+  </ol>
+</ng-template>

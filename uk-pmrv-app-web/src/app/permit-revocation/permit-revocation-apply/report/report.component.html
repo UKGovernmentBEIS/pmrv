@@ -1,0 +1,23 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  caption="Permit revocation"
+  heading="{{ (route.data | async)?.pageTitle }}"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <div formControlName="annualEmissionsReportRequired" govuk-radio>
+    <govuk-radio-option [value]="true" label="Yes">
+      <ng-container govukConditionalContent>
+        <div
+          formControlName="annualEmissionsReportDate"
+          [min]="minDate"
+          govuk-date-input
+          label="When is the revocation report required?"
+        ></div>
+      </ng-container>
+    </govuk-radio-option>
+    <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+  </div>
+</app-wizard-step>
+<a govukLink routerLink="../../">Return to: Permit revocation task list</a>

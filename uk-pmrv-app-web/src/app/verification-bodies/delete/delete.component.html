@@ -1,0 +1,24 @@
+<ng-container *ngIf="(isConfirmationDisplayed$ | async) !== true; else verificationBodyDeleted">
+  <h2 class="govuk-heading-l">Confirm that this verification body will be deleted</h2>
+
+  <govuk-warning-text>You will not be able to undo this action.</govuk-warning-text>
+
+  <div class="govuk-button-group">
+    <button (click)="delete()" appPendingButton govukWarnButton>Confirm delete</button>
+    <a govukLink routerLink="/verification-bodies">Cancel</a>
+  </div>
+</ng-container>
+
+<ng-template #verificationBodyDeleted>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <govuk-panel title="The verification body account has been deleted"></govuk-panel>
+
+      <h2 class="govuk-heading-m">What happens next</h2>
+      <p class="govuk-body">
+        GHG Permit holders who have appointed this verification body will be notified that their verifier has been
+        removed and that they should appoint a new verifier.
+      </p>
+    </div>
+  </div>
+</ng-template>

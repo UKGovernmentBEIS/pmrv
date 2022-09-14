@@ -1,0 +1,32 @@
+<ng-container
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-permit-task>
+    <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+    <app-page-heading caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+      >Confirm your answers</app-page-heading
+    >
+    <p class="govuk-body">
+      Get help with <a routerLink="../help" target="_blank" govukLink>applying tiers to activity data</a>
+    </p>
+    <p class="govuk-body">
+      Get help with
+      <a routerLink="../help-metering-uncertainty" target="_blank" govukLink
+        >calculating overall metering uncertainty</a
+      >
+    </p>
+
+    <app-activity-data-summary-overview
+      [isChangeLinkAvailable]="(store.isEditable$ | async) === true"
+      [activityDataSectionHasBottomBorder]="true"
+      [justificationSectionHasBottomBorder]="!tier?.activityData?.isHighestRequiredTier"
+      [validMeasurementDevicesOrMethodsError]="form.errors?.validMeasurementDevicesOrMethods"
+    ></app-activity-data-summary-overview>
+
+    <div *ngIf="(store.isEditable$ | async) === true" class="govuk-button-group">
+      <button appPendingButton govukButton type="button" (click)="onConfirm()">Confirm and complete</button>
+    </div>
+
+    <a govukLink routerLink="../.."> Return to: {{ tier | sourceStreamCategoryName | async }} </a>
+  </app-permit-task>
+</ng-container>

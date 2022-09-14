@@ -1,0 +1,54 @@
+<app-page-heading>Temporary factor preventing compliance with a permit condition</app-page-heading>
+
+<div
+  formControlName="description"
+  govuk-textarea
+  [maxLength]="10000"
+  label="Describe the factors preventing compliance"
+></div>
+
+<ng-content></ng-content>
+
+<div
+  formControlName="startDateOfNonCompliance"
+  govuk-date-input
+  label="What is the predicted or actual start date of non-compliance?"
+></div>
+
+<div
+  formControlName="endDateOfNonCompliance"
+  govuk-date-input
+  [min]="today"
+  label="When is the non-compliance expected to end?"
+></div>
+
+<div
+  formControlName="inRespectOfMonitoringMethodology"
+  govuk-radio
+  legend="Is this non-compliance in respect of the monitoring and reporting methodology?"
+  legendSize="medium"
+>
+  <govuk-radio-option [value]="true" label="Yes">
+    <ng-container govukConditionalContent>
+      <div
+        formControlName="details"
+        govuk-textarea
+        [maxLength]="10000"
+        label="Provide details of the interim monitoring and reporting methodology adopted"
+      ></div>
+      <div
+        formControlName="proof"
+        govuk-textarea
+        [maxLength]="10000"
+        label="Provide proof of the necessity for a change to the monitoring and reporting methodology"
+      ></div>
+      <div
+        formControlName="measures"
+        govuk-textarea
+        [maxLength]="10000"
+        label="Describe the measures taken to ensure prompt restoration of compliance"
+      ></div>
+    </ng-container>
+  </govuk-radio-option>
+  <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+</div>

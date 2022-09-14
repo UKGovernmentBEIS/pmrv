@@ -1,0 +1,46 @@
+<app-aer-task [breadcrumb]="true">
+  <app-page-heading>Emission points</app-page-heading>
+
+  <ng-container *ngIf="'emissionPoints' | task | async as emissionPoints; else startAdding">
+    <ng-container *ngIf="emissionPoints.length > 0; else startAdding">
+      <p class="govuk-body">
+        Add, change or delete an emission point (Continuous Emissions Measurement System) from your approved permit, and
+        check the data is correct for the reporting year.
+      </p>
+
+      <govuk-table [columns]="columns" [data]="'emissionPoints' | task | async" [class.no-bottom-border]="false">
+        <ng-template let-column="column" let-row="row">
+          <ng-container [ngSwitch]="column.field">
+            <ng-container *ngSwitchCase="'reference'">{{ row.reference }}</ng-container>
+            <ng-container *ngSwitchCase="'description'">{{ row.description }} </ng-container>
+            <ng-container *ngIf="(aerService.isEditable$ | async) === true">
+              <ng-container *ngSwitchCase="'change'"><a [routerLink]="row.id" govukLink>Change</a></ng-container>
+              <ng-container *ngSwitchCase="'delete'"
+                ><a [routerLink]="['delete', row.id]" govukLink>Delete</a></ng-container
+              >
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+
+      <ng-container *ngIf="(aerService.isEditable$ | async) === true">
+        <button govukSecondaryButton="add" routerLink="add" type="button">Add another emission point</button>
+
+        <div class="govuk-button-group">
+          <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #startAdding>
+    <p class="govuk-body">
+      List the emission points (Continuous Emissions Measurement Systems) that have been used during the reporting year.
+    </p>
+    <div class="govuk-button-group" *ngIf="(aerService.isEditable$ | async) === true">
+      <button govukButton routerLink="add" type="button">Add an emission point</button>
+    </div>
+  </ng-template>
+
+  <app-return-link></app-return-link>
+</app-aer-task>

@@ -1,0 +1,39 @@
+<dl
+  *ngIf="details?.exist === false; else measurementDevices"
+  govuk-summary-list
+  [class]="cssClass"
+  [class.summary-list--edge-border]="hasBottomBorder"
+  [hasBorders]="false"
+>
+  <div govukSummaryListRow>
+    <dt govukSummaryListRowKey>
+      Is any equipment used for temperature and pressure measurement in the transport network?
+    </dt>
+    <dd govukSummaryListRowValue>No</dd>
+  </div>
+</dl>
+
+<ng-template #measurementDevices>
+  <dl
+    *ngFor="let detail of details?.measurementDevices"
+    govuk-summary-list
+    [class]="cssClass"
+    [class.summary-list--edge-border]="hasBottomBorder"
+    [hasBorders]="false"
+  >
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Reference</dt>
+      <dd class="pre-wrap" govukSummaryListRowValue>{{ detail.reference }}</dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Type of measurement device</dt>
+      <dd govukSummaryListRowValue>
+        {{ detail.type === 'OTHER' ? detail.otherTypeName : (detail.type | measurementDevicesType) }}
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Location</dt>
+      <dd govukSummaryListRowValue>{{ detail.location }}</dd>
+    </div>
+  </dl>
+</ng-template>

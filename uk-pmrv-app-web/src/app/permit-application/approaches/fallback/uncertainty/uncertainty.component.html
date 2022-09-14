@@ -1,0 +1,16 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Fall-back"
+    heading="Annual uncertainty analysis"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">Provide details about the procedures used to carry out the annual uncertainty analysis.</p>
+
+    <app-procedure-form></app-procedure-form>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Fall-back" reviewGroupUrl="fall-back"></app-approach-return-link>
+</app-permit-task>

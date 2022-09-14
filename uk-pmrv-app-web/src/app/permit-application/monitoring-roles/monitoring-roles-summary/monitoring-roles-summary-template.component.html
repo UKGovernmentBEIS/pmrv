@@ -1,0 +1,20 @@
+<dl
+  *ngFor="let detail of roles$ | async"
+  [details]="detail"
+  appGroupedSummaryList
+  govuk-summary-list
+  [hasBottomBorder]="hasBottomBorder"
+></dl>
+<ng-container *ngIf="(task$ | async)?.organisationCharts?.length">
+  <dl govuk-summary-list appGroupedSummaryList [hasBottomBorder]="hasBottomBorder">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Organisation chart</dt>
+      <dd govukSummaryListRowValue>
+        <app-summary-download-files
+          [files]="store.getDownloadUrlFiles(((task$ | async)?.organisationCharts))"
+        >
+        </app-summary-download-files>
+      </dd>
+    </div>
+  </dl>
+</ng-container>

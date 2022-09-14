@@ -1,0 +1,66 @@
+= Introduction
+
+== History and background information
+•	The EU ETS is a cornerstone of the EU’s and UK’s policies to combat climate change and is a key tool for reducing greenhouse gas emissions cost-effectively. The EU ETS operates as a cap-and-trade system of tradable Allowances, which are permits for the emission of 1 (one) tonne of carbon dioxide equivalent. The EU ETS includes intra-European Economic Area (EEA) flights. Stationary installation operators, aircraft operators and traders participate in the scheme to reduce greenhouse gases over time and meet the Government’s Clean Growth Strategy ambition and our statutory commitments under the Climate Change Act 2008.
+•	The EU ETS was transposed into national law in the UK through the following measures:
+    a)	The Greenhouse Gas Emissions Trading Scheme Regulations 2003 +
+    b)	Greenhouse Gas Emissions Trading Scheme Rules 2004 +
+    c)	The Greenhouse Gas Emissions Trading Scheme and National Emissions Inventory (Amendment) Regulations 2013 +
+    d)	The Greenhouse Gas Emissions Trading System Scheme (Amendment) Regulations 2013 +
+    e)	The Greenhouse Gas Emissions Trading Scheme (Amendment) Regulations 2014 +
+•	ETSWAP is the system currently owned and operated by the Environment Agency (EA)/ Defra DDTS (Digital, Data and Technology Service) for permitting, monitoring, reporting and verification of greenhouse gas emissions in the UK under the current EU ETS. The system is designed to facilitate permitting of emissions, completion and submission of verified emissions and benchmarking reports, viewing of approved emissions/ benchmarking plans for existing operators and submission of emissions plans for new operators.
+•	After the UK exits the EU we may initially remain in the EU ETS as per the Withdrawal Agreement until the end of the EU Exit Implementation Period. The UK Government and Devolved Administrations have consulted on the options for a future carbon pricing scheme  and are intending to create new UK Legislation in due course. In the event of exiting without a withdrawal agreement, the UK Government has announced that it will implement an interim Carbon Emissions Tax. In either scenario, a PMRV Solution will be required as described in this ITT.
+
+== Documentation methodology
+This document is created following the techniques from  *Coding the architecture*, summarized appropriately with a http://www.codingthearchitecture.com/2017/04/27/visualising_and_documenting_software_architecture_cheat_sheets.html[cheat sheet] ^<<ctacs,[9]>>^ as well as the more elaborate *SEI approach to software architecture documentation: Views and beyond*^<<seivab,[10]>>^.
+
+Multiple views are used to describe various aspects of the system covering functional, operational and data storage viewpoints along the way. This document aims on providing the high level view and any important details used for decision making. More elaborate details are recorded on separate design documents and are referenced as needed, making this document a general entry point to the project's overall technical documentation.
+
+== How to read this document
+In order to get a general understanding of the architecture of the project the reader is advised to go through the following sections:
+
+- xref:context:index.adoc[Context],
+ in order to understand the vision, the main goals, the stakeholders and in general the large picture for this project
+
+- xref:constraints:index.adoc[Constraints]
+ and xref:principles:index.adoc[Principles],
+ that describe the main decision drivers for this project's architecture
+
+- xref:non-functional-view:index.adoc[Non Functional View]
+ for a treatment on the quality attributes of the system
+
+- xref:technologies:index.adoc[Technology Selection]
+ and
+
+For a deeper understanding on the system's structure and runtime behavior, a thorough reading on the 
+xref:logical-view:index.adoc[Logical View]
+ and
+xref:design-view:index.adoc[Design View]
+ contains information around important lower level decisions and algorithms used, and could also provide valuable information.
+
+Security auditors may mostly want to focus on the 
+xref:non-functional-view:security.adoc[relevant security subsection in Non Functional View].
+
+System operators, application and data storage management personnel may instead prefer to focus on 
+xref:development_flow_and_branching_model:index.adoc[Deployment],
+xref:infrastructure-view:index.adoc[Infrastructure],
+ and
+xref:data-view:index.adoc[Data Views].
+
+Other systems' architects or integration specialists are advised to read through the 
+xref:interface-view:index.adoc[Interface View]
+ for an understanding on how this system inter-operates with others.
+
+== References
+
+. [[euets]] EU Emissions Trading System (EU ETS) at https://ec.europa.eu/clima/policies/ets_en
+. [[pmrv]] Monitoring, reporting and verification of EU ETS emissions at https://ec.europa.eu/clima/eu-action/eu-emissions-trading-system-eu-ets/monitoring-reporting-and-verification-eu-ets-emissions_en
+. [[eurlex]] EUR-Lex at https://eur-lex.europa.eu/eli/dir/2003/87
+. [[eurlex32018R2066]] EUR-Lex Document 32018R2066 at https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2018.334.01.0001.01.ENG
+. [[eurlex32018R2067]] EUR-Lex Document 32018R2067 at https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=uriserv:OJ.L_.2018.334.01.0094.01.ENG
+. [[freeallocation]] Free allocation at https://ec.europa.eu/clima/eu-action/eu-emissions-trading-system-eu-ets/free-allocation_en#tab-0-1
+. [[icaocorsia]] SARPs - Annex 16 Volume IV at https://www.icao.int/environmental-protection/CORSIA/Pages/SARPs-Annex-16-Volume-IV.aspx
+. [[mrr]] Monitoring, reporting and verification of EU ETS emissions
+at https://ec.europa.eu/clima/eu-action/eu-emissions-trading-system-eu-ets/monitoring-reporting-and-verification-eu-ets-emissions_en
+. [[ctacs]] Coding the architecture http://www.codingthearchitecture.com/2017/04/27/visualising_and_documenting_software_architecture_cheat_sheets.html[cheat sheet] presents a quick summary of the techniques used to document UK ETS architecture
+. [[seivab]] http://www.sei.cmu.edu/architecture/tools/document/viewsandbeyond.cfm[SEI approach to software architecture documentation: Views and beyond] is a book used complimentary to the Coding the Architecture guidelines defined above.

@@ -1,0 +1,47 @@
+<app-base-action-container-component
+  [header]="(route.data | async)?.pageTitle"
+  [customContentTemplate]="customContentTemplate"
+  [expectedActionType]="['PERMIT_NOTIFICATION_APPLICATION_COMPLETED']"
+>
+</app-base-action-container-component>
+
+<ng-template #customContentTemplate>
+  <div class="govuk-!-margin-bottom-8">
+    <app-follow-up-summary
+      class="govuk-!-display-block govuk-!-margin-bottom-8"
+      [allowChange]="false"
+      sectionHeading="Follow up response details"
+      [summaryListMapper]="followUpResponseDetailsSummaryListMapper"
+      [data]="followUpResponseDetailsData$ | async"
+      [files]="followUpResponseDetailsFiles$ | async"
+    ></app-follow-up-summary>
+    <app-follow-up-summary
+      class="govuk-!-display-block govuk-!-margin-bottom-8"
+      [allowChange]="false"
+      sectionHeading="Decision Details"
+      [summaryListMapper]="decisionDetailsSummaryListMapper"
+      [data]="decisionDetailsData$ | async"
+      [files]="decisionDetailsFiles$ | async"
+    ></app-follow-up-summary>
+
+    <ng-container *ngIf="usersInfo$ | async as usersInfo">
+      <h2 app-summary-header class="govuk-heading-m">Official notice recipients</h2>
+      <dl govuk-summary-list appGroupedSummaryList class="govuk-!-margin-bottom-6">
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Users</dt>
+          <dd govukSummaryListRowValue>
+            <div *ngFor="let user of operators$ | async">
+              {{ user | userInfoResolver: usersInfo }}
+            </div>
+          </dd>
+        </div>
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Name and signature on the official notice</dt>
+          <dd govukSummaryListRowValue>
+            {{ signatory$ | async | userInfoResolver: usersInfo }}
+          </dd>
+        </div>
+      </dl>
+    </ng-container>
+  </div>
+</ng-template>

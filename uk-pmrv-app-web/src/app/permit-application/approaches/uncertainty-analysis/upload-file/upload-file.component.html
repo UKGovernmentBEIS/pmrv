@@ -1,0 +1,33 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    caption="Monitoring approaches"
+    heading="Uncertainty analysis"
+    submitText="Save and continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-body">
+      <p>
+        You must provide evidence to demonstrate compliance with the applied tiers. Please list references to
+        uncertainty calculations and/or schematics. Relevant to all measurement devices and tiers applied across your
+        monitoring approach.
+      </p>
+
+      <p>Get help with <a [routerLink]="" govukLink>uncertainty analysis</a>.</p>
+    </div>
+
+    <app-multiple-file-input
+      [baseDownloadUrl]="getDownloadUrl()"
+      [label]="(isFileUploaded$ | async) ? 'Upload another file' : 'Upload a file'"
+      formControlName="files"
+      hint="The file must be smaller than 20MB"
+      listTitle="Uploaded files"
+    ></app-multiple-file-input>
+  </app-wizard-step>
+</app-permit-task>
+
+<app-list-return-link
+  reviewGroupTitle="Uncertainty analysis"
+  reviewGroupUrl="uncertainty-analysis"
+></app-list-return-link>

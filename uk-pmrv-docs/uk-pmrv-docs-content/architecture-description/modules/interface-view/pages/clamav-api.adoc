@@ -1,0 +1,7 @@
+= ClamAV API
+
+http://www.clamav.net/[ClamAV] is an open-source antivirus engine for detecting trojans, viruses, malware & other malicious threats.
+It is deployed as a separate service and all files are sent to this service for scanning prior to being accepted and stored in PMRV database.
+https://github.com/cdarras/clamav-client[Clamav-client] is used for communication with this service.
+
+

@@ -1,0 +1,27 @@
+= GOV-UK Pay API
+
+GOV-UK Pay: Online payment management system. PMRV integrates with GOV-UK Pay to process payments that are needed as part of an application process.
+Ref: https://www.payments.service.gov.uk/
+
+|===
+|Description |Http method |URI |Query params |Body
+
+|Create payment endpoint
+|POST
+|https://publicapi.payments.service.gov.uk/v1/payments
+|
+a|{
+"amount": <payment amount>,
+"description": <payment description>,
+"description": <payment description>,
+"reference": <payment reference>,
+"returnUrl": <the url for GOV-UK Pay to call back when payment processing is finished>
+}
+
+|Retrieve payment info
+|GET
+|https://publicapi.payments.service.gov.uk/v1/payments/{paymentId}
+|1) paymentId: the id of the payment. +
+|
+|===
+

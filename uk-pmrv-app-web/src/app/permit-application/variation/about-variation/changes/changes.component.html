@@ -1,0 +1,85 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    heading="What type of changes are you making?"
+    submitText="Continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <h2 class="govuk-heading-m">Non-significant changes to the Monitoring Plan or the Monitoring Methodology Plan</h2>
+    <p class="govuk-body">
+      Non-significant changes are updates to the installation details that are not related to emissions equipment or
+      emissions points.
+    </p>
+    <p class="govuk-body">Contact your regulator if you are unsure about the change.</p>
+    <div formControlName="nonSignificantChanges" govuk-checkboxes>
+      <ng-container *ngFor="let changeKey of nonSignificantChangesKeys">
+        <ng-container *ngIf="changeKey !== 'OTHER_NON_SIGNFICANT'">
+          <govuk-checkbox [value]="changeKey" [label]="nonSignificantChanges[changeKey]"></govuk-checkbox>
+        </ng-container>
+        <ng-container *ngIf="changeKey === 'OTHER_NON_SIGNFICANT'">
+          <govuk-checkbox [value]="changeKey" [label]="nonSignificantChanges[changeKey]">
+            <ng-container govukConditionalContent>
+              <div formControlName="otherNonSignficantSummary" govuk-text-input></div>
+            </ng-container>
+          </govuk-checkbox>
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <h2 class="govuk-heading-m">Significant modifications to the Monitoring Plan</h2>
+    <p class="govuk-body">A fee may be charged for significant modifications to the Monitoring Plan.</p>
+    <p class="govuk-body">
+      Significant modifications are those set out in Article 15 of the Monitoring and Reporting Regulation, including:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>changes to emission sources</li>
+      <li>the introduction of new source streams</li>
+      <li>a change of emission factor values laid down in the monitoring plan</li>
+    </ul>
+    <div formControlName="significantChangesMonitoringPlan" govuk-checkboxes>
+      <ng-container *ngFor="let changeKey of significantChangesMonitoringPlanKeys">
+        <ng-container *ngIf="changeKey !== 'OTHER_MONITORING_PLAN'">
+          <govuk-checkbox [value]="changeKey" [label]="significantChangesMonitoringPlan[changeKey]"></govuk-checkbox>
+        </ng-container>
+        <ng-container *ngIf="changeKey === 'OTHER_MONITORING_PLAN'">
+          <govuk-checkbox [value]="changeKey" [label]="significantChangesMonitoringPlan[changeKey]">
+            <ng-container govukConditionalContent>
+              <div formControlName="otherMonitoringPlanSummary" govuk-text-input></div>
+            </ng-container>
+          </govuk-checkbox>
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <h2 class="govuk-heading-m">Significant modifications to the Monitoring Methodology Plan</h2>
+    <p class="govuk-body">A fee may be charged for significant modifications to the Monitoring Methodology Plan.</p>
+    <p class="govuk-body">
+      Significant modifications are those set out in Article 9 of the Free Allocation Rules, including:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>modifications resulting from changes to the installation</li>
+      <li>the change of a default value or estimation method laid down in the monitoring methodology plan</li>
+      <li>changes requested by the competent authority</li>
+    </ul>
+    <div formControlName="significantChangesMonitoringMethodologyPlan" govuk-checkboxes>
+      <ng-container *ngFor="let changeKey of significantChangesMonitoringMethodologyPlanKeys">
+        <ng-container *ngIf="changeKey !== 'OTHER_MONITORING_METHODOLOGY_PLAN'">
+          <govuk-checkbox
+            [value]="changeKey"
+            [label]="significantChangesMonitoringMethodologyPlan[changeKey]"
+          ></govuk-checkbox>
+        </ng-container>
+        <ng-container *ngIf="changeKey === 'OTHER_MONITORING_METHODOLOGY_PLAN'">
+          <govuk-checkbox [value]="changeKey" [label]="significantChangesMonitoringMethodologyPlan[changeKey]">
+            <ng-container govukConditionalContent>
+              <div formControlName="otherMonitoringMethodologyPlanSummary" govuk-text-input></div>
+            </ng-container>
+          </govuk-checkbox>
+        </ng-container>
+      </ng-container>
+    </div>
+  </app-wizard-step>
+
+  <app-list-return-link></app-list-return-link>
+</app-permit-task>

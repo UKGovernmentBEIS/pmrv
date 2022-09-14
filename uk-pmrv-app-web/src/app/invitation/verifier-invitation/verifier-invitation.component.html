@@ -1,0 +1,10 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-one-half">
+    <govuk-error-summary *ngIf="isSummaryDisplayed | async" [form]="form"></govuk-error-summary>
+    <app-page-heading>Activate your account</app-page-heading>
+    <form (ngSubmit)="submitPassword()" [formGroup]="form">
+      <app-password></app-password>
+      <button appPendingButton govukButton type="submit">Submit</button>
+    </form>
+  </div>
+</div>

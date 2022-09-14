@@ -1,0 +1,57 @@
+= Logging Policy
+
+== Overall design and management
+All applications in the UK PMRV ecosystem log according to specific rules. All logs of all applications
+are stored in AWS Cloudwatch in index files that are automatically aggregated. They are made available
+to support engineers, devops, administrators, etc. as long as the have the proper rights and an IAM role.
+
+Cloudwatch supports the concept of log groups, one for each task definition. Each task is defined to
+sent its logs into a specific log group.
+
+== Backend log format
+Developers are free to include logs in the code but there are two gotchas:
+
+- no sensitive information is logged - this includes information that is communicated from the user
+in HTTP requests or information that is retrieved from any database as part of data retrieving operation.
+** information that have been identified as sensitive and are being masked in the logs are:
+* password
+* token
+* emailToken
+* invitationToken
+* email
+* firstName
+* lastName
+* address line1
+* address line2
+* city
+* country
+* postcode
+* number
+* phoneNumber
+* mobileNumber
+* jobTitle
+
+- logs are written when they are needed. E.g. to note an input validation error or a situation that must
+be acted upon such as a problem in a scheduler or during message processing.
+
+Except from the logs that reside in the code, every Request/Response in the Rest APIs is also logged.
+Log level for these logs is by default INFO unless an error occurs where the log level is ERROR for both Request/Response.
+
+In Request/Response logs all http headers are being logged together with request/response payload if exists and some additional information:
+
+* The userId of the user making the request.
+* A correlationId which is the same in every Request/Response pair and is used to correlate a request with its response.
+
+=== Exceptions and other typical logging information
+This element contains exception related information. This is automatically filled in by the
+logging library.
+
+Example Request/Response logs
+
+ REQUEST[correlationId=f6b276a4-6e81-47aa-8f9d-a3bca4004a3e, headers={sec-fetch-mode=cors, referer=https://integration.ukpmrv.net/rfi/75/wait, sec-fetch-site=same-origin, x-forwarded-proto=https, accept-language=en-GB,en-US;q=0.9,en;q=0.8,el;q=0.7, cookie=iptac-10F920DE343E-WZP25290XZX=4e52425c703730343533404e5242--1655883577--3600--1655718095--89e69beca1e43a46cfe89cef862b9ed9843ecdace8ee7050c0595d2ac664e153; JSESSIONID=8D8E0BBB3DD035415DB70B28481529ED; OAuth_Token_Request_State=dbacfd2f-8b84-48d0-af51-cad0216ffe4c; AWSALB=Io/+R+2NVziQ08d7n5hyEGFx9DbHQX/tw6bAG6uPCqEEegBQ8mayOsOzfB0pvt8NF+ghOQ68cWg33PkIFS2v6hrUKIg7QnT+NkcWK3ZrGPeV2qWbpMXwDXMXXFgz; AWSALBCORS=Io/+R+2NVziQ08d7n5hyEGFx9DbHQX/tw6bAG6uPCqEEegBQ8mayOsOzfB0pvt8NF+ghOQ68cWg33PkIFS2v6hrUKIg7QnT+NkcWK3ZrGPeV2qWbpMXwDXMXXFgz, x-forwarded-port=443, x-forwarded-for=integration.ukpmrv.net, accept=*/*, sec-ch-ua=".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103", x-amzn-trace-id=Root=1-62d91f1e-290c41d24ee9f1ec4a53bff2, sec-ch-ua-mobile=?0, sec-ch-ua-platform="Windows", host=integration.ukpmrv.net, connection=close, accept-encoding=gzip, deflate, br, user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36, sec-fetch-dest=empty}, payload=null, timestamp=2022-07-21T09:40:46.732249, uri=/api/v1.0/request-actionsrequestId=48, user=ea6b6917-4296-4f37-8aa4-f21cc2afe064, httpMethod=GET]
+
+ RESPONSE[correlationId=f6b276a4-6e81-47aa-8f9d-a3bca4004a3e, headers={Correlation-Id=f6b276a4-6e81-47aa-8f9d-a3bca4004a3e, Vary=Origin}, payload=[{"id":72,"type":"PERMIT_ISSUANCE_APPLICATION_SUBMITTED","submitter":"wedfs wserf","creationDate":"2022-06-23T15:11:58.052191Z"},{"id":73,"type":"PAYMENT_MARKED_AS_RECEIVED","submitter":"Regulator England","creationDate":"2022-06-23T15:12:57.993772Z"},{"id":74,"type":"RFI_SUBMITTED","submitter":"Regulator England","creationDate":"2022-06-23T15:14:59.562519Z"}], timestamp=2022-07-21T09:40:46.747489, httpStatus=200 OK]
+
+Example Request log with masked sensitive data
+
+ REQUEST[correlationId=0b8f7199-4bc8-4afb-a8f1-2060693651e5, headers={sec-fetch-mode=cors, content-length=1063, referer=https://integration.ukpmrv.net/user/regulators/ea6b6917-4296-4f37-8aa4-f21cc2afe064, sec-fetch-site=same-origin, x-forwarded-proto=https, accept-language=en-GB,en-US;q=0.9,en;q=0.8,el;q=0.7, cookie=iptac-10F920DE343E-WZP25290XZX=4e52425c703730343533404e5242--1655883577--3600--1655718095--89e69beca1e43a46cfe89cef862b9ed9843ecdace8ee7050c0595d2ac664e153; JSESSIONID=8D8E0BBB3DD035415DB70B28481529ED; OAuth_Token_Request_State=dbacfd2f-8b84-48d0-af51-cad0216ffe4c; AWSALB=7CKKxHOu9GNhKPJO0X90tmqFzkyTBH2BGx6KHwzVfrTVTkkr9IEiUYt3/i53AbloXyby95hszwyJlSC4EDTxP+pJDx6mGRLppPpA26ALgCCLHfah1L5VXBh9EReI; AWSALBCORS=7CKKxHOu9GNhKPJO0X90tmqFzkyTBH2BGx6KHwzVfrTVTkkr9IEiUYt3/i53AbloXyby95hszwyJlSC4EDTxP+pJDx6mGRLppPpA26ALgCCLHfah1L5VXBh9EReI, origin=https://integration.ukpmrv.net, x-forwarded-port=443, x-forwarded-for=integration.ukpmrv.net, accept=*/*, sec-ch-ua=".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103", x-amzn-trace-id=Root=1-62d921ad-0ed6f29a07fa544a0263aa3c, sec-ch-ua-mobile=?0, sec-ch-ua-platform="Windows", host=integration.ukpmrv.net, connection=close, content-type=multipart/form-data; boundary=----WebKitFormBoundaryv3eqdhAtco3l5WLw, accept-encoding=gzip, deflate, br, user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36, sec-fetch-dest=empty}, payload={"user":{"firstName":"*********","lastName":"*******","phoneNumber":"******","mobileNumber":null,"email":"*************************","jobTitle":"***"},"permissions":{"ADD_OPERATOR_ADMIN":"EXECUTE","ASSIGN_REASSIGN_TASKS":"EXECUTE","MANAGE_USERS_AND_CONTACTS":"EXECUTE","MANAGE_VERIFICATION_BODIES":"EXECUTE","REVIEW_INSTALLATION_ACCOUNT":"EXECUTE","REVIEW_PERMIT_APPLICATION":"EXECUTE","PEER_REVIEW_PERMIT_APPLICATION":"EXECUTE","REVIEW_PERMIT_SURRENDER":"EXECUTE","PEER_REVIEW_PERMIT_SURRENDER":"EXECUTE","SUBMIT_PERMIT_REVOCATION":"EXECUTE","PEER_REVIEW_PERMIT_REVOCATION":"EXECUTE","REVIEW_PERMIT_NOTIFICATION":"NONE","PEER_REVIEW_PERMIT_NOTIFICATION":"NONE","SUBMIT_REVIEW_PERMIT_VARIATION":"NONE","PEER_REVIEW_PERMIT_VARIATION":"NONE","REVIEW_AER":"NONE"}}, timestamp=2022-07-21T09:51:41.478075, uri=/api/v1.0/regulator-users, user=ea6b6917-4296-4f37-8aa4-f21cc2afe064, httpMethod=POST]

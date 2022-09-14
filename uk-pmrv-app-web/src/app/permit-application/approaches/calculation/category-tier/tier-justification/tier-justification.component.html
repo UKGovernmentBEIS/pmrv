@@ -1,0 +1,53 @@
+<ng-container
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-permit-task>
+    <app-wizard-step
+      (formSubmit)="onContinue()"
+      [formGroup]="form"
+      caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+      heading="Reasons for not applying the highest required tier"
+      submitText="Continue"
+      [hideSubmit]="(store.isEditable$ | async) === false"
+    >
+      <h2 class="govuk-heading-m">Why are you not applying the highest required tier?</h2>
+
+      <p class="govuk-body">Select all that apply</p>
+
+      <div formControlName="justification" govuk-checkboxes>
+        <ng-container govukLegend>
+          <span class="govuk-visually-hidden">Unreasonable cost</span>
+        </ng-container>
+        <govuk-checkbox value="isCostUnreasonable" label="Unreasonable cost"> </govuk-checkbox>
+
+        <ng-container govukLegend>
+          <span class="govuk-visually-hidden">Technical infeasibility</span>
+        </ng-container>
+        <govuk-checkbox value="isTechnicallyInfeasible" label="Technical infeasibility">
+          <ng-container govukConditionalContent>
+            <div
+              formControlName="technicalInfeasibilityExplanation"
+              govuk-textarea
+              [maxLength]="10000"
+              label="Explain why it is technically infeasible to meet the highest tier"
+            ></div>
+          </ng-container>
+        </govuk-checkbox>
+      </div>
+
+      <app-multiple-file-input
+        [baseDownloadUrl]="getDownloadUrl()"
+        [label]="
+          (isFileUploaded$ | async)
+            ? 'Upload a different file'
+            : 'Upload any supporting files or completed templates (optional)'
+        "
+        formControlName="files"
+        hint="The file must be smaller than 20MB"
+        listTitle="Upload any supporting files or completed templates (optional)"
+      ></app-multiple-file-input>
+    </app-wizard-step>
+  </app-permit-task>
+
+  <a govukLink routerLink="../..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+</ng-container>

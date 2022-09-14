@@ -1,0 +1,49 @@
+<app-permit-task
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+    heading="Add an analysis method used to determine {{ statusKey | subtaskName | lowercase }}"
+    submitText="Continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div formControlName="analysis" govuk-text-input label="Method of analysis" hint="For example, 'ISO6976'."></div>
+    <div
+      formControlName="subParameter"
+      govuk-text-input
+      label="Sub parameter (optional)"
+      hint="Enter any sub-parameter used, for example moisture content, purity, ash content"
+    ></div>
+    <app-select-other formControlName="samplingFrequency" label="Sampling frequency" widthClass="govuk-!-width-full">
+      <option *ngFor="let option of samplingFrequencyMap" [value]="option">
+        {{ option | samplingFrequency }}
+      </option>
+      <div govukConditionalContent>
+        <div formControlName="samplingFrequencyOtherDetails" govuk-text-input label="Provide a short name"></div>
+      </div>
+    </app-select-other>
+    <div
+      formControlName="frequencyMeetsMinRequirements"
+      govuk-radio
+      legend="Does the sampling frequency meet the minimum requirements set out in the Monitoring and Reporting regulations?"
+    >
+      <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+      <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+    </div>
+    <div formControlName="laboratoryName" govuk-text-input label="Laboratory name"></div>
+    <div formControlName="laboratoryAccredited" govuk-radio legend="Is the laboratory ISO17025 accredited?">
+      <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+      <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+    </div>
+    <app-multiple-file-input
+      [baseDownloadUrl]="getDownloadUrl()"
+      [label]="(isFileUploaded$ | async) ? 'Upload a different file' : 'Upload any supporting files (optional)'"
+      formControlName="files"
+      listTitle="Additional documents and information (optional)"
+      hint="The file must be smaller than 20MB"
+    ></app-multiple-file-input>
+  </app-wizard-step>
+  <a govukLink routerLink="../../..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+</app-permit-task>

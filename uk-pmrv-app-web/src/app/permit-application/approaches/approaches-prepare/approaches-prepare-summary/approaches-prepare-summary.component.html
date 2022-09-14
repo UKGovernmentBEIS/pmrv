@@ -1,0 +1,10 @@
+<app-permit-task [notification]="notification" [breadcrumb]="true">
+  <app-approaches-prepare-template></app-approaches-prepare-template>
+
+  <dl
+    govuk-summary-list
+    [details]="[{ key: 'I have read Preparing to define monitoring approaches', value: 'Yes' }]"
+  ></dl>
+
+  <app-list-return-link></app-list-return-link>
+</app-permit-task>

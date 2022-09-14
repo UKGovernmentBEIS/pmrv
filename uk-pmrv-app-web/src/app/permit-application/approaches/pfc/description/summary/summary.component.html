@@ -1,0 +1,15 @@
+<app-permit-task [notification]="notification" [breadcrumb]="[{ text: 'Perfluorocarbons', link: ['pfc'] }]">
+  <app-page-heading caption="Perfluorocarbons">Approach description</app-page-heading>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Approach description</span>
+  </h2>
+
+  <app-pfc-approach-description-summary-template></app-pfc-approach-description-summary-template>
+
+  <app-approach-return-link parentTitle="Perfluorocarbons" reviewGroupUrl="pfc"></app-approach-return-link>
+</app-permit-task>

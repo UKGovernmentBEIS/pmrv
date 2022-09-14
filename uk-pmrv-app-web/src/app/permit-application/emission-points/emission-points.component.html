@@ -1,0 +1,45 @@
+<app-permit-task [breadcrumb]="true" reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels">
+  <app-page-heading caption="Fuels and equipment inventory">Emission points</app-page-heading>
+  <p class="govuk-body">
+    Add all the emission points that emit greenhouse gases at the installation (for example exhaust outlets, stacks and
+    vents)
+  </p>
+  <govuk-details summary="What is an emission point">TBD</govuk-details>
+
+  <ng-container *ngIf="'emissionPoints' | task | async as emissionPoints; else startAdding">
+    <ng-container *ngIf="emissionPoints.length > 0; else startAdding">
+      <h2 app-summary-header class="govuk-heading-m">
+        You have added {{ emissionPoints.length }} emission {{ emissionPoints.length > 1 ? 'points' : 'point' }}
+      </h2>
+
+      <ng-container *ngFor="let emissionPoint of emissionPoints">
+        <dl appGroupedSummaryList govuk-summary-list>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Emission point</dt>
+            <dd govukSummaryListRowValue>{{ emissionPoint.reference }} {{ emissionPoint.description }}</dd>
+            <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+              <a [routerLink]="emissionPoint.id" govukLink>Change</a> |
+              <a [routerLink]="['delete', emissionPoint.id]" govukLink>Delete</a>
+            </dd>
+          </div>
+        </dl>
+      </ng-container>
+
+      <ng-container *ngIf="(store.isEditable$ | async) === true">
+        <button govukSecondaryButton routerLink="add" type="button">Add another emission point</button>
+
+        <div class="govuk-button-group">
+          <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #startAdding>
+    <div class="govuk-button-group" *ngIf="(store.isEditable$ | async) === true">
+      <button govukButton routerLink="add" type="button">Add an emission point</button>
+    </div>
+  </ng-template>
+
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

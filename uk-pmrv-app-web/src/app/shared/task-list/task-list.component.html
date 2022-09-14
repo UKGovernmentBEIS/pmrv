@@ -1,0 +1,26 @@
+<app-page-heading size="xl">{{ heading }}</app-page-heading>
+<ol class="app-task-list">
+  <li *ngFor="let section of sections" app-task-section [title]="section.title" [tasks]="section.tasks"></li>
+  <ng-content></ng-content>
+  <li *ngIf="!hideSubmit">
+    <h2 class="app-task-list__section">{{ submitLabel }}</h2>
+    <ul class="app-task-list__items">
+      <li class="app-task-list__item">
+        <span class="app-task-list__task-name">
+          <button
+            (click)="submitApplication.emit()"
+            [disabled]="isSubmitDisabled"
+            class="govuk-!-margin-bottom-0"
+            govukButton
+            type="button"
+          >
+            {{ submitButtonLabel }}
+          </button>
+        </span>
+      </li>
+      <li *ngIf="!hideCancel" class="app-task-list__item">
+        <a govukLink (click)="cancelApplication.emit()" routerLink=".">{{ cancelLinkLabel }}</a>
+      </li>
+    </ul>
+  </li>
+</ol>

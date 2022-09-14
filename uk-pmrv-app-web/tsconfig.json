@@ -1,0 +1,36 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "module": "es2020",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "target": "es2015",
+    "lib": ["es2018", "dom"],
+    "paths": {
+      "govuk-components": ["dist/govuk-components/govuk-components", "dist/govuk-components"],
+      "pmrv-api": ["dist/pmrv-api/pmrv-api", "dist/pmrv-api"],
+      "crypto": ["node_modules/crypto-js"],
+      "@core/*": ["src/app/core/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@permit-revocation/*": ["src/app/permit-revocation/*"],
+      "@tasks/*": ["src/app/tasks/*"],
+      "@permit-notification/*": ["src/app/tasks/permit-notification/*"],
+      "@testing": ["src/testing"],
+      "@permit-application/*": ["src/app/permit-application/*"]
+    }
+  },
+  "exclude": ["**/node_modules/*", "**/coverage/*", "**/dist/*", "**/node/*"],
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true,
+    "strictTemplates": true
+  }
+}

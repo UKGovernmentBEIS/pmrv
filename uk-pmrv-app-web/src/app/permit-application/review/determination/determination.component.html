@@ -1,0 +1,54 @@
+<app-page-heading>Permit determination</app-page-heading>
+<h2 class="govuk-heading-m">Available actions</h2>
+<div class="govuk-hint">Based on the current status of the determination</div>
+<ng-container *ngIf="(store.isEditable$ | async) === true; else nonEditable">
+  <div class="govuk-button-group">
+    <button
+      *ngIf="(isGrantDisplayed$ | async) === true"
+      appPendingButton
+      govukButton
+      type="button"
+      (click)="onContinue('GRANTED')"
+    >
+      Grant
+    </button>
+    <button
+      *ngIf="(isRejectDisplayed$ | async) === true"
+      appPendingButton
+      govukButton
+      type="button"
+      (click)="onContinue('REJECTED')"
+    >
+      Reject
+    </button>
+    <button govukSecondaryButton type="button" (click)="onContinue('DEEMED_WITHDRAWN')">Deem withdrawn</button>
+  </div>
+</ng-container>
+
+<ng-template #nonEditable>
+  <ng-container *ngIf="(isGrantDisplayed$ | async) === true">
+    <div class="govuk-body">
+      <p><strong>Grant</strong></p>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="(isRejectDisplayed$ | async) === true">
+    <div class="govuk-body">
+      <p><strong>Reject</strong></p>
+    </div>
+  </ng-container>
+  <div class="govuk-body">
+    <p><strong>Deem withdrawn</strong></p>
+  </div>
+</ng-template>
+
+<h2 class="govuk-heading-m">Unavailable actions</h2>
+
+<div *ngIf="(isGrantDisplayed$ | async) === false" class="govuk-body">
+  <p><strong>Grant</strong></p>
+  <div class="govuk-hint">All sections must have a decision of 'accepted'</div>
+</div>
+<div *ngIf="(isRejectDisplayed$ | async) === false" class="govuk-body">
+  <p><strong>Reject</strong></p>
+  <div class="govuk-hint">All sections must have a decision with one or more marked as 'rejected'</div>
+</div>
+<a govukLink routerLink="..">Return to: Permit determination</a>

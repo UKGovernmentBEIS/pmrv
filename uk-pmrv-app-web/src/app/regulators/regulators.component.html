@@ -1,0 +1,62 @@
+<govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="regulatorsForm"></govuk-error-summary>
+<app-page-heading size="xl">Regulator users and contacts</app-page-heading>
+<govuk-tabs>
+  <ng-template govukTab id="regulator-users" label="Regulator users">
+    <button *ngIf="isEditable$ | async" govukButton id="add-regulator" routerLink="add" type="button">
+      Add a new user
+    </button>
+    <form (ngSubmit)="saveRegulators()" [formGroup]="regulatorsForm" id="regulators-form">
+      <govuk-table
+        [columns]="(isEditable$ | async) ? editableCols : nonEditableCols"
+        [form]="regulatorsForm"
+        [users]="regulators$"
+        appUsersTable
+      >
+        <ng-template let-column="column" let-index="index" let-row="row">
+          <ng-container formArrayName="regulatorsArray">
+            <div [formGroupName]="index" [ngSwitch]="column.field" class="cell-container">
+              <ng-container *ngSwitchCase="'name'">
+                <ng-container
+                  *ngIf="(isEditable$ | async) || row.userId === (authService.userStatus | async).userId; else bareName"
+                >
+                  <a [routerLink]="row.userId" govukLink>{{ row | userFullName }}</a>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngSwitchCase="'authorityStatus'">
+                <ng-container *ngIf="regulatorsArray.at(index).value.authorityStatus; let authorityStatus">
+                  <ng-container *ngIf="authorityStatus !== 'PENDING'; else pendingStatus">
+                    <app-user-locked *ngIf="row.locked"></app-user-locked>
+                    <div
+                      [options]="authorityStatus === 'ACCEPTED' ? authorityStatusesAccepted : authorityStatuses"
+                      formControlName="authorityStatus"
+                      govuk-select
+                      widthClass="govuk-!-width-full"
+                    ></div>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+              <ng-container *ngSwitchCase="'deleteBtn'">
+                <a [routerLink]="[row.userId, 'delete']" govukLink>Delete</a>
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                {{ row[column.field] }}
+              </ng-container>
+            </div>
+            <ng-template #bareName>{{ row | userFullName }}</ng-template>
+            <ng-template #pendingStatus>Awaiting confirmation</ng-template>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+      <div *ngIf="(isEditable$ | async) && (regulators$ | async)?.length > 0" class="govuk-button-group">
+        <button appPendingButton govukButton type="submit">Save</button>
+        <button (click)="refresh$.next()" govukSecondaryButton type="button">Discard changes</button>
+      </div>
+    </form>
+  </ng-template>
+  <ng-template govukTab id="site-contacts" label="Site contacts">
+    <app-site-contacts></app-site-contacts>
+  </ng-template>
+  <ng-template govukTab id="external-contacts" label="External contacts">
+    <app-external-contacts></app-external-contacts>
+  </ng-template>
+</govuk-tabs>

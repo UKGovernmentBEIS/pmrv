@@ -1,0 +1,15 @@
+<app-wizard-step [formGroup]="form" heading="Peer review decision" (formSubmit)="onSubmit()">
+  <div govuk-radio formControlName="type" legend="What is your assessment of this determination?" legendSize="medium">
+    <govuk-radio-option label="I agree with the determination" value="AGREE"></govuk-radio-option>
+    <govuk-radio-option label="I do not agree with the determination" value="DISAGREE"></govuk-radio-option>
+  </div>
+  <div
+    formControlName="notes"
+    label="Add notes to support your decision"
+    hint="This cannot be viewed by the operator"
+    govuk-textarea
+    [maxLength]="10000"
+  ></div>
+</app-wizard-step>
+
+<a govukLink routerLink=".."> Return to: {{ previousPage }}</a>

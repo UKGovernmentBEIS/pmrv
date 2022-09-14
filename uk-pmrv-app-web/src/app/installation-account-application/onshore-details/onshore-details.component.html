@@ -1,0 +1,33 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  caption="Installation details"
+  heading="Enter the onshore installation details"
+>
+  <fieldset govukFieldset id="installation-name-fieldset">
+    <legend govukLegend>Installation name</legend>
+    <div
+      appAsyncValidationField
+      formControlName="name"
+      govuk-text-input
+      hint="This is the name that will be used to find the account. This must not be the same as another registered installation name, unless you receive an existing permit as part of a transfer"
+      label="Name"
+    ></div>
+  </fieldset>
+  <div
+    formControlName="siteName"
+    govuk-text-input
+    hint="Enter the site name of the installation"
+    label="Site name"
+  ></div>
+  <fieldset govukFieldset id="installation-address-fieldset">
+    <legend govukLegend>Installation address</legend>
+    <div
+      formControlName="gridReference"
+      govuk-text-input
+      hint="Enter the grid reference of the site entrance with at least 6 digits of accuracy, for example NN166712"
+      label="UK Ordnance Survey grid reference"
+    ></div>
+    <app-address-input formGroupName="address"></app-address-input>
+  </fieldset>
+</app-wizard-step>

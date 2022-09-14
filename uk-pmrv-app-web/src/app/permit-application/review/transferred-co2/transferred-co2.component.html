@@ -1,0 +1,143 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Transferred CO2">
+  <h2 class="govuk-heading-m">Transferred CO2 details</h2>
+  <ul app-task-item-list>
+    <li
+      *ngIf="'TRANSFERRED_CO2_Installations' | taskStatus | async as status"
+      app-task-item
+      link="../../transferred-co2/installations/summary"
+      linkText="Receiving and transferring installations"
+      [status]="status"
+    >
+      <ng-container *ngIf="status === 'complete'">
+        <app-installations-summary-template [hasBottomBorder]="false"></app-installations-summary-template>
+      </ng-container>
+    </li>
+    <li
+      *ngIf="'TRANSFERRED_CO2_Accounting' | taskStatus | async as status"
+      app-task-item
+      link="../../transferred-co2/accounting/summary"
+      linkText="Accounting for emissions from transferred CO2"
+      [status]="status"
+    >
+      <ng-container *ngIf="status === 'complete'">
+        <app-accounting-summary-template
+          [accounting]="('TRANSFERRED_CO2' | monitoringApproachTask | async).accountingEmissions"
+          [changePerStage]="false"
+          cssClass="govuk-!-margin-bottom-0"
+        ></app-accounting-summary-template>
+      </ng-container>
+    </li>
+
+    <li
+      app-task-item
+      link="../../transferred-co2/deductions/summary"
+      linkText="Deductions to amount of transferred CO2"
+      [status]="'TRANSFERRED_CO2_Deductions' | taskStatus | async"
+    >
+      <ng-container
+        *ngIf="('TRANSFERRED_CO2' | monitoringApproachTask | async).deductionsToAmountOfTransferredCO2 as task"
+      >
+        <dl
+          *ngIf="task.exist === false; else procedureForm"
+          govuk-summary-list
+          class="govuk-summary-list--no-border govuk-!-margin-bottom-0"
+        >
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Is any part of the transferred CO2 generated from biomass?</dt>
+            <dd govukSummaryListRowValue>No</dd>
+          </div>
+        </dl>
+        <ng-template #procedureForm>
+          <app-procedure-form-summary
+            [details]="task.procedureForm"
+            [hasBottomBorder]="false"
+            cssClass="govuk-!-margin-bottom-0"
+          >
+          </app-procedure-form-summary>
+        </ng-template>
+      </ng-container>
+    </li>
+    <li
+      app-task-item
+      link="../../transferred-co2/leakage/summary"
+      linkText="Procedure for leakage events"
+      [status]="'TRANSFERRED_CO2_Leakage' | taskStatus | async"
+    >
+      <ng-container *ngIf="('TRANSFERRED_CO2' | monitoringApproachTask | async).procedureForLeakageEvents as task">
+        <dl
+          *ngIf="task.exist === false; else procedureForm"
+          govuk-summary-list
+          class="govuk-summary-list--no-border govuk-!-margin-bottom-0"
+        >
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>
+              Is there a procedure for preventing, detecting and quantifying leakage events from the transport network?
+            </dt>
+            <dd govukSummaryListRowValue>No</dd>
+          </div>
+        </dl>
+        <ng-template #procedureForm>
+          <app-procedure-form-summary
+            [details]="task.procedureForm"
+            [hasBottomBorder]="false"
+            cssClass="govuk-!-margin-bottom-0"
+          >
+          </app-procedure-form-summary>
+        </ng-template>
+      </ng-container>
+    </li>
+    <li
+      app-task-item
+      link="../../transferred-co2/temperature/summary"
+      linkText="Temperature and pressure measurement equipment"
+      [status]="'TRANSFERRED_CO2_Temperature' | taskStatus | async"
+    >
+      <app-temperature-summary-template
+        [details]="('TRANSFERRED_CO2' | monitoringApproachTask | async).temperaturePressure"
+        [hasBottomBorder]="false"
+        cssClass="govuk-!-margin-bottom-0"
+      ></app-temperature-summary-template>
+    </li>
+    <li
+      app-task-item
+      link="../../transferred-co2/transfer/summary"
+      linkText="Transfer of CO2"
+      [status]="'TRANSFERRED_CO2_Transfer' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.TRANSFERRED_CO2.transferOfCO2' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      >
+      </app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../transferred-co2/quantification/summary"
+      linkText="Quantification methodologies"
+      [status]="'TRANSFERRED_CO2_Quantification' | taskStatus | async"
+    >
+      <app-procedure-form-summary
+        [details]="'monitoringApproaches.TRANSFERRED_CO2.quantificationMethodologies' | taskProcedureForm | async"
+        cssClass="govuk-!-margin-bottom-0"
+        [hasBottomBorder]="false"
+      >
+      </app-procedure-form-summary>
+    </li>
+    <li
+      app-task-item
+      link="../../transferred-co2/description/summary"
+      linkText="Approach description"
+      [status]="'TRANSFERRED_CO2_Description' | taskStatus | async"
+    >
+      <app-transferred-co2-description-summary-template
+        [hasBottomBorder]="false"
+      ></app-transferred-co2-description-summary-template>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

@@ -1,0 +1,39 @@
+= Context
+
+In this section an attempt is made to present the big picture, in other words what is UK PMRV, what is being built, whom will it serve and equally important how it will fit the existing environment. Let's start by describing a high level vision, the actors and the main goals of the system.
+
+== Vision
+PMRV is the process where operators apply for their GHG permit, set out their monitoring plan, report on and verify their emissions. The system is designed to enable completion and submission of verified emissions and benchmarking reports, viewing of approved emissions and benchmarking plans for existing operators, and submission of emissions plans for new operators.
+
+== Actors/Stakeholders
+•	Installation Operator Users: Individuals/consultants employed by the Installation Operators, responsible for creating and submitting GHG permit applications and subsequent updates and reports.
+•	Aircraft Operator Users: Individuals/consultants employed by Aircraft Operators, responsible for creating and submitting EP applications and subsequent updates and reports.
+•	Verifier Users: Individuals employed by a verification body, responsible for reviewing and verifying AERs submitted by both Aircraft and Installation Operators, EUCRs submitted by Aircraft Operators only and activity levels submitted by Installation Operators only.
+•	Competent Authority Users: UK regulators with admin level role-based access that carry out Competent Authority activities
+
+
+== Main Goals
+UK PMRV systems have the following major goals:
+
+a.	Ability to register and Create, Read, Update and Delete (CRUD) accounts for Installation Operators, Aircraft Operators, Verifiers and other users of the system and the ability to appoint Verifiers to the relevant accounts.
+b.	Ability for users (e.g. Installation Operator, Aircraft Operators, etc.) to apply for GHG permits and Emissions Plans (EPs) and update applications with role based access controls (RBAC).
+c.	The system must send out notification to users and administrator of significant changes to permits, EPs and other important CRUD activities in the system.
+d.	Ability for Installation Operators to surrender a GHG permit, or to transfer it to another Installation Operator with RBAC.
+e.	Ability to submit the Annual Emissions Report (AER) and Activity Level Change (ALC) for Installations and AER’s for Aircraft Operators and the ability for Aircraft Operators to link AERs to CORSIA.
+f.	Ability for the Regulator and admin users to monitor and determine where an Operator’s AER / ALC is not submitted on time and where the Verifier returns a ‘not verified’ opinion.
+g.	Ability for Aircraft Operators to submit triennial Emissions Unit Cancellation Reports (EUCR).
+h.	Ability for Accredited Verifiers to access the AER and ALC for Installations and AER for Aircraft Operators and access to an Aircraft Operator’s EUCR.
+i.	Ability for a Verifier to complete and submit a verification report that outlines exactly how many emissions units were produced/offset, which forms an integral part of the Operator’s AER/EUCR that is submitted to the regulator.
+j.	Ability for Installations to submit an Improvement Report (IR) with frequency of submission based on the size of the Operator’s emissions.
+k.	Ability for Installations and Aircraft Operator to submit a Verifier Improvement Report (VIR) based on the findings of the Verifier that are recorded in the Verifier’s report.
+l.	The system to initiate workflows automatically or manually by admin users (Regulators) for non-compliance (civil penalty) for defined non-compliance (e.g. failed to complete on time).
+m.	Ability to issue and collect Annual Subsistence (fee) Payments from Operators.
+n.	Ability to support Free Allocation Regulation (FAR) – Operators are provided with free emissions credits as required and the ability for new Operators to apply for such credits.
+o.	Facility to collect National Implementation Measures (NIMS) data collection (e.g. Operators are required to submit a report every 5 years, next report scheduled 2024).
+p.	Ability to submit a Monitoring Methodology Plan and ability to change from an Operator’s and a Regulator’s perspective.
+
+=== Internal PMRV system
+Internally the UK PMRV system is expected to have some needs regarding user management and authentication mechanisms. So these functionalities are offloaded to another system (the Identity Management). Permitting and monitoring/reporting/verification of emissions are covered by PMRV. The current system ETSWAP is expected to be replaced since it is tied to the EU ETS ecosystem. The new PMRV system will again have similar needs for user management and authentication.
+
+=== Target user-base
+We currently describe 3 large categories of users. Regulators, Operators and Verifiers.

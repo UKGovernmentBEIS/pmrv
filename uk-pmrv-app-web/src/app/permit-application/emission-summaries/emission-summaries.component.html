@@ -1,0 +1,163 @@
+<app-permit-task [breadcrumb]="true" reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels">
+  <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading caption="Fuels and equipment inventory">
+    Emissions summaries and regulated activities
+  </app-page-heading>
+  <ng-container *ngIf="('emissionSummaries' | taskStatus | async) === 'cannot start yet'; else start">
+    <p class="govuk-body">
+      This task requires you to define the network of emissions for each of your source streams and associate them with
+      regulated activities. Other tasks must be completed before you can start:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Regulated activities carried out at the installation</li>
+      <li>Source streams (fuels and materials)</li>
+      <li>Emission sources</li>
+      <li>Emission points</li>
+    </ul>
+  </ng-container>
+  <ng-template #start>
+    <p class="govuk-body">Create emissions summaries to show all the emissions connections at your installation</p>
+    <ng-container *ngIf="'emissionSummaries' | task | async as emissionSummaries">
+      <ng-container *ngIf="emissionSummaries.length > 0; else startAdding">
+        <h2 app-summary-header class="govuk-heading-m">
+          You have added {{ emissionSummaries.length }} emission
+          {{ emissionSummaries.length > 1 ? 'summaries' : 'summary' }}
+        </h2>
+
+        <ng-container *ngFor="let emissionSummary of emissionSummaries; let i = index">
+          <dl appGroupedSummaryList govuk-summary-list>
+            <div govukSummaryListRow>
+              <ng-container
+                *ngIf="
+                  'sourceStreams' | task | async | sourceStream: emissionSummary.sourceStream as sourceStream;
+                  else missingSourceStream
+                "
+              >
+                <dt govukSummaryListRowKey>Source stream</dt>
+                <dd govukSummaryListRowValue>
+                  {{ sourceStream.reference }}
+                  {{ sourceStream | sourceStreamDescription }}
+                </dd>
+              </ng-container>
+              <ng-template #missingSourceStream>
+                <dt class="missing-row-key" govukSummaryListRowKey><span>Source stream</span></dt>
+                <dd govukSummaryListRowValue>
+                  <span class="error">{{ form.errors.sourceStreamNotExist }}</span>
+                </dd>
+              </ng-template>
+              <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+                <a [routerLink]="'' + i" govukLink>Change</a> |
+                <a [routerLink]="['delete', '' + i]" govukLink>Delete</a>
+              </dd>
+            </div>
+
+            <div govukSummaryListRow>
+              <ng-container
+                *ngIf="
+                  emissionSummary.emissionSources.length === 1 &&
+                    !('emissionSources' | task | async | emissionSource: emissionSummary.emissionSources[0]);
+                  else emissionSources
+                "
+              >
+                <dt class="missing-row-key" govukSummaryListRowKey><span>Emission sources</span></dt>
+                <dd govukSummaryListRowValue>
+                  <span class="error">{{ form.errors.emissionSourceNotExist }}</span>
+                </dd>
+              </ng-container>
+              <ng-template #emissionSources>
+                <dt govukSummaryListRowKey>Emission sources</dt>
+                <dd govukSummaryListRowValue>
+                  <ng-container *ngFor="let emissionSourceId of emissionSummary.emissionSources; let isLast = last">
+                    <ng-container
+                      *ngIf="'emissionSources' | task | async | emissionSource: emissionSourceId as emissionSource"
+                    >
+                      {{ emissionSource.reference }}
+                      {{ emissionSource.description }}
+                      <ng-container *ngIf="!isLast">
+                        <br />
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </dd>
+              </ng-template>
+            </div>
+
+            <div govukSummaryListRow>
+              <ng-container
+                *ngIf="
+                  emissionSummary.emissionPoints.length === 1 &&
+                    !('emissionPoints' | task | async | emissionPoint: emissionSummary.emissionPoints[0]);
+                  else emissionPoints
+                "
+              >
+                <dt class="missing-row-key" govukSummaryListRowKey><span>Emission points</span></dt>
+                <dd govukSummaryListRowValue>
+                  <span class="error">{{ form.errors.emissionPointNotExist }}</span>
+                </dd>
+              </ng-container>
+              <ng-template #emissionPoints>
+                <dt govukSummaryListRowKey>Emission points</dt>
+                <dd govukSummaryListRowValue>
+                  <ng-container *ngFor="let emissionPointId of emissionSummary.emissionPoints; let isLast = last">
+                    <ng-container
+                      *ngIf="'emissionPoints' | task | async | emissionPoint: emissionPointId as emissionPoint"
+                    >
+                      {{ emissionPoint.reference }}
+                      {{ emissionPoint.description }}
+                      <ng-container *ngIf="!isLast">
+                        <br />
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </dd>
+              </ng-template>
+            </div>
+
+            <div govukSummaryListRow>
+              <ng-container *ngIf="'regulatedActivities' | task | async as regulatedActivities">
+                <ng-container
+                  *ngIf="
+                    !emissionSummary.excludedRegulatedActivity &&
+                      !(regulatedActivities | regulatedActivity: emissionSummary.regulatedActivity);
+                    else regulatedActivity
+                  "
+                >
+                  <dt class="missing-row-key" govukSummaryListRowKey><span>Regulated activity</span></dt>
+                  <dd govukSummaryListRowValue>
+                    <span class="error">{{ form.errors.regulatedActivityNotExist }}</span>
+                  </dd>
+                </ng-container>
+                <ng-template #regulatedActivity>
+                  <dt govukSummaryListRowKey>Regulated activity</dt>
+                  <dd govukSummaryListRowValue>
+                    {{
+                      (emissionSummary.excludedRegulatedActivity
+                        ? 'excludedRegulatedActivity'
+                        : (regulatedActivities | regulatedActivity: emissionSummary.regulatedActivity).type
+                      ) | regulatedActivityType
+                    }}
+                  </dd>
+                </ng-template>
+              </ng-container>
+            </div>
+          </dl>
+        </ng-container>
+
+        <ng-container *ngIf="(store.isEditable$ | async) === true">
+          <button govukSecondaryButton routerLink="add" type="button">Add another emission summary</button>
+
+          <div class="govuk-button-group">
+            <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+    <ng-template #startAdding>
+      <div class="govuk-button-group" *ngIf="(store.isEditable$ | async) === true">
+        <button govukButton routerLink="add" type="button">Add an emission summary</button>
+      </div>
+    </ng-template>
+  </ng-template>
+
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

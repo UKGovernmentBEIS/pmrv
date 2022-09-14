@@ -1,0 +1,27 @@
+<app-page-heading size="l">{{ (route.data | async)?.pageTitle }}</app-page-heading>
+<div *ngIf="(taskType$ | async) !== 'PERMIT_NOTIFICATION_FOLLOW_UP_WAIT_FOR_AMENDS'; else amendsComponent">
+  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <govuk-error-summary *ngIf="isErrorSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <div formControlName="followUpResponseExpirationDate" govuk-date-input></div>
+      </div>
+    </div>
+
+    <button appPendingButton govukButton type="submit" *ngIf="isEditable$ | async">Confirm and complete</button>
+  </form>
+</div>
+
+<ng-template #amendsComponent>
+  <form (ngSubmit)="onAmendsSubmit()" [formGroup]="decisionForm">
+    <govuk-error-summary *ngIf="isErrorSummaryDisplayed$ | async" [form]="decisionForm"></govuk-error-summary>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <div formControlName="dueDate" govuk-date-input></div>
+      </div>
+    </div>
+
+    <button appPendingButton govukButton type="submit" *ngIf="isEditable$ | async">Confirm and complete</button>
+  </form>
+</ng-template>
+<a govukLink routerLink="../">Return to: Awaiting follow up response to notification</a>

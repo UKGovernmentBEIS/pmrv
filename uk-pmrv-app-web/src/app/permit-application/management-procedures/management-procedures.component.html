@@ -1,0 +1,70 @@
+<app-permit-task *ngIf="permitTask$ | async as permitTask">
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    [heading]="permitTask | managementProceduresHeading"
+    caption="Management procedures"
+    submitText="Confirm and complete"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">{{ permitTask | managementProceduresBody }}</p>
+    <p *ngIf="permitTask === 'dataFlowActivities'" class="govuk-body">
+      If there are several procedures, provide details of the overarching one that covers the main steps of data flow
+      activities and attach a diagram showing how the data management procedures link together.
+    </p>
+
+    <div
+      formControlName="procedureDocumentName"
+      govuk-text-input
+      hint="Your verifier may ask to view this document."
+      label="Name of the procedure document"
+    ></div>
+    <div formControlName="procedureReference" govuk-text-input label="Procedure reference"></div>
+    <div formControlName="diagramReference" govuk-text-input label="Diagram reference (optional)"></div>
+    <div
+      [maxLength]="10000"
+      formControlName="procedureDescription"
+      govuk-textarea
+      hint="Include the essential parameters and operations performed"
+      label="Procedure description"
+    ></div>
+    <div
+      formControlName="responsibleDepartmentOrRole"
+      govuk-text-input
+      label="Department or role that’s responsible for the procedure and the data generated"
+    ></div>
+    <div
+      formControlName="locationOfRecords"
+      govuk-text-input
+      hint="For example, ‘Intranet’ or ‘Google Drive’"
+      label="Location of records"
+    ></div>
+    <div formControlName="itSystemUsed" govuk-text-input label="IT system used (optional)"></div>
+    <div
+      formControlName="appliedStandards"
+      govuk-text-input
+      hint="For example, ‘EN’ or ‘ISO14001’"
+      label="European or other standards applied (optional)"
+    ></div>
+    <ng-container *ngIf="permitTask === 'dataFlowActivities'">
+      <div formControlName="primaryDataSources" govuk-text-input label="Primary data sources"></div>
+      <div
+        [maxLength]="10000"
+        formControlName="processingSteps"
+        govuk-textarea
+        hint="Include outputs of data flow activities, formulae used to determine emissions, details on electronic data processing."
+        label="Describe the processing steps for each data flow activity"
+      ></div>
+      <app-file-input
+        [downloadUrl]="getDownloadUrl"
+        formControlName="diagramAttachmentId"
+        hint="The file must be smaller than 20MB"
+        label="Upload a diagram (optional)"
+      ></app-file-input>
+    </ng-container>
+  </app-wizard-step>
+  <app-list-return-link
+    reviewGroupTitle="Management procedures"
+    reviewGroupUrl="management-procedures"
+  ></app-list-return-link>
+</app-permit-task>

@@ -1,0 +1,5 @@
+<span [id]="identifier + '-error'" class="govuk-error-message">
+  <span *ngFor="let error of errors | keyvalue" class="govuk-!-display-block">
+    <span class="govuk-visually-hidden">Error:</span> {{ error.value }}
+  </span>
+</span>

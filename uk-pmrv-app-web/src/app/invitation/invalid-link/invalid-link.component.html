@@ -1,0 +1,20 @@
+<ng-container [ngSwitch]="errorCode$ | async">
+  <ng-container *ngSwitchCase="'EMAIL1001'">
+    <app-page-heading>This link has expired</app-page-heading>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body">
+          Please contact the admin of your organisation and request that they add you once again as a new user.
+        </p>
+        <p class="govuk-body">
+          When the admin user has done this you will receive a new email with a link enabling you to activate your
+          account.
+        </p>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchDefault>
+    <app-page-heading>This link is invalid</app-page-heading>
+    <p class="govuk-body">Please contact your admin for access.</p>
+  </ng-container>
+</ng-container>

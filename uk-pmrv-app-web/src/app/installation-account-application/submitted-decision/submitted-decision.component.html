@@ -1,0 +1,18 @@
+<ng-container *ngIf="action$ | async as action">
+  <app-page-heading>
+    <ng-container *ngIf="action.decision === 'ACCEPTED'; else rejected">
+      The regulator accepted the installation account application
+    </ng-container>
+    <ng-template #rejected> The regulator rejected the installation account application </ng-template>
+  </app-page-heading>
+
+  <ng-container *ngIf="action.reason">
+    <h2 class="govuk-heading-m">Details</h2>
+    <dl govuk-summary-list [hasBorders]="true">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Decision</dt>
+        <dd govukSummaryListRowValue>{{ action.reason }}</dd>
+      </div>
+    </dl>
+  </ng-container>
+</ng-container>

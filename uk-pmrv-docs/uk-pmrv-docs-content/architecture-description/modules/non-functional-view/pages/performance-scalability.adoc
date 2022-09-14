@@ -1,0 +1,102 @@
+= Performance and scalability
+
+In this section we will consider the system from a performance and scalability viewpoint.
+We will provide some basic definitions of the terms frequently used and then we will present the relevant requirements as elicited from the ITT, statistical analysis from the ETSWAP system and
+
+== Basic Definitions
+=== Performance
+Performance relates to speed and efficiency of the system while it performs its current workload.
+
+=== Scalability
+Scalability focuses on how the system behaves when the workload volume increases.
+
+=== Response time
+Response time is the length of time it takes for a specified interaction with the system to complete, which relates to how quickly the system responds to typical user workloads such as the execution of an action in the context of a workflow task or the execution of a search in the Tasks page.
+
+=== Throughput
+Throughput is the amount of workload the system is capable of performing in a specific amount of time.
+
+=== Peak load behavior
+Eventually, with increasing load, any system exhibits poor performance. Poor performance means that the response time
+becomes so big, that the system becomes unusable. Our target is to make sure the system stays within acceptable
+performance levels during normal operation.
+
+== Performance requirements
+
+Performance requirements cover all major stakeholders:
+
+* end users
+* business
+* system operation
+
+In general, these stakeholders are interested in different aspects of the system's performance (which are often opposite to one another). End users are typically concerned with response or turnaround time. Business is normally concerned with throughput. System operators are normally concerned with cost reduction, efficiency or more generally resource utilization.
+
+The next section analyses a bit further each stakeholder needs and identifies key focus points.
+
+=== Stakeholder needs' analysis
+The only potential scenarios that could be suspected of response time issues are:
+
+* The Tasks page which in case of Regulators will load open workflow tasks related to Installation accounts belonging to the Regulator's Competent Authority which could grow in numbers as the number of Installation accounts grow. Currently there are about 1000 active Installation Accounts that could be doubled in the years to come, a number that should not be considered a potential risk for the performance of PMRV.  The problem becomes less significant if pagination is taken under consideration, as no matter how many the open tasks exist, the application loads batches of 30 items each time.
+* The generation of official document, a quite heavy process that should fetch the document template from DB, process the template with data in order to produce the official document in .docx format and finally convert the .docx to pdf. This process has already been identified as a resource heavy process probably related to the size of the template, something that needs to be investigated and verified as bigger templates are implemented. As the generation of the official document takes place upon a user action in the context of a workflow task, which is synchronous by design, the aforementioned processing could potentially cause slight delays in the UI for the workflow tasks related to official documents. A loader or some other solution could be implemented for such cases in case it is identified the delay is causing user inconvenience as far as UX is concerned.
+* Account search and Workflow search functionality are not considered potential risks for system performance as the number of accounts is relatively small and pagination has been implemented in those pages as well. Nevertheless special technical care has been given in any resource-intensive functionality with optimizations in the design of the DB itself and the queries performed.
+
+From a business point of view, throughput in terms of workflow task-actions per minute could be significant, specially in case of AERs, or other batch processes (e.g permit batch reissue). The number of the Installation Accounts that exist in the system and by taking under consideration that these processes are performed outside of business hours are not considered a potential risk in terms of performance.
+
+Resource utilization may actually be our main goal here, in the sense that performance testing can be used to properly size the underlying executing VM instances used in AWS or to check if T3/T2 (resource restrained but burstable) VM families can be used or other families (unrestrained) like M5 are better. In this scenario the tests are made more around assessing statements like "with a regular daily usage of 15 simultaneous users T3 Medium instances are utilised within the expected percentage to handle effectively weekly peaks of 100 simultaneous users" rather than targeting explicit break points. We do need to keep in mind though, that VM instances in AWS can be changed either on demand or scheduled ahead of time, so known peak periods can be handled ahead of time, by increasing resources temporarily.
+
+There is however another important aspect around performance testing that is often neglected. Performance tests are the only tests where concurrent users are operating on the system. As such they are prime candidates for uncovering deadlocks, serialization bottlenecks, memory leaks (e.g. during soak testing) etc. In case of PMRV such scenarios have been identified in edge cases where multiple workflows which impact the status of the account are completed in the same time (multiple actions on the same workflow are not considered a case as from both a business and technical point of view, only one user can take actions on a workflow task at any given time), scenarios that are considered unrealistic from business point of view. Nevertheless special care has been given on the management of concurrent updates and it has been assured that the state of the application is handled properly, so these scenarios are not considered a potential risk.
+
+=== Key Parameters 
+
+Given the above short analysis and a bit of statistical analysis (presented in the next subsection) we are in a position to define our key parameters.
+
+==== ETSWAP input
+By mining information from the existing ETSWAP, we have some  performance related (volumetric mostly) information. We can use this information (presented in the table below, summarized and rounded up) as a basis to define our key parameters.
+
+|===
+|Metric |Value |Comment
+
+|Number of Accounts
+|About 1000
+a| Split out:
+
+* about 940 are Installation
+* about 250 are Aviation
+
+|Number of active users
+|About 5000
+a|Split out:
+
+* 4400 Operators
+* 152 Regulators
+* 143 Verifiers
+
+|Number of active workflows
+|About 5000 (4400 were started in 2021)
+|
+
+|===
+
+==== Key Parameter Definition
+Given the prior volumetric data we can now attempt to determine some key parameters (starting point refers to system at launch, target point refers to expectations after a few years) for our performance test scenarios (roughly starting point multiplied by a factor of 3):
+
+|===
+| Metric | Starting point value | Targeted value | Comment
+
+| Total accounts | 2000 | 5000 |
+| Total users | 50000 | 10000 |
+| Number of active logged-in users in the system on any regular day | 50 | 100 |
+| Starting point number of active logged-in users in the system on a peak day | 500 | 1500 |
+| Logging in to the system	 | less than 10 seconds	 | less than 10 seconds	 |
+| Average response time per page at any time | < 1 second in 90% cases
+
+< 5 seconds in 95% cases
+
+< 20 seconds in 100% cases | < 1 second in 90% cases
+
+< 5 seconds in 95% cases
+
+< 20 seconds in 100% cases |
+| Typical expected infrastructure load in terms of CPU, Memory, Storage/Network I/O | 25% Utilization | 25% Utilization | Generally within the limits of T2/T3 VM instance family in AWS - Registry and TL services could exceed this, guesstimate to be revised
+| Maximum acceptable infrastructure load in terms of CPU, Memory, Storage/Network I/O | 80% Utilization | 80% Utilization | Guesstimate, Registry and TL could reach well over 200%, since they take the bulk of work, to be further revised
+|===

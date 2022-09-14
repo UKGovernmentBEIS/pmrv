@@ -1,0 +1,10 @@
+<ng-container *ngIf="emailTemplate$ | async as emailTemplate">
+  <govuk-error-summary *ngIf="displayErrorSummary$ | async" [form]="form$ | async"></govuk-error-summary>
+  <app-page-heading>Edit {{ emailTemplate.name }}</app-page-heading>
+  <form (ngSubmit)="onSubmit()" *ngIf="form$ | async as form" [formGroup]="form">
+    <div formControlName="subject" govuk-text-input label="Email subject"></div>
+    <div formControlName="message" govuk-textarea [maxLength]="10000" label="Email message"></div>
+    <button appPendingButton govukButton type="submit">Confirm and complete</button>
+  </form>
+  <app-email-template-details-template [emailTemplate]="emailTemplate"></app-email-template-details-template>
+</ng-container>

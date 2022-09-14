@@ -1,0 +1,26 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    submitText="Confirm and complete"
+    caption="Inherent CO2"
+    heading="Approach description"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-body">
+      <p>
+        Explain how inherent CO2 will be accounted for through the use of a calculation or measurement method as defined
+        in the MRR.
+      </p>
+    </div>
+
+    <div
+      formControlName="approachDescription"
+      govuk-textarea
+      [maxLength]="30000"
+      label="Describe the approach used to determine inherent CO2"
+    ></div>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Inherent CO2" reviewGroupUrl="inherent-co2"></app-approach-return-link>
+</app-permit-task>

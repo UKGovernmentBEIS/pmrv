@@ -1,0 +1,11 @@
+= Design view
+
+We specify design as the step that provides some insights that will help developers implement a specific task.
+Most of the time we display here models using UML class or ER diagrams.
+
+- xref:authentication-and-authorization.adoc[Authentication and authorisation]
+- xref:logging-policy.adoc[Logging policy]
+- xref:bpmn.adoc[BPMN Workflow engine]
+- xref:domain-driven-design.adoc[Domain Driven Design]
+- xref:data-migration.adoc[Data Migration]
+

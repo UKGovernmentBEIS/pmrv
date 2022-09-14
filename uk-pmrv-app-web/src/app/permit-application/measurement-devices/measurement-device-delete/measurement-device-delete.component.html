@@ -1,0 +1,13 @@
+<ng-container *ngIf="measurementDevice$ | async as measurementDevice">
+  <app-page-heading size="xl">
+    Are you sure you want to delete
+    <span class="nowrap"> '{{ measurementDevice.reference }}' ?</span>
+  </app-page-heading>
+
+  <p class="govuk-body">Any reference to this item will be removed from your application.</p>
+
+  <div class="govuk-button-group">
+    <button (click)="delete()" appPendingButton govukWarnButton type="button">Yes, delete</button>
+    <a govukLink routerLink="..">Cancel</a>
+  </div>
+</ng-container>

@@ -1,0 +1,75 @@
+<app-permit-task
+  [notification]="notification"
+  [breadcrumb]="true"
+  reviewGroupTitle="Fuels and equipment inventory"
+  reviewGroupUrl="fuels"
+>
+  <app-page-heading caption="Fuels and equipment inventory">
+    Emissions summaries and regulated activities
+  </app-page-heading>
+
+  <h2
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    app-summary-header
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">List of emission summaries</span>
+  </h2>
+
+  <ng-container *ngFor="let emissionSummary of 'emissionSummaries' | task | async; let i = index">
+    <dl appGroupedSummaryList govuk-summary-list>
+      <div
+        govukSummaryListRow
+        *ngIf="'sourceStreams' | task | async | sourceStream: emissionSummary.sourceStream as sourceStream"
+      >
+        <dt govukSummaryListRowKey>Source stream</dt>
+        <dd govukSummaryListRowValue>
+          {{ sourceStream.reference }}
+          {{ sourceStream | sourceStreamDescription }}
+        </dd>
+      </div>
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Emission sources</dt>
+        <dd govukSummaryListRowValue>
+          <ng-container *ngFor="let emissionSourceId of emissionSummary.emissionSources; let isLast = last">
+            <ng-container *ngIf="'emissionSources' | task | async | emissionSource: emissionSourceId as emissionSource">
+              {{ emissionSource.reference }}
+              {{ emissionSource.description }}
+              <ng-container *ngIf="!isLast">
+                <br />
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </dd>
+      </div>
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Emission points</dt>
+        <dd govukSummaryListRowValue>
+          <ng-container *ngFor="let emissionPointId of emissionSummary.emissionPoints; let isLast = last">
+            <ng-container *ngIf="'emissionPoints' | task | async | emissionPoint: emissionPointId as emissionPoint">
+              {{ emissionPoint.reference }}
+              {{ emissionPoint.description }}
+              <ng-container *ngIf="!isLast">
+                <br />
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </dd>
+      </div>
+      <ng-container *ngIf="'regulatedActivities' | task | async as regulatedActivities">
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Regulated activity</dt>
+          <dd govukSummaryListRowValue>
+            {{
+              (emissionSummary.excludedRegulatedActivity
+                ? 'excludedRegulatedActivity'
+                : (regulatedActivities | regulatedActivity: emissionSummary.regulatedActivity).type
+              ) | regulatedActivityType
+            }}
+          </dd>
+        </div>
+      </ng-container>
+    </dl>
+  </ng-container>
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

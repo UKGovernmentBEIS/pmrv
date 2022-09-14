@@ -1,0 +1,60 @@
+<app-wizard-step
+  [hideSubmit]="(store.isEditable$ | async) === false"
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  heading="Request for information"
+  submitText="Confirm and Complete"
+>
+  <app-page-heading size="xl">
+    <app-task-header-info
+      [assignee]="(assignee$ | async).assigneeFullName"
+      [daysRemaining]="daysRemaining$ | async"
+    ></app-task-header-info>
+  </app-page-heading>
+
+  <dl govuk-summary-list [hasBorders]="false" *ngIf="(store | async).rfiQuestionPayload?.files?.length > 0">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Files shared by the regulator</dt>
+      <dd govukSummaryListRowValue>
+        <app-summary-download-files [files]="store.getDownloadUrlFiles((store | async).rfiQuestionPayload.files)">
+        </app-summary-download-files>
+      </dd>
+    </div>
+  </dl>
+
+  <div formArrayName="pairs">
+    <fieldset
+      *ngFor="let question of questions$ | async; index as i"
+      [formGroupName]="i"
+      govukFieldset
+      id="question-{{ i }}"
+    >
+      <legend govukLegend>Question {{ i + 1 }}</legend>
+      <p class="govuk-body">{{ question }}</p>
+
+      <legend govukLegend>Your response</legend>
+      <div formControlName="response" govuk-textarea [maxLength]="10000" label=""></div>
+    </fieldset>
+  </div>
+
+  <app-multiple-file-input
+    [baseDownloadUrl]="getDownloadUrl()"
+    [label]="(isFileUploaded$ | async) === true ? 'Upload a different file' : 'Upload a file (optional)'"
+    [listTitle]="'Uploaded files'"
+    formControlName="files"
+    hint="The file must be smaller than 20MB"
+  ></app-multiple-file-input>
+</app-wizard-step>
+
+<div *ngIf="relatedTasks$ | async as relatedTasks" class="govuk-!-margin-top-6">
+  <app-related-tasks *ngIf="relatedTasks.length > 0" [items]="relatedTasks"></app-related-tasks>
+</div>
+
+<app-timeline>
+  <app-timeline-item
+    *ngFor="let action of actions$ | async"
+    [action]="action"
+    [link]="action | timelineItemLink"
+    [state]="navigationState"
+  ></app-timeline-item>
+</app-timeline>

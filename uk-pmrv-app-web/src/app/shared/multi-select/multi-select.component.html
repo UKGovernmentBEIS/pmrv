@@ -1,0 +1,43 @@
+<label [for]="identifier" [id]="'l.' + identifier" class="govuk-label">
+  {{ label }}
+</label>
+<span *ngIf="hint" [id]="identifier + '-hint'" class="govuk-hint">
+  {{ hint }}
+</span>
+<govuk-error-message *ngIf="shouldDisplayErrors" [errors]="control.errors" [identifier]="identifier">
+</govuk-error-message>
+<button
+  type="button"
+  class="govuk-input"
+  [class.govuk-input--error]="shouldDisplayErrors"
+  [class.no-bottom-border]="currentValue && currentValue.length > 0 && (isOpen | async) === false"
+  [attr.aria-expanded]="(isOpen | async) === true"
+  aria-live="polite"
+  aria-owns="available-options selected-options"
+  aria-controls="available-options selected-options"
+  (click)="click()"
+  [id]="identifier"
+>
+  {{ !currentValue || currentValue.length === 0 ? '' : currentValue.length + ' selected' }}
+  <span class="arrow"></span>
+</button>
+<ng-container *ngIf="isOpen | async; else closed">
+  <div class="options-container options-valid" id="available-options">
+    <div class="govuk-checkboxes govuk-checkboxes--small options">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</ng-container>
+<ng-template #closed>
+  <div
+    *ngIf="currentValue && currentValue.length > 0"
+    class="govuk-body options"
+    [class.options-invalid]="shouldDisplayErrors"
+    [class.options-valid]="!shouldDisplayErrors"
+    id="selected-options"
+  >
+    <span *ngFor="let value of currentValue" class="selected">
+      {{ itemMap[value] }}
+    </span>
+  </div>
+</ng-template>

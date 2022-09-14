@@ -1,0 +1,49 @@
+<app-page-heading size="l">Edit installation address </app-page-heading>
+
+<form (ngSubmit)="onSubmit()" [formGroup]="form">
+  <govuk-error-summary *ngIf="isSummaryDisplayed | async" [form]="form"></govuk-error-summary>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+      <ng-container *ngIf="(account$ | async).location.type === 'ONSHORE'; else offshoreDetails">
+        <div
+          formControlName="gridReference"
+          govuk-text-input
+          hint="Input the location of the site entrance with at least 6 digits of accuracy"
+          label="UK Ordnance Survey grid reference"
+        ></div>
+        <app-address-input formGroupName="address"></app-address-input>
+      </ng-container>
+
+      <ng-template #offshoreDetails>
+        <h3 class="govuk-heading-m">Coordinates</h3>
+        <fieldset formGroupName="latitude" govukFieldset id="latitude-fieldset">
+          <legend govukLegend>Latitude</legend>
+          <div formControlName="degree" govuk-text-input inputType="number" label="Degree"></div>
+          <div formControlName="minute" govuk-text-input inputType="number" label="Minute"></div>
+          <div formControlName="second" govuk-text-input inputType="number" label="Second"></div>
+          <div
+            [options]="latitudeDirections"
+            formControlName="cardinalDirection"
+            govuk-select
+            label="Cardinal direction"
+          ></div>
+        </fieldset>
+        <fieldset formGroupName="longitude" govukFieldset id="longitude-fieldset">
+          <legend govukLegend>Longitude</legend>
+          <div formControlName="degree" govuk-text-input inputType="number" label="Degree"></div>
+          <div formControlName="minute" govuk-text-input inputType="number" label="Minute"></div>
+          <div formControlName="second" govuk-text-input inputType="number" label="Second"></div>
+          <div
+            [options]="longitudeDirections"
+            formControlName="cardinalDirection"
+            govuk-select
+            label="Cardinal direction"
+          ></div>
+        </fieldset>
+      </ng-template>
+    </div>
+  </div>
+  <button appPendingButton govukButton type="submit">Confirm and complete</button>
+</form>
+
+<a govukLink routerLink="../..">Return to: Installation details</a>

@@ -1,0 +1,42 @@
+= Data view
+
+Following the Domain Driven Design (DDD), each domain defines its own business objects and data models. The references across domains are not enforced (weak references). If an object has a very complex data model, eg. the permit object, it is represented at the database as a JSON document stored in a database table.
+
+== Account domain
+The account domain has the following objects.
+
+=== Competent authority
+image::competent-authority.png[width=40%]
+
+=== Operator account
+image::account.png[]
+
+
+== Verification body domain
+image::verification-body.png[width=50%]
+
+== Authorisation domain
+image::authorization.png[]
+
+
+== Workflow domain
+image::request.png[]
+
+
+== Payments domain
+image::request_payment.png[width=50%]
+
+
+== Notification domain
+image::notification.png[]
+
+
+== File domain
+The uploaded files are stored as binary objects at the File domain.
+
+image::file.png[width=50%]
+
+
+== Keycloak and other services
+Keycloak is using its own internal schema. For more information please refer to
+https://www.keycloak.org/documentation.

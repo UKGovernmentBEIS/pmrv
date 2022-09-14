@@ -1,0 +1,98 @@
+<div class="govuk-grid-row">
+  <div [class]="(hasRelatedActions$ | async) === true ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+    <app-page-heading size="xl">
+      Surrender permit determination
+      <app-task-header-info
+          [assignee]="(store.select('assignee') | async).assigneeFullName"
+          [daysRemaining]="store.select('daysRemaining') | async"
+      ></app-task-header-info>
+    </app-page-heading>
+
+    <ng-container *ngIf="requestTaskItem$ | async as requestTaskItem">
+      <ng-container [ngSwitch]="requestTaskItem.requestTask.type">
+        <govuk-warning-text *ngSwitchCase="'PERMIT_SURRENDER_WAIT_FOR_REVIEW'">
+          Waiting for the regulator to make a determination
+        </govuk-warning-text>
+        <govuk-warning-text *ngSwitchCase="'PERMIT_SURRENDER_WAIT_FOR_PEER_REVIEW'">
+          Waiting for peer review, you cannot make any changes
+        </govuk-warning-text>
+      </ng-container>
+
+      <ng-container>
+        <div class="govuk-button-group">
+          <button
+            *ngIf="
+              requestTaskItem.allowedRequestTaskActions?.includes('PERMIT_SURRENDER_NOTIFY_OPERATOR_FOR_DECISION') &&
+                isDeterminationCompleted$ | async
+            "
+            (click)="notifyOperator()"
+            govukButton
+            title="Notify Operator for decision"
+            type="button"
+          >
+            Notify Operator of decision
+          </button>
+          <button
+            *ngIf="
+              requestTaskItem.allowedRequestTaskActions?.includes('PERMIT_SURRENDER_REQUEST_PEER_REVIEW') &&
+                isDeterminationCompleted$ | async
+            "
+            (click)="sendPeerReview()"
+            govukButton
+            title="Send for peer review"
+            type="button"
+          >
+            Send for peer review
+          </button>
+          <button
+            *ngIf="
+              requestTaskItem.allowedRequestTaskActions.includes('PERMIT_SURRENDER_REVIEW_SUBMIT_PEER_REVIEW_DECISION')
+            "
+            (click)="peerReviewDecision()"
+            govukButton
+            title="Peer review decision"
+            type="button"
+          >
+            Peer review decision
+          </button>
+        </div>
+      </ng-container>
+
+      <ul app-task-item-list>
+        <li
+          app-task-item
+          link="decision"
+          linkText="Review surrender request"
+          [status]="'DECISION' | reviewSectionStatus | async"
+        ></li>
+        <li
+          app-task-item
+          [link]="determinationLink | async"
+          linkText="Determination"
+          [status]="'DETERMINATION' | reviewSectionStatus | async"
+        ></li>
+      </ul>
+
+      <ng-container *ngIf="relatedTasks$ | async as relatedTasks">
+        <app-related-tasks *ngIf="relatedTasks.length > 0" [items]="relatedTasks"></app-related-tasks>
+      </ng-container>
+
+      <app-timeline>
+        <app-timeline-item
+          *ngFor="let action of actions$ | async"
+          [action]="action"
+          [link]="action | timelineItemLink"
+          [state]="navigationState"
+        ></app-timeline-item>
+      </app-timeline>
+    </ng-container>
+  </div>
+  <div class="govuk-grid-column-one-third" *ngIf="(hasRelatedActions$ | async) === true">
+    <app-related-actions
+        [isAssignable]="store.select('assignable') | async"
+        [taskId]="taskId$ | async"
+        [allowedActions]="store.select('allowedRequestTaskActions') | async"
+    ></app-related-actions>
+  </div>
+</div>
+

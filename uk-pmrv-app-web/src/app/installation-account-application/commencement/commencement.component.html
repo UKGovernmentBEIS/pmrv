@@ -1,0 +1,14 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  caption="Start date of regulated activities"
+  heading="Enter the start date of regulated activities"
+>
+  <p class="govuk-body govuk-!-font-weight-bold">When will regulated activities start?</p>
+  <p class="govuk-body">Contact your regulator after you have completed this application if:</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>regulated activities have already started at the installation</li>
+    <li>regulated activities will start sooner than 2 months from today</li>
+  </ul>
+  <div formControlName="commencementDate" govuk-date-input></div>
+</app-wizard-step>

@@ -1,0 +1,8 @@
+<form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
+  <govuk-error-summary *ngIf="isSummaryDisplayedSubject | async" [form]="formGroup"></govuk-error-summary>
+
+  <app-page-heading [caption]="caption">{{ heading }}</app-page-heading>
+
+  <ng-content></ng-content>
+  <button appPendingButton govukButton type="submit" *ngIf="!hideSubmit">{{ submitText }}</button>
+</form>

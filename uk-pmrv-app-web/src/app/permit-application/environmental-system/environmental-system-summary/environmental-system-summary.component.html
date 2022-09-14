@@ -1,0 +1,21 @@
+<app-permit-task
+  [notification]="notification"
+  [breadcrumb]="true"
+  reviewGroupTitle="Management procedures"
+  reviewGroupUrl="management-procedures"
+>
+  <app-page-heading caption="Management procedures">Environmental management system</app-page-heading>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Environmental management system</span>
+  </h2>
+  <app-environmental-system-summary-template></app-environmental-system-summary-template>
+  <app-list-return-link
+    reviewGroupTitle="Management procedures"
+    reviewGroupUrl="management-procedures"
+  ></app-list-return-link>
+</app-permit-task>

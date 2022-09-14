@@ -1,0 +1,68 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Transferred CO2"
+    heading="Temperature and pressure measurement equipment"
+    submitText="Confirm and complete"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <div class="govuk-body">
+      <p>Text explaining this task and any additional information needed to complete the task.</p>
+      <p>Get help with <a [routerLink]="" govukLink>temperature and pressure equipment</a>.</p>
+    </div>
+
+    <app-boolean-radio-group
+      controlName="exist"
+      legend="Is any equipment used for temperature and pressure measurement in the transport network?"
+    >
+      <ng-container govukConditionalContent>
+        <div formArrayName="measurementDevices">
+          <fieldset
+            *ngFor="let device of measurementDevices.controls; index as i"
+            [formGroupName]="i"
+            govukFieldset
+            id="measurement-device-{{ i }}"
+          >
+            <legend govukLegend>Measurement device {{ i + 1 }}</legend>
+            <button
+              (click)="measurementDevices.removeAt(i)"
+              *ngIf="measurementDevices.length > 1"
+              [heading]="heading"
+              appAddAnother
+              govukSecondaryButton
+              type="button"
+              #removeButton
+            >
+              Remove
+            </button>
+            <div
+              formControlName="reference"
+              govuk-text-input
+              hint="For example, ‘M1 Meter south boiler 1’"
+              label="Reference"
+            ></div>
+            <app-select-other formControlName="type" label="Type of measurement device">
+              <option *ngFor="let option of measurementTypes" [value]="option">
+                {{ option | measurementDevicesType }}
+              </option>
+              <div govukConditionalContent>
+                <div formControlName="otherTypeName" govuk-text-input label="Provide a short name"></div>
+              </div>
+            </app-select-other>
+            <div
+              formControlName="location"
+              govuk-text-input
+              hint="For example, ‘Inside boiler house on control panel’ or ‘North terminal’"
+              label="Location"
+            ></div>
+          </fieldset>
+
+          <button (click)="addMeasurementDevice()" govukSecondaryButton type="button">Add another</button>
+        </div>
+      </ng-container>
+    </app-boolean-radio-group>
+  </app-wizard-step>
+
+  <app-approach-return-link parentTitle="Transferred CO2" reviewGroupUrl="transferred-co2"></app-approach-return-link>
+</app-permit-task>

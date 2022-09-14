@@ -1,0 +1,23 @@
+<app-page-heading>Start a new task</app-page-heading>
+
+<ng-container *ngFor="let task of availableTasks$ | async">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-m">{{ task.title }}</h2>
+      <ng-template [ngIf]="!task.errors" [ngIfElse]="errors">
+        <button (click)="onRequestButtonClick(task.type)" appPendingButton govukButton type="button">
+          {{ task.button }}
+        </button>
+      </ng-template>
+      <ng-template #errors>
+        <ul class="govuk-list">
+          <li *ngFor="let error of task.errors">
+            {{ error }}
+          </li>
+        </ul>
+      </ng-template>
+    </div>
+  </div>
+
+  <hr class="govuk-section-break govuk-section-break--m" />
+</ng-container>

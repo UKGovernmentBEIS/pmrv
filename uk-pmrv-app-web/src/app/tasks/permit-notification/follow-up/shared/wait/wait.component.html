@@ -1,0 +1,44 @@
+<ng-container *ngIf="store.requestTaskType$ | async as taskType">
+  <govuk-notification-banner *ngIf="notification" type="success">
+    <h1 class="govuk-notification-banner__heading">Details updated</h1>
+  </govuk-notification-banner>
+  <app-base-task-container-component
+    [header]="(route.data | async)?.pageTitle"
+    [customContentTemplate]="customContentTemplate"
+    [expectedTaskType]="taskType"
+    *ngIf="
+      ['PERMIT_NOTIFICATION_WAIT_FOR_FOLLOW_UP', 'PERMIT_NOTIFICATION_FOLLOW_UP_WAIT_FOR_AMENDS'].includes(taskType)
+    "
+  >
+  </app-base-task-container-component>
+
+  <ng-template #customContentTemplate>
+    <div *ngIf="taskType === 'PERMIT_NOTIFICATION_WAIT_FOR_FOLLOW_UP'; else amendsTemplate">
+      <app-follow-up-summary
+        class="govuk-!-margin-bottom-8 govuk-!-display-block"
+        [data]="data$ | async"
+        [sectionHeading]="(route.data | async)?.caption"
+        [summaryListMapper]="followUpSummaryListMapper"
+        [allowChange]="isEditable$ | async"
+      ></app-follow-up-summary>
+    </div>
+    <ng-template #amendsTemplate>
+      <govuk-warning-text> Waiting for operator amends </govuk-warning-text>
+      <app-follow-up-summary
+        class="govuk-!-display-block"
+        [data]="amendsData$ | async"
+        [sectionHeading]="(route.data | async)?.caption"
+        [summaryListMapper]="amendsSummaryListMapper"
+        [allowChange]="isEditable$ | async"
+        [files]="amendsFiles$ | async"
+      ></app-follow-up-summary>
+      <app-follow-up-summary
+        class="govuk-!-margin-bottom-8 govuk-!-display-block"
+        [data]="amendsReviewDecisionData$ | async"
+        [summaryListMapper]="amendsReviewDecisionSummaryListMapper"
+        [allowChange]="isEditable$ | async"
+        [files]="amendsReviewDecisionFiles$ | async"
+      ></app-follow-up-summary>
+    </ng-template>
+  </ng-template>
+</ng-container>

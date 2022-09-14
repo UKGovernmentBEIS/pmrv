@@ -1,0 +1,65 @@
+<govuk-error-summary *ngIf="isSummaryDisplayed | async" [form]="searchForm"></govuk-error-summary>
+
+<app-page-heading size="xl">Account search</app-page-heading>
+<span class="govuk-hint">Enter ID, name or code</span>
+
+<div class="govuk-grid-row">
+  <form (ngSubmit)="onSearch()" [formGroup]="searchForm" id="search-form">
+    <div class="govuk-grid-column-full">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+          <div formControlName="term" govuk-text-input></div>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+          <button appPendingButton govukButton type="submit">Search</button>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="(userRoleType$ | async) === 'REGULATOR'" class="govuk-grid-column-one-quarter">
+      <div class="govuk-heading-s">Type</div>
+      <div formControlName="accountTypes" govuk-checkboxes class="govuk-checkboxes govuk-checkboxes--small">
+        <govuk-checkbox [label]="'Aviation'" value="AVIATION"></govuk-checkbox>
+        <govuk-checkbox [label]="'Installation'" value="INSTALLATION"></govuk-checkbox>
+      </div>
+    </div>
+    <div
+      class="{{
+        (userRoleType$ | async) === 'REGULATOR' ? 'govuk-grid-column-three-quarters' : 'govuk-grid-column-full'
+      }}"
+    >
+      <ng-container *ngIf="(accounts$ | async)?.length; else noResults">
+        <ul class="govuk-list">
+          <li *ngFor="let account of accounts$ | async" class="search-results-list_item">
+            <div class="govuk-grid-row">
+              <div class="govuk-grid-column-three-quarters">
+                <a routerLink="." (click)="navigateToAccount(account.id)" govukLink>{{ account.name }}</a>
+                <div>
+                  ID: {{ account.emitterId }} &nbsp; &nbsp; Operator:
+                  <span class="wrap-text"> {{ account.legalEntityName }} </span>
+                </div>
+              </div>
+              <div class="govuk-grid-column-one-quarter">
+                <span class="search-results-list_item_status govuk-tag govuk-tag--grey">
+                  <strong>{{ account.status | accountStatus }}</strong>
+                </span>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <app-pagination
+          *ngIf="(totalItems$ | async) > pageSize"
+          [count]="totalItems$ | async"
+          (currentPageChange)="page$.next($event)"
+          [pageSize]="pageSize"
+        ></app-pagination>
+      </ng-container>
+      <ng-template #noResults>
+        <div class="govuk-grid-row">
+          <div class="govuk-grid-column-full">
+            <p class="govuk-body" tabindex="-1">There are no results to show</p>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </form>
+</div>

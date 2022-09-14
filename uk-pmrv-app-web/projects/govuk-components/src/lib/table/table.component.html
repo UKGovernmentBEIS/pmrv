@@ -1,0 +1,46 @@
+<table class="govuk-table">
+  <caption *ngIf="caption" class="govuk-table__caption">
+    {{
+      caption
+    }}
+  </caption>
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th
+        *ngFor="let column of columns"
+        [attr.aria-sort]="!column.isSortable ? null : sortedField === column.field ? sortingDirection : 'none'"
+        [class.govuk-table__header]="true"
+        [class]="column.widthClass"
+        scope="col"
+      >
+        <ng-container *ngIf="!column.isSortable; else sortableColumnHeader">{{ column.header }}</ng-container>
+        <ng-template #sortableColumnHeader>
+          <button (click)="sortBy(column.field)" type="button">{{ column.header }}</button>
+        </ng-template>
+      </th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+    <tr *ngFor="let row of data; let i = index" class="govuk-table__row">
+      <ng-container *ngFor="let column of columns">
+        <th *ngIf="column.isHeader; else td" class="govuk-table__header" scope="row">
+          <ng-container *ngTemplateOutlet="cell"></ng-container>
+        </th>
+        <ng-template #td>
+          <td [class.govuk-table__cell--numeric]="getTypeof(row[column.field]) === 'number'" class="govuk-table__cell">
+            <ng-container *ngTemplateOutlet="cell"></ng-container>
+          </td>
+        </ng-template>
+        <ng-template #cell>
+          <ng-container *ngIf="template; else plainCell">
+            <ng-container *ngTemplateOutlet="template; context: { column: column, row: row, index: i }"></ng-container>
+          </ng-container>
+          <ng-template #plainCell>{{ row[column.field] }}</ng-template>
+        </ng-template>
+      </ng-container>
+    </tr>
+  </tbody>
+</table>
+<div *ngIf="sortedColumn" aria-atomic="true" aria-live="polite" class="govuk-visually-hidden" role="status">
+  Sort by {{ sortedColumn }} ({{ sortingDirection }})
+</div>

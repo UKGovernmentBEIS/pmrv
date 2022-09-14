@@ -1,0 +1,19 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Permit type">
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      [link]="(isPermitTypeEditable$ | async) ? '../../permit-type/summary' : null"
+      linkText="Permit type"
+      [status]="(permitType$ | async) ? 'complete' : 'not started'"
+      [hasContent]="true"
+    >
+      <app-permit-type-summary-template [hasBottomBorder]="false"></app-permit-type-summary-template>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [canEdit]="(isPermitTypeEditable$ | async) === true"
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

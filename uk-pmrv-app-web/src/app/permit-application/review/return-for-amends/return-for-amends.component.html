@@ -1,0 +1,42 @@
+<app-permit-task>
+  <app-page-heading>
+    <ng-container *ngIf="(store.isEditable$ | async) === true; else notEditable"
+      >Check your information before sending</ng-container
+    >
+    <ng-template #notEditable>Permit application returned for amends</ng-template>
+  </app-page-heading>
+
+  <div *ngFor="let decision of decisionAmends$ | async">
+    <h2 app-summary-header class="govuk-heading-m">
+      {{ decision.groupKey | i18nSelect: heading }}
+    </h2>
+    <dl govuk-summary-list class="govuk-summary-list--no-border summary-list--edge-border">
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Changes required</dt>
+        <dd govukSummaryListRowValue class="pre-wrap">{{ decision.data.changesRequired }}</dd>
+      </div>
+      <div govukSummaryListRow *ngIf="decision.data.files?.length > 0">
+        <dt govukSummaryListRowKey>Uploaded files</dt>
+        <dd govukSummaryListRowValue>
+          <ng-container *ngFor="let file of decision.groupKey | decisionFiles: (store | async); let isLast = last">
+            <a [routerLink]="file.downloadUrl" govukLink target="_blank">{{ file.fileName }}</a>
+            <br *ngIf="!isLast && decision.data.files.length !== 1" />
+          </ng-container>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <div *ngIf="(store.isEditable$ | async) === true" class="govuk-button-group">
+    <button appPendingButton govukButton type="button" (click)="onSubmit()">Confirm and complete</button>
+  </div>
+
+  <a *ngIf="isTask$ | async" govukLink [routerLink]="(store.isEditable$ | async) === true ? '..' : returnUrl">
+    Return to:
+    {{
+      returnUrl?.includes('review') || (store.isEditable$ | async) === true
+        ? 'Permit determination'
+        : 'Apply for a permit'
+    }}
+  </a>
+</app-permit-task>

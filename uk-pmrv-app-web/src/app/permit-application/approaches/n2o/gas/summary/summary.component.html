@@ -1,0 +1,19 @@
+<app-permit-task [notification]="notification" [breadcrumb]="[{ text: 'Nitrous oxide', link: ['nitrous-oxide'] }]">
+  <app-page-heading caption="Nitrous oxide">Calculation of gas flow</app-page-heading>
+
+  <div class="govuk-body">
+    <p>Text explaining this task and any additional information needed to complete the task.</p>
+    <p>Get help with <a [routerLink]="" govukLink>calculation of gas flow</a>.</p>
+  </div>
+
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    <span class="govuk-visually-hidden">Calculation of gas flow</span>
+  </h2>
+
+  <app-n2o-approach-gas-summary-template></app-n2o-approach-gas-summary-template>
+  <app-approach-return-link parentTitle="Nitrous oxide" reviewGroupUrl="nitrous-oxide"></app-approach-return-link>
+</app-permit-task>

@@ -1,0 +1,42 @@
+<ng-content></ng-content>
+
+<div
+  formControlName="procedureDescription"
+  govuk-textarea
+  hint="Include the essential parameters and operations performed."
+  label="Procedure description"
+  [maxLength]="10000"
+></div>
+
+<div
+  formControlName="procedureDocumentName"
+  govuk-text-input
+  hint="Your verifier may ask to view this document."
+  label="Name of the procedure document"
+></div>
+
+<div formControlName="procedureReference" govuk-text-input label="Procedure reference"></div>
+
+<div formControlName="diagramReference" govuk-text-input label="Diagram reference (optional)"></div>
+
+<div
+  formControlName="responsibleDepartmentOrRole"
+  govuk-text-input
+  label="Department or role that’s responsible for the procedure and the data generated"
+></div>
+
+<div
+  formControlName="locationOfRecords"
+  govuk-text-input
+  hint="For example, ‘Intranet’ or ‘Google Drive’."
+  label="Location of records"
+></div>
+
+<div formControlName="itSystemUsed" govuk-text-input label="IT system used (optional)"></div>
+
+<div
+  formControlName="appliedStandards"
+  govuk-text-input
+  hint="For example, ‘EN’ or 'ISO14001’."
+  label="European or other standards applied (optional)"
+></div>

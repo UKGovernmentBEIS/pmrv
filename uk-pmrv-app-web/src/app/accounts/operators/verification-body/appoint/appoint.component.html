@@ -1,0 +1,34 @@
+<ng-template #formTemplate>
+  <govuk-error-summary *ngIf="isSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+  <app-page-heading size="xl">Users, contacts and verifiers</app-page-heading>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h2 class="govuk-heading-l">
+        {{ (currentVerificationBody$ | async) ? 'Replace a verifier' : 'Appoint a verifier' }}
+      </h2>
+
+      <govuk-warning-text>
+        Appointing a verifier will grant personnel at the verifier organisation read-only access to your account.<br />
+        This is useful for the verifier to prepare in advance to undertake the necessary tasks involved with reviewing
+        and verifying your Annual Emissions Monitoring (AEM) report.
+      </govuk-warning-text>
+
+      <form (ngSubmit)="onSubmit()" [formGroup]="form">
+        <div
+          [options]="activeBodies$ | async"
+          formControlName="verificationBodyId"
+          govuk-select
+          label="Select verification body"
+        ></div>
+
+        <button appPendingButton govukButton type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<app-confirmation
+  *ngIf="appointedAccount$ | async as appointedAccount; else formTemplate"
+  [verificationAccount]="appointedAccount"
+></app-confirmation>

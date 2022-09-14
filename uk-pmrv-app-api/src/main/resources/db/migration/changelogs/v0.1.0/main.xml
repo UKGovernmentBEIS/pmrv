@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+		logicalFilePath="v0.1.0/main.xml"
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+	<!-- should be executed first -->
+	<include file="changelog_db_modules.xml" relativeToChangelogFile="true" />
+	
+	<!-- application changelogs -->
+    <include file="changelog_camunda_schema.xml" relativeToChangelogFile="true" />
+    <include file="changelog_table_terms.xml" relativeToChangelogFile="true" />
+    <include file="changelog_location.xml" relativeToChangelogFile="true" />
+    <include file="changelog_legal_entity.xml" relativeToChangelogFile="true" />
+    <include file="changelog_account.xml" relativeToChangelogFile="true" />
+    <include file="changelog_user_authority.xml" relativeToChangelogFile="true" />
+    <include file="changelog_request_model.xml" relativeToChangelogFile="true" />
+    <include file="changelog_ref_country.xml" relativeToChangelogFile="true" />
+    <include file="changelog_file_attachment.xml" relativeToChangelogFile="true" />
+    <include file="changelog_notification_template.xml" relativeToChangelogFile="true" />
+    <include file="changelog_notification_system_message.xml" relativeToChangelogFile="true" />
+    <include file="changelog_authorization_rules.xml" relativeToChangelogFile="true" />
+    <include file="changelog_verification_body.xml" relativeToChangelogFile="true" />
+    <include file="changelog_ca_external_contacts.xml" relativeToChangelogFile="true" />
+    <include file="changelog_account_contact.xml" relativeToChangelogFile="true" />
+    <include file="changelog_permit.xml" relativeToChangelogFile="true" />
+    <include file="changelog_request_payment_model.xml" relativeToChangelogFile="true" />
+    <include file="changelog_aer.xml" relativeToChangelogFile="true" />
+    <include file="changelog_mi_reports.xml" relativeToChangelogFile="true" />
+
+
+    <!-- Should be executed at the end -->
+    <include file="changelog_data_migrations.xml" relativeToChangelogFile="true" />
+    <include file="changelog_schema_cleanup.xml" relativeToChangelogFile="true" />
+    
+</databaseChangeLog>

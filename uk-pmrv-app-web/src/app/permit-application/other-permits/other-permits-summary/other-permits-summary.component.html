@@ -1,0 +1,21 @@
+<app-permit-task
+  [notification]="notification"
+  [breadcrumb]="true"
+  reviewGroupTitle="Installation details"
+  reviewGroupUrl="details"
+>
+  <app-page-heading caption="Installation details">Other environmental permits or licences</app-page-heading>
+  <p class="govuk-body">
+    Examples include the ‘Environmental Protection Regulations’ and ‘Discharges to surface water and groundwater
+    environmental’ permits.
+  </p>
+  <h2
+    app-summary-header
+    [changeRoute]="(store.isEditable$ | async) === true ? '..' : undefined"
+    class="govuk-heading-m"
+  >
+    Environmental permits and licences
+  </h2>
+  <app-permits-summary-template></app-permits-summary-template>
+  <app-list-return-link reviewGroupTitle="Installation details" reviewGroupUrl="details"></app-list-return-link>
+</app-permit-task>

@@ -1,0 +1,31 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  caption="Installation operator responsibility"
+  heading="Confirm responsibility for operating the installation"
+  submitText="Confirm and continue"
+>
+  <div govukInsetText>
+    An installation application can only be requested and managed by an operator that meets the specified conditions.
+  </div>
+  <p class="govuk-body govuk-!-font-weight-bold">
+    I confirm that the organisation that will operate the installation has the authority and ability to:
+  </p>
+  <div formControlName="responsibility" govuk-checkboxes hint="Select all options">
+    <ng-container govukLegend>
+      <span class="govuk-visually-hidden">Confirm responsibility</span>
+    </ng-container>
+    <govuk-checkbox
+      [value]="ResponsibilityOption.management"
+      label="Manage site operations with day-to-day control of plant operation, including the manner and rate of operation"
+    ></govuk-checkbox>
+    <govuk-checkbox
+      [value]="ResponsibilityOption.effectivePermit"
+      label="Ensure that permit conditions are effectively complied with"
+    ></govuk-checkbox>
+    <govuk-checkbox
+      [value]="ResponsibilityOption.control"
+      label="Control, monitor and report specified emissions"
+    ></govuk-checkbox>
+  </div>
+</app-wizard-step>

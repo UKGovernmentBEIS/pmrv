@@ -1,0 +1,4 @@
+= Non-functional view
+
+Apart from the functional requirements, a number of non-functional requirements must be addressed by the software
+architecture, and those are described in the following sections.

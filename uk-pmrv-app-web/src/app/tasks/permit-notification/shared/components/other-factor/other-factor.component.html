@@ -1,0 +1,52 @@
+<app-page-heading>Any other factor</app-page-heading>
+
+<div formControlName="reportingType" govuk-radio legend="What are you reporting?">
+  <govuk-radio-option
+    [label]="'EXCEEDED_THRESHOLD_STATED_GHGE_PERMIT' | reportingType"
+    value="EXCEEDED_THRESHOLD_STATED_GHGE_PERMIT"
+  >
+    <ng-container govukConditionalContent>
+      <div
+        formControlName="startDateOfNonCompliance_EXCEEDED_THRESHOLD_STATED_GHGE_PERMIT"
+        govuk-date-input
+        label="Provide a start date"
+      ></div>
+    </ng-container>
+  </govuk-radio-option>
+
+  <govuk-radio-option
+    [label]="'EXCEEDED_THRESHOLD_STATED_HSE_PERMIT' | reportingType"
+    value="EXCEEDED_THRESHOLD_STATED_HSE_PERMIT"
+  >
+    <ng-container govukConditionalContent>
+      <div
+        formControlName="startDateOfNonCompliance_EXCEEDED_THRESHOLD_STATED_HSE_PERMIT"
+        govuk-date-input
+        label="Provide a start date"
+      ></div>
+    </ng-container>
+  </govuk-radio-option>
+
+  <govuk-radio-option [label]="'RENOUNCE_FREE_ALLOCATIONS' | reportingType" value="RENOUNCE_FREE_ALLOCATIONS">
+  </govuk-radio-option>
+
+  <govuk-radio-option [divider]="true" [label]="'OTHER_ISSUE' | reportingType" value="OTHER_ISSUE">
+    <ng-container govukConditionalContent>
+      <div
+        formControlName="startDateOfNonCompliance_OTHER_ISSUE"
+        govuk-date-input
+        label="Provide a start date (optional)"
+      ></div>
+      <div
+        formControlName="endDateOfNonCompliance"
+        govuk-date-input
+        [min]="today"
+        label="Provide an end date (optional)"
+      ></div>
+    </ng-container>
+  </govuk-radio-option>
+</div>
+
+<div formControlName="description" govuk-textarea [maxLength]="10000" label="Describe the issue in more detail"></div>
+
+<ng-content></ng-content>

@@ -1,0 +1,178 @@
+/* https://www.lastingpowerofattorney.service.gov.uk/home */
+.summary-print body {
+    overflow: visible;
+    width: 100%;
+    height: 100%
+}
+
+.summary-print .appstatus, .summary-print .appstatus *, .summary-print .button, .summary-print .button *, .summary-print .button-link, .summary-print .button-link *, .summary-print .divorced, .summary-print .divorced *, .summary-print .global-nav, .summary-print .global-nav *, .summary-print .iconlinks, .summary-print .iconlinks *, .summary-print .menu, .summary-print .menu *, .summary-print .no-print, .summary-print .no-print *, .summary-print .no-print-for-summary, .summary-print .no-print-for-summary *, .summary-print .table-summary-action, .summary-print .table-summary-action *, .summary-print .visually-hidden, .summary-print .visually-hidden *, .summary-print a:after, .summary-print main > hr, .summary-print main > hr *, .summary-print main > p, .summary-print main > p * {
+    display: none !important
+}
+
+.summary-print #content {
+    padding: 20px
+}
+
+.summary-print .table-summary {
+    text-align: left;
+    display: block;
+    margin-top: 40px;
+    float: none
+}
+
+.summary-print .table-summary tbody, .summary-print .table-summary tr {
+    display: block
+}
+
+.summary-print .table-summary td, .summary-print .table-summary th {
+    display: block;
+    width: 100%
+}
+
+.summary-print .table-summary tr:first-of-type .table-summary-title {
+    font-size: 24px
+}
+
+.summary-print .table-summary-title {
+    font-weight: 700;
+    border-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important
+}
+
+.summary-print .table-summary-heading .heading-small {
+    font-size: 24px;
+    margin-top: 10px;
+    margin-bottom: 10px
+}
+
+.summary-print .group-element, .summary-print .group-end, .summary-print .group-single {
+    float: none;
+    page-break-after: auto;
+    break-after: auto
+}
+
+.summary-print .group-element td, .summary-print .group-end td, .summary-print .group-single td {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid gray
+}
+
+
+.topic-for-android {
+    display: none;
+}
+
+.topic-downloading-the-app {
+    display: none;
+}
+
+.topic-for-apple-ios {
+    display: none;
+}
+
+.topic-accessing-the-registry {
+    display: none;
+}
+
+.topic-setting-the-time-on-device {
+    display: none;
+}
+
+.topic-for-android.topic-for-android-target {
+    display: block;
+}
+
+.topic-downloading-the-app.topic-downloading-the-app-target {
+    display: block;
+}
+
+.topic-for-apple-ios.topic-for-apple-ios-target {
+    display: block;
+}
+
+.topic-accessing-the-registry.topic-accessing-the-registry-target {
+    display: block;
+}
+
+.topic-setting-the-time-on-device.topic-setting-the-time-on-device-target {
+    display: block;
+}
+
+.govuk-img {
+    vertical-align: middle;
+    width: 27px;
+    height: 27px;
+    margin-top: -5px;
+}
+
+div.govuk-grid-column-two-thirds.govuk-grid-column-two-thirds-custom {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 15px;
+    float: left;
+}
+
+.guidance-img {
+    width: 67%;
+    height: auto;
+}
+
+.govuk-noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+button.gem-c-modal-dialogue__close-button.gem-c-modal-dialogue__close-button-custom2 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    border: 0;
+    cursor: pointer;
+    font-family: "GDS Transport", arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 24px;
+    font-size: 1.5rem;
+    line-height: 0.3;
+    background-color: white;
+}
+
+button.gem-c-modal-dialogue__close-button.gem-c-modal-dialogue__close-button-custom2:hover {
+    background-color: #dfdfdf; /* Light Gray */
+}
+
+.gem-c-modal-dialogue__box {
+    height: 100%;
+    background: transparent;
+}
+
+@media (min-width: 40.0625em) {
+    button.gem-c-modal-dialogue__close-button.gem-c-modal-dialogue__close-button-custom2 {
+        font-size: 36px;
+        font-size: 2rem;
+        line-height: 0;
+    }
+}
+
+@media (min-width: 40.0625em) {
+    .govuk-heading-m.govuk-heading-m-custom {
+        margin-bottom: 0px;
+        padding: 15px;
+        padding-left: 32px;
+        position: relative;
+        border-bottom: 1px solid #bfc1c3;
+    }
+}
+
+nav.help-navigation {
+    margin-left: -17px;
+    padding: 30px 0;
+}

@@ -1,0 +1,31 @@
+<app-permit-task [breadcrumb]="true">
+  <app-page-heading caption="Apply">Submit your {{ permitType$ | async }} Permit application</app-page-heading>
+  <ng-container *ngIf="(allowSubmission$ | async) === true && (permitType$ | async); else submissionNotAllowed">
+    <p class="govuk-body">
+      <ng-container [ngSwitch]="permitType$ | async">
+        <ng-container *ngSwitchCase="'GHGE'">
+          <span>
+            By submitting this application you are confirming that the legal entity applying for this GHGE permit will
+            be responsible for trading in the registry, and that to the best of your knowledge, the details you are
+            providing are correct.
+          </span>
+        </ng-container>
+        <ng-container *ngSwitchCase="'HSE'">
+          <span>
+            By submitting this application you are confirming that, to the best of your knowledge, the details you are
+            providing are correct.
+          </span>
+        </ng-container>
+      </ng-container>
+    </p>
+
+    <div class="govuk-button-group">
+      <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and send</button>
+    </div>
+  </ng-container>
+
+  <ng-template #submissionNotAllowed>
+    <p class="govuk-body"><span>All tasks must be completed before you can submit your application.</span></p>
+  </ng-template>
+  <a govukLink routerLink="..">Return to: Apply for a permit</a>
+</app-permit-task>

@@ -1,0 +1,16 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  caption="Permit revocation"
+  heading="{{ (route.data | async)?.pageTitle }}"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <div
+    formControlName="reason"
+    [maxLength]="10000"
+    govuk-textarea
+    label="For example, evidence that the regulated activity is no longer carried out"
+  ></div>
+</app-wizard-step>
+<a govukLink routerLink="../../">Return to: Permit revocation task list</a>

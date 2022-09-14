@@ -1,0 +1,38 @@
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <app-wizard-step
+      (formSubmit)="onContinue()"
+      [formGroup]="form"
+      submitText="Continue"
+      [hideSubmit]="(store | async).isEditable === false"
+    >
+      <span class="govuk-caption-l">Notify the regulator of a change</span>
+      <app-page-heading>What do you want to notify the regulator about?</app-page-heading>
+      <div class="govuk-hint">
+        If a change is not temporary or not non-significant, then you should submit a permit variation.
+      </div>
+      <div class="govuk-hint">
+        If your installation is closing or you are permanently ceasing regulated activities at the installation you
+        should surrender your permit.
+      </div>
+
+      <div formControlName="type" govuk-radio>
+        <govuk-radio-option
+          *ngFor="let option of notificationTypeOptions"
+          [label]="option | notificationType"
+          [hint]="option | notificationTypeDescription"
+          [value]="option"
+        >
+        </govuk-radio-option>
+        <govuk-radio-option
+          [divider]="true"
+          [label]="'OTHER_FACTOR' | notificationType"
+          [hint]="'OTHER_FACTOR' | notificationTypeDescription"
+          value="OTHER_FACTOR"
+        >
+        </govuk-radio-option>
+      </div>
+    </app-wizard-step>
+    <a govukLink routerLink="..">Return to: Notify the regulator of a change</a>
+  </div>
+</div>

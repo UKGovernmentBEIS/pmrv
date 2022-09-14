@@ -1,0 +1,20 @@
+@use '~govuk-frontend/govuk/base' as govuk;
+
+.cell-container {
+  padding-top: govuk.govuk-spacing(5);
+}
+
+.row-container {
+  display: flex;
+  align-items: flex-end;
+}
+.app-column-width-15-per {
+  width: 15%;
+}
+.app-column-width-20-per {
+  width: 20%;
+}
+
+.no-bottom-border table tbody tr:last-of-type td {
+  border-bottom: none;
+}

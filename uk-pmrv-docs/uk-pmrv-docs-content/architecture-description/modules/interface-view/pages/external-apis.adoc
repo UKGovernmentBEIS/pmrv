@@ -1,0 +1,9 @@
+= External Interface view
+
+In this section, we describe the interfaces of PMRV with external systems:
+
+- xref:gov-uk-pay.adoc[GOV-UK Pay API]
+- xref:pwnedpasswords.adoc[Password Check API]
+- xref:clamav-api.adoc[ClamAV API]
+- xref:mail-api.adoc[Mail API]
+

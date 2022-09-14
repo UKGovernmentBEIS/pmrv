@@ -1,0 +1,21 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Confidentiality">
+  <ul app-task-item-list>
+    <li
+      *ngIf="'confidentialityStatement' | taskStatus | async as status"
+      app-task-item
+      link="../../confidentiality-statement/summary"
+      linkText="Commercially confidential sections"
+      [status]="status"
+      [hasContent]="true"
+    >
+      <app-confidentiality-statement-summary-template
+        [hasBottomBorder]="false"
+      ></app-confidentiality-statement-summary-template>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

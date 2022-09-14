@@ -1,0 +1,62 @@
+package uk.gov.pmrv.api.workflow.request.application.item.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import uk.gov.pmrv.api.common.domain.enumeration.RoleType;
+import uk.gov.pmrv.api.common.domain.model.PmrvUser;
+import uk.gov.pmrv.api.workflow.request.application.authorization.VerifierAuthorityResourceAdapter;
+import uk.gov.pmrv.api.workflow.request.application.item.domain.ItemPage;
+import uk.gov.pmrv.api.workflow.request.application.item.domain.dto.ItemDTOResponse;
+import uk.gov.pmrv.api.workflow.request.application.item.repository.ItemAssignedToMeVerifierRepository;
+import uk.gov.pmrv.api.workflow.request.core.domain.enumeration.RequestTaskType;
+
+import java.util.Map;
+import java.util.Set;
+
+@Service
+@RequiredArgsConstructor
+public class ItemAssignedToMeVerifierService implements ItemAssignedToMeService {
+
+    private final ItemAssignedToMeVerifierRepository itemAssignedToMeVerifierRepository;
+    private final ItemResponseService itemResponseService;
+    private final VerifierAuthorityResourceAdapter verifierAuthorityResourceAdapter;
+
+    @Override
+    public ItemDTOResponse getItemsAssignedToMe(PmrvUser pmrvUser, Long page, Long pageSize) {
+        Map<Long, Set<RequestTaskType>> userScopedRequestTaskTypes =
+                verifierAuthorityResourceAdapter.findUserScopedRequestTaskTypes(pmrvUser.getUserId());
+
+        ItemPage itemPage = itemAssignedToMeVerifierRepository.findItemsAssignedTo(
+            pmrvUser.getUserId(),
+            userScopedRequestTaskTypes,
+            page,
+            pageSize);
+
+        return itemResponseService.toItemDTOResponse(itemPage, pmrvUser);
+    }
+
+    @Override
+    public ItemDTOResponse getItemsAssignedToMeByAccount(PmrvUser pmrvUser, Long accountId, Long page, Long pageSize) {
+        Map<Long, Set<RequestTaskType>> userScopedRequestTaskTypes =
+                verifierAuthorityResourceAdapter.findUserScopedRequestTaskTypes(pmrvUser.getUserId());
+
+        if (ObjectUtils.isEmpty(userScopedRequestTaskTypes)) {
+            return ItemDTOResponse.emptyItemDTOResponse();
+        }
+
+        ItemPage itemPage = itemAssignedToMeVerifierRepository.findItemsAssignedToByAccount(
+            pmrvUser.getUserId(),
+            accountId,
+            userScopedRequestTaskTypes,
+            page,
+            pageSize);
+
+        return itemResponseService.toItemDTOResponse(itemPage, pmrvUser);
+    }
+
+    @Override
+    public RoleType getRoleType() {
+        return RoleType.VERIFIER;
+    }
+}

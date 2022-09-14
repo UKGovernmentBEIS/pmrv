@@ -1,0 +1,48 @@
+<app-page-heading>Cessation completed</app-page-heading>
+
+<p class="govuk-body">{{ store.select('creationDate') | async | govukDate }}</p>
+
+<h2 app-summary-header class="govuk-heading-m">Details</h2>
+
+<app-cessation-summary-details
+  [cessation]="store.select('cessation') | async"
+  [allowancesSurrenderRequired]="store.select('allowancesSurrenderRequired') | async"
+  [isEditable]="store.select('isEditable') | async"
+></app-cessation-summary-details>
+
+<ng-container *ngIf="store.select('cessationDecisionNotification') | async as decisionNotification">
+  <h2 app-summary-header class="govuk-heading-m">Official notice recipients</h2>
+  <dl govuk-summary-list appGroupedSummaryList class="govuk-!-margin-bottom-6">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Users</dt>
+      <dd govukSummaryListRowValue>
+        <div *ngFor="let user of operators$ | async">
+          {{ user | userInfoResolver: (usersInfo$ | async) }}
+        </div>
+      </dd>
+    </div>
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Name and signature on the official notice</dt>
+      <dd govukSummaryListRowValue>
+        {{ signatory$ | async | userInfoResolver: (usersInfo$ | async) }}
+      </dd>
+    </div>
+    <div govukSummaryListRow *ngIf="(store | async).cessationOfficialNotice as officialNotice">
+      <dt govukSummaryListRowKey>Official notice</dt>
+      <dd govukSummaryListRowValue>
+        <a
+          [routerLink]="[
+            '/permit-surrender/action',
+            store.select('requestActionId') | async,
+            'file-download',
+            'document',
+            officialNotice.uuid
+          ]"
+          govukLink
+          target="_blank"
+          >{{ officialNotice.name }}</a
+        >
+      </dd>
+    </div>
+  </dl>
+</ng-container>

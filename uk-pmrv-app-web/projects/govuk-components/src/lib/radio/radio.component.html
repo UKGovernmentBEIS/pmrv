@@ -1,0 +1,27 @@
+<div [class.govuk-form-group--error]="shouldDisplayErrors" class="govuk-form-group">
+  <fieldset [id]="identifier" govukFieldset>
+    <legend [size]="legendSize" govukLegend>
+      <ng-container *ngIf="legend; else customLegend">{{ legend }}</ng-container>
+      <ng-template #customLegend>
+        <ng-content select="[govukLegend]"></ng-content>
+      </ng-template>
+    </legend>
+    <span *ngIf="hint" govukFieldsetHint>{{ hint }}</span>
+    <govuk-error-message
+      *ngIf="shouldDisplayErrors"
+      [errors]="control.errors"
+      [identifier]="identifier"
+    ></govuk-error-message>
+    <div
+      [class.govuk-radios--inline]="isInline"
+      [class.govuk-radios--small]="radioSize === 'medium'"
+      class="govuk-radios"
+    >
+      <ng-container *ngFor="let option of options">
+        <div *ngIf="option.divider" class="govuk-radios__divider">or</div>
+        <ng-container [ngTemplateOutlet]="option.optionTemplate"></ng-container>
+        <ng-container [ngTemplateOutlet]="option.conditionalTemplate"></ng-container>
+      </ng-container>
+    </div>
+  </fieldset>
+</div>

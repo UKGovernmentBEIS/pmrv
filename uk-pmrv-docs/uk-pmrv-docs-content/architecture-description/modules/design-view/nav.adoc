@@ -1,0 +1,6 @@
+* xref:index.adoc[Design view]
+** xref:authentication-and-authorization.adoc[Authentication and authorization]
+** xref:logging-policy.adoc[Logging policy]
+** xref:bpmn.adoc[BPMN Workflow engine]
+** xref:domain-driven-design.adoc[Domain Driven Design]
+** xref:data-migration.adoc[Data Migration]

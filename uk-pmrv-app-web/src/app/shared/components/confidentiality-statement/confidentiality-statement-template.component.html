@@ -1,0 +1,52 @@
+<app-wizard-step
+  (formSubmit)="onSubmit()"
+  [formGroup]="form"
+  [caption]="caption"
+  heading="Confidentiality statement"
+  submitText="Confirm and complete"
+  [hideSubmit]="!isEditable"
+>
+  <details class="govuk-details" data-module="govuk-details">
+    <summary class="govuk-details__summary">
+      <span class="govuk-details__summary-text"> Details link </span>
+    </summary>
+    <div class="govuk-details__text"></div>
+  </details>
+  <app-boolean-radio-group
+    controlName="exist"
+    legend="Is any of the information in your application commercially confidential?"
+    [isEditable]="isEditable"
+  >
+    <div govukConditionalContent>
+      <p class="govuk-body">
+        Identify which sections of the application you consider should be treated as commercially confidential and
+        explain why disclosure of this information would have and adverse effect to your commercial interests.
+      </p>
+      <div formArrayName="confidentialSections">
+        <fieldset
+          *ngFor="let section of sections.controls; index as i"
+          [formGroupName]="i"
+          govukFieldset
+          id="confidentiality-statement-{{ i }}"
+        >
+          <legend govukLegend>Confidentiality statement {{ i + 1 }}</legend>
+          <button
+            (click)="sections.removeAt(i)"
+            *ngIf="sections.length > 1"
+            [heading]="heading"
+            appAddAnother
+            govukSecondaryButton
+            type="button"
+            [disabled]="!isEditable"
+            #removeButton
+          >
+            Remove
+          </button>
+          <div formControlName="section" govuk-text-input label="Section"></div>
+          <div formControlName="explanation" govuk-textarea [maxLength]="10000" label="Explanation"></div>
+        </fieldset>
+        <button (click)="addSection()" govukSecondaryButton type="button" [disabled]="!isEditable">Add another</button>
+      </div>
+    </div>
+  </app-boolean-radio-group>
+</app-wizard-step>

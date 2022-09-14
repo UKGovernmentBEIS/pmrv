@@ -1,0 +1,133 @@
+<ng-template #mainView>
+  <app-page-heading size="l">Help us improve the UK ETS Reporting service</app-page-heading>
+  <govuk-error-summary *ngIf="isErrorSummaryDisplayed | async" [form]="feedbackForm"></govuk-error-summary>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <p class="govuk-body">
+        Use this form to suggest an improvement or give feedback about the UK ETS Reporting service.
+      </p>
+
+      <h1 class="govuk-heading-m">Satisfaction survey</h1>
+
+      <form (ngSubmit)="onSubmit()" [formGroup]="feedbackForm" id="feedback-form">
+        <div
+          formControlName="userRegistrationRate"
+          govuk-radio
+          legend="How would you rate your experience with the user registration and the two-factor authentication method?"
+        >
+          <govuk-radio-option
+            *ngFor="let option of rateOptionsWithoutNotApplicable"
+            [label]="rateOptionLabel(option)"
+            [value]="option"
+          >
+          </govuk-radio-option>
+        </div>
+        <div
+          formControlName="userRegistrationRateReason"
+          govuk-textarea
+          [maxLength]="1200"
+          label="Why did you give this rating? (optional)"
+        ></div>
+
+        <div
+          formControlName="onlineGuidanceRate"
+          govuk-radio
+          legend="How would you rate your experience of the online guidance and communication regarding the service?"
+        >
+          <govuk-radio-option *ngFor="let option of rateOptions" [label]="rateOptionLabel(option)" [value]="option">
+          </govuk-radio-option>
+        </div>
+        <div
+          formControlName="onlineGuidanceRateReason"
+          govuk-textarea
+          [maxLength]="1200"
+          label="Why did you give this rating? (optional)"
+        ></div>
+
+        <div
+          formControlName="creatingAccountRate"
+          govuk-radio
+          legend="How would you rate your experience of claiming an account?"
+        >
+          <govuk-radio-option *ngFor="let option of rateOptions" [label]="rateOptionLabel(option)" [value]="option">
+          </govuk-radio-option>
+        </div>
+        <div
+          formControlName="creatingAccountRateReason"
+          govuk-textarea
+          [maxLength]="1200"
+          label="Why did you give this rating? (optional)"
+        ></div>
+
+        <div
+          formControlName="onBoardingRate"
+          govuk-radio
+          legend="How would you rate your experience with the on-boarding, identity and security checks?"
+        >
+          <govuk-radio-option *ngFor="let option of rateOptions" [label]="rateOptionLabel(option)" [value]="option">
+          </govuk-radio-option>
+        </div>
+        <div
+          formControlName="onBoardingRateReason"
+          govuk-textarea
+          [maxLength]="1200"
+          label="Why did you give this rating? (optional)"
+        ></div>
+
+        <div
+          formControlName="tasksRate"
+          govuk-radio
+          legend="How would you rate your experience with viewing, searching and responding to tasks?"
+        >
+          <govuk-radio-option *ngFor="let option of rateOptions" [label]="rateOptionLabel(option)" [value]="option">
+          </govuk-radio-option>
+        </div>
+        <div
+          formControlName="tasksRateReason"
+          govuk-textarea
+          [maxLength]="1200"
+          label="Why did you give this rating? (optional)"
+        ></div>
+
+        <div
+          formControlName="satisfactionRate"
+          govuk-radio
+          legend="How would you rate your overall experience with this service so far?"
+        >
+          <govuk-radio-option
+            *ngFor="let option of rateOptionsWithoutNotApplicable"
+            [label]="rateOptionLabel(option)"
+            [value]="option"
+          >
+          </govuk-radio-option>
+        </div>
+        <div
+          formControlName="satisfactionRateReason"
+          govuk-textarea
+          [maxLength]="1200"
+          label="Why did you give this rating? (optional)"
+        ></div>
+
+        <div
+          formControlName="improvementSuggestion"
+          govuk-textarea
+          [maxLength]="1200"
+          label="How could we improve the service?"
+          hint="If you would like to be contacted about your response, please add your name and email at the end of your comments in the text box below. Do not include any other personal or financial information, for example your National Insurance number or credit card details."
+        ></div>
+
+        <div>
+          <button appPendingButton govukButton type="submit">Send feedback</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-container *ngIf="(feedbackSent$ | async) === true; else mainView">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <govuk-panel title="Feedback sent"></govuk-panel>
+    </div>
+  </div>
+</ng-container>

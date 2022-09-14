@@ -1,0 +1,16 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <span class="govuk-caption-l">Reject permit surrender</span>
+
+  <app-page-heading>Should the fee for the surrender be refunded to the operator?</app-page-heading>
+
+  <div formControlName="shouldFeeBeRefundedToOperator" govuk-radio>
+    <govuk-radio-option [value]="true" label="Yes"></govuk-radio-option>
+    <govuk-radio-option [value]="false" label="No"></govuk-radio-option>
+  </div>
+</app-wizard-step>
+<a govukLink routerLink="../../..">Return to: Permit surrender review</a>

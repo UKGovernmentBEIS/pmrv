@@ -1,0 +1,20 @@
+<app-page-heading>Temporary suspension of a regulated activity</app-page-heading>
+
+<div
+  formControlName="description"
+  govuk-textarea
+  [maxLength]="10000"
+  hint="Include details of how the infrastructure remains present to restart regulated activities"
+  label="Describe the regulated activities which are temporarily suspended"
+></div>
+
+<ng-content></ng-content>
+
+<div formControlName="startDateOfNonCompliance" govuk-date-input label="When did the regulated activity stop?"></div>
+
+<div
+  formControlName="endDateOfNonCompliance"
+  govuk-date-input
+  [min]="today"
+  label="When is the regulated activity proposed to restart?"
+></div>

@@ -1,0 +1,31 @@
+<div class="govuk-grid-row">
+  <div [class]="(hasRelatedActions$ | async) === true ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+    <ng-container *ngIf="requestTaskItem$ | async as requestTaskItem">
+      <app-page-heading size="xl">
+        Surrender your permit
+        <app-task-header-info
+            [assignee]="requestTaskItem.requestTask.assigneeFullName"
+            [daysRemaining]="requestTaskItem.requestTask.daysRemaining"
+        ></app-task-header-info>
+      </app-page-heading>
+
+      <govuk-warning-text> Waiting for the regulator to make a determination </govuk-warning-text>
+
+      <app-timeline>
+        <app-timeline-item
+          *ngFor="let action of actions$ | async"
+          [action]="action"
+          [link]="action | timelineItemLink"
+          [state]="navigationState"
+        ></app-timeline-item>
+      </app-timeline>
+    </ng-container>
+  </div>
+  <div class="govuk-grid-column-one-third" *ngIf="(hasRelatedActions$ | async) === true">
+    <app-related-actions
+        [isAssignable]="store.select('assignable') | async"
+        [taskId]="taskId$ | async"
+        [allowedActions]="store.select('allowedRequestTaskActions') | async"
+    ></app-related-actions>
+  </div>
+</div>

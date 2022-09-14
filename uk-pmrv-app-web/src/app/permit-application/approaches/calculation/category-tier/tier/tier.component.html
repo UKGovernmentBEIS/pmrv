@@ -1,0 +1,47 @@
+<app-permit-task
+  *ngIf="('CALCULATION' | monitoringApproachTask | async).sourceStreamCategoryAppliedTiers[index$ | async] as tier"
+>
+  <app-wizard-step
+    (formSubmit)="onContinue()"
+    [formGroup]="form"
+    caption="Calculation, {{ tier | sourceStreamCategoryName | async }}"
+    [heading]="statusKey | subtaskName"
+    submitText="Continue"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <p class="govuk-body">
+      Get help with
+      <a routerLink="../help" target="_blank" govukLink>{{ statusKey | subtaskName | lowercase }} and applying tiers</a
+      >.
+    </p>
+
+    <div
+      formControlName="tier"
+      govuk-radio
+      legend="What tier are you applying for {{ statusKey | subtaskName | lowercase }} ?"
+      legendSize="medium"
+    >
+      <ng-container *ngFor="let option of tierOptions">
+        <ng-container *ngIf="!option.hasConditionalContent">
+          <govuk-radio-option [value]="option.value" [label]="option.label"></govuk-radio-option>
+        </ng-container>
+        <ng-container *ngIf="option.hasConditionalContent">
+          <govuk-radio-option [value]="option.value" [label]="option.label">
+            <ng-container govukConditionalContent>
+              <div
+                [formControlName]="'isHighestRequiredTier_' + option.value"
+                govuk-radio
+                legend="Are you applying the highest required tier?"
+              >
+                <govuk-radio-option [value]="true" label="Yes"> </govuk-radio-option>
+                <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+              </div>
+            </ng-container>
+          </govuk-radio-option>
+        </ng-container>
+      </ng-container>
+    </div>
+  </app-wizard-step>
+
+  <a govukLink routerLink="../..">Return to: {{ tier | sourceStreamCategoryName | async }}</a>
+</app-permit-task>

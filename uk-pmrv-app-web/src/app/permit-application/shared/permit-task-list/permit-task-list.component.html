@@ -1,0 +1,430 @@
+<div class="govuk-grid-row">
+  <div [class]="(isRelatedActionsSectionVisible$ | async) ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+    <govuk-notification-banner *ngIf="isTaskTypeAmendsSubmit$ | async" type="neutral">
+      <h1 class="govuk-notification-banner__heading">The regulator has requested amends to your application.</h1>
+      <a [routerLink]="" (click)="viewAmends()" govukLink class="govuk-notification-banner__link"
+        >View all required amends</a
+      >
+    </govuk-notification-banner>
+    <app-page-heading size="xl" *ngIf="isHeadingVisible">
+      {{ headerText$ | async }}
+      <app-task-header-info
+        *ngIf="isTask$ | async"
+        [assignee]="(store.select('assignee') | async).assigneeFullName"
+        [daysRemaining]="store.select('daysRemaining') | async"
+      ></app-task-header-info>
+    </app-page-heading>
+
+    <app-task-list
+      [hideSubmit]="
+        (store.select('isEditable') | async) === false || (permitType$ | async) === undefined || (isVariation$ | async)
+      "
+      (submitApplication)="submit()"
+      [submitLabel]="(isTaskTypeAmendsSubmit$ | async) ? 'Resubmit' : 'Submit'"
+      [hideCancel]="true"
+    >
+      <ng-container *ngIf="isVariation$ | async">
+        <li app-task-section title="Variation">
+          <ul app-task-item-list>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/about/summary') | async"
+              linkText="About the variation"
+              [status]="aboutVariationStatus$ | async"
+            ></li>
+          </ul>
+        </li>
+      </ng-container>
+      <li app-task-section title="Permit type">
+        <ul app-task-item-list>
+          <li
+            *ngIf="(isTaskTypeAmendsSubmit$ | async) && (reviewGroupKeys$ | async | includes: 'PERMIT_TYPE')"
+            app-task-item
+            [link]="getSectionUrl('/amend/permit-type/summary') | async"
+            linkText="Amends needed for permit type"
+            [status]="'AMEND_permit_type' | taskStatus | async"
+          ></li>
+          <li
+            app-task-item
+            [link]="getSectionUrl('/permit-type/summary') | async"
+            linkText="Define permit type"
+            [status]="(permitType$ | async) ? 'complete' : 'not started'"
+          ></li>
+        </ul>
+      </li>
+      <ng-container *ngIf="permitType$ | async">
+        <li app-task-section title="Installation details">
+          <ul app-task-item-list>
+            <li
+              *ngIf="(isTaskTypeAmendsSubmit$ | async) && (reviewGroupKeys$ | async | includes: 'INSTALLATION_DETAILS')"
+              app-task-item
+              [link]="getSectionUrl('/amend/details/summary') | async"
+              linkText="Amends needed for installation details"
+              [status]="'AMEND_details' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/details/summary') | async"
+              linkText="Installation and operator details"
+              status="complete"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/other-permits/summary') | async"
+              linkText="Other environmental permits or licences"
+              [status]="'environmentalPermitsAndLicences' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/description/summary') | async"
+              linkText="Description of the installation"
+              [status]="'installationDescription' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/regulated-activities/summary') | async"
+              linkText="Regulated activities carried out at the installation"
+              [status]="'regulatedActivities' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/category/summary') | async"
+              linkText="Estimated annual CO2e"
+              [status]="'estimatedAnnualEmissions' | taskStatus | async"
+            ></li>
+          </ul>
+        </li>
+        <li app-task-section title="Fuels and equipment inventory">
+          <ul app-task-item-list>
+            <li
+              *ngIf="(isTaskTypeAmendsSubmit$ | async) && (reviewGroupKeys$ | async | includes: 'FUELS_AND_EQUIPMENT')"
+              app-task-item
+              [link]="getSectionUrl('/amend/fuels/summary') | async"
+              linkText="Amends needed for fuels and equipment inventory"
+              [status]="'AMEND_fuels' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/source-streams/summary') | async"
+              linkText="Source streams (fuels and materials)"
+              [status]="'sourceStreams' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/emission-sources/summary') | async"
+              linkText="Emission sources"
+              [status]="'emissionSources' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/emission-points/summary') | async"
+              linkText="Emission points"
+              [status]="'emissionPoints' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/emission-summaries/summary') | async"
+              linkText="Emissions summaries and regulated activities"
+              [status]="'emissionSummaries' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/measurement-devices/summary') | async"
+              linkText="Measurement devices or methods"
+              [status]="'measurementDevicesOrMethods' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/site-diagram/summary') | async"
+              linkText="Site diagram"
+              [status]="'siteDiagrams' | taskStatus | async"
+            ></li>
+          </ul>
+        </li>
+        <li app-task-section title="Monitoring approaches">
+          <ul app-task-item-list>
+            <li
+              *ngIf="
+                (isTaskTypeAmendsSubmit$ | async) &&
+                (reviewGroupKeys$
+                  | async
+                  | includesAny
+                    : [
+                        'DEFINE_MONITORING_APPROACHES',
+                        'CALCULATION',
+                        'MEASUREMENT',
+                        'FALLBACK',
+                        'N2O',
+                        'PFC',
+                        'INHERENT_CO2',
+                        'TRANSFERRED_CO2',
+                        'UNCERTAINTY_ANALYSIS'
+                      ])
+              "
+              app-task-item
+              [link]="getSectionUrl('/amend/monitoring-approaches/summary') | async"
+              linkText="Amends needed for monitoring approaches"
+              [status]="'AMEND_monitoring_approaches' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/monitoring-approaches-prepare/summary') | async"
+              linkText="Preparing to define monitoring approaches"
+              [status]="'monitoringApproachesPrepare' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/monitoring-approaches/summary') | async"
+              linkText="Define monitoring approaches"
+              [status]="'monitoringApproaches' | taskStatus | async"
+            ></li>
+            <ng-container *ngIf="'monitoringApproaches' | task | async as task">
+              <li
+                *ngIf="task.CALCULATION"
+                app-task-item
+                [link]="getSectionUrl('/calculation') | async"
+                linkText="Calculation approach"
+                [status]="'CALCULATION' | taskStatus | async"
+              ></li>
+              <li
+                *ngIf="task.MEASUREMENT"
+                app-task-item
+                [link]="getSectionUrl('/measurement') | async"
+                linkText="Measurement approach"
+                [status]="'MEASUREMENT' | taskStatus | async"
+              ></li>
+              <li
+                *ngIf="task.FALLBACK"
+                app-task-item
+                [link]="getSectionUrl('/fall-back') | async"
+                linkText="Fall-back approach"
+                [status]="'FALLBACK' | taskStatus | async"
+              ></li>
+              <li
+                *ngIf="task.N2O"
+                app-task-item
+                [link]="getSectionUrl('/nitrous-oxide') | async"
+                linkText="Nitrous oxide (N2O) approach"
+                [status]="'N2O' | taskStatus | async"
+              ></li>
+              <li
+                *ngIf="task.PFC"
+                app-task-item
+                [link]="getSectionUrl('/pfc') | async"
+                linkText="Perfluorocarbons PFC approach"
+                [status]="'PFC' | taskStatus | async"
+              ></li>
+              <li
+                *ngIf="task.INHERENT_CO2"
+                app-task-item
+                [link]="getSectionUrl('/inherent-co2') | async"
+                linkText="Inherent CO2"
+                [status]="'INHERENT_CO2' | taskStatus | async"
+              ></li>
+              <li
+                *ngIf="task.TRANSFERRED_CO2"
+                app-task-item
+                [link]="getSectionUrl('/transferred-co2') | async"
+                linkText="Transferred CO2"
+                [status]="'TRANSFERRED_CO2' | taskStatus | async"
+              ></li>
+            </ng-container>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/uncertainty-analysis/summary') | async"
+              linkText="Uncertainty analysis"
+              [status]="'uncertaintyAnalysis' | taskStatus | async"
+            ></li>
+          </ul>
+        </li>
+        <li app-task-section title="Management procedures">
+          <ul app-task-item-list>
+            <li
+              *ngIf="
+                (isTaskTypeAmendsSubmit$ | async) && (reviewGroupKeys$ | async | includes: 'MANAGEMENT_PROCEDURES')
+              "
+              app-task-item
+              [link]="getSectionUrl('/amend/management-procedures/summary') | async"
+              linkText="Amends needed for management procedures"
+              [status]="'AMEND_management_procedures' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/management-procedures-exist/summary') | async"
+              linkText="Confirm if management procedures will be provided"
+              [status]="'managementProceduresExist' | taskStatus | async"
+            ></li>
+            <ng-container *ngIf="(managementProceduresExist$ | async) === true">
+              <li
+                app-task-item
+                [link]="getSectionUrl('/monitoring-roles/summary') | async"
+                linkText="Monitoring and reporting roles"
+                [status]="'monitoringReporting' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/responsibilities/summary') | async"
+                linkText="Assignment of responsibilities"
+                [status]="'assignmentOfResponsibilities' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/appropriateness/summary') | async"
+                linkText="Monitoring plan appropriateness"
+                [status]="'monitoringPlanAppropriateness' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/data-flow-activities/summary') | async"
+                linkText="Data flow activities"
+                [status]="'dataFlowActivities' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/qa-activities/summary') | async"
+                linkText="Quality assurance of IT used for data flow activities"
+                [status]="'qaDataFlowActivities' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/review-validation/summary') | async"
+                linkText="Review and validation of data"
+                [status]="'reviewAndValidationOfData' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/assess-control-risk/summary') | async"
+                linkText="Assessing and controlling risks"
+                [status]="'assessAndControlRisk' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/qa-metering-measuring/summary') | async"
+                linkText="Quality assurance of metering and measuring equipment"
+                [status]="'qaMeteringAndMeasuringEquipment' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/corrections/summary') | async"
+                linkText="Corrections and corrective actions"
+                [status]="'correctionsAndCorrectiveActions' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/outsourced-activities/summary') | async"
+                linkText="Control of outsourced activities"
+                [status]="'controlOfOutsourcedActivities' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/record-keeping/summary') | async"
+                linkText="Record keeping and documentation"
+                [status]="'recordKeepingAndDocumentation' | taskStatus | async"
+              ></li>
+              <li
+                app-task-item
+                [link]="getSectionUrl('/environmental-system/summary') | async"
+                linkText="Environmental management system"
+                [status]="'environmentalManagementSystem' | taskStatus | async"
+              ></li>
+            </ng-container>
+          </ul>
+        </li>
+        <li app-task-section title="Monitoring Methodology Plan">
+          <ul app-task-item-list>
+            <li
+              *ngIf="
+                (isTaskTypeAmendsSubmit$ | async) &&
+                (reviewGroupKeys$ | async | includes: 'MONITORING_METHODOLOGY_PLAN')
+              "
+              app-task-item
+              [link]="getSectionUrl('/amend/monitoring-methodology-plan/summary') | async"
+              linkText="Amends needed for monitoring methodology plan"
+              [status]="'AMEND_monitoring_methodology_plan' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/monitoring-methodology-plan/summary') | async"
+              linkText="Monitoring Methodology Plan"
+              [status]="'monitoringMethodologyPlans' | taskStatus | async"
+            ></li>
+          </ul>
+        </li>
+        <li app-task-section title="Additional information">
+          <ul app-task-item-list>
+            <li
+              *ngIf="
+                (isTaskTypeAmendsSubmit$ | async) && (reviewGroupKeys$ | async | includes: 'ADDITIONAL_INFORMATION')
+              "
+              app-task-item
+              [link]="getSectionUrl('/amend/additional-info/summary') | async"
+              linkText="Amends needed for additional information"
+              [status]="'AMEND_additional_info' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/abbreviations/summary') | async"
+              linkText="Abbreviations, acronyms and definitions"
+              [status]="'abbreviations' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/additional-documents/summary') | async"
+              linkText="Additional documents and information"
+              [status]="'additionalDocuments' | taskStatus | async"
+            ></li>
+          </ul>
+        </li>
+        <li app-task-section title="Confidentiality statement">
+          <ul app-task-item-list>
+            <li
+              *ngIf="
+                (isTaskTypeAmendsSubmit$ | async) && (reviewGroupKeys$ | async | includes: 'CONFIDENTIALITY_STATEMENT')
+              "
+              app-task-item
+              [link]="getSectionUrl('/amend/confidentiality/summary') | async"
+              linkText="Amends needed for confidentiality statement"
+              [status]="'AMEND_confidentiality' | taskStatus | async"
+            ></li>
+            <li
+              app-task-item
+              [link]="getSectionUrl('/confidentiality-statement/summary') | async"
+              linkText="Confidentiality statement"
+              [status]="'confidentialityStatement' | taskStatus | async"
+            ></li>
+          </ul>
+        </li>
+        <li app-task-section title="Submit" *ngIf="isVariation$ | async">
+          <ul app-task-item-list>
+            <li
+              app-task-item
+              [link]="(isVariationSubmissionStatusCannotStartedYetOrComplete$ | async) ? '' : getVariationSubmitUrl()"
+              linkText="Send to the regulator"
+              [status]="variationSubmissionStatus$ | async"
+            ></li>
+          </ul>
+        </li>
+      </ng-container>
+    </app-task-list>
+
+    <ng-container *ngIf="relatedTasks$ | async as relatedTasks">
+      <app-related-tasks *ngIf="relatedTasks.length > 0" [items]="relatedTasks"></app-related-tasks>
+    </ng-container>
+
+    <app-timeline *ngIf="isTaskTypeAmendsSubmit$ | async">
+      <app-timeline-item
+        *ngFor="let action of actions$ | async"
+        [action]="action"
+        [link]="action | timelineItemLink"
+        [state]="navigationState"
+      ></app-timeline-item>
+    </app-timeline>
+  </div>
+  <div *ngIf="isRelatedActionsSectionVisible$ | async" class="govuk-grid-column-one-third">
+    <app-related-actions
+      [isAssignable]="store.select('assignable') | async"
+      [taskId]="taskId$ | async"
+      [allowedActions]="store.select('allowedRequestTaskActions') | async"
+    ></app-related-actions>
+  </div>
+</div>

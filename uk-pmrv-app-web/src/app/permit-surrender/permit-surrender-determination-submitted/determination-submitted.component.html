@@ -1,0 +1,134 @@
+<ng-container *ngIf="store | async as store">
+  <app-page-heading
+    >Surrender request
+    <ng-container [ngSwitch]="store.reviewDetermination.type">
+      <ng-container *ngSwitchCase="'GRANTED'"> approved </ng-container>
+      <ng-container *ngSwitchCase="'REJECTED'"> reject </ng-container>
+      <ng-container *ngSwitchCase="'DEEMED_WITHDRAWN'"> deemed withdrawn </ng-container>
+    </ng-container>
+  </app-page-heading>
+
+  <h2 app-summary-header class="govuk-heading-m">Decision details</h2>
+
+  <dl govuk-summary-list [hasBorders]="false" class="summary-list--edge-border govuk-!-margin-bottom-9">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Decision</dt>
+      <dd govukSummaryListRowValue>
+        <ng-container [ngSwitch]="store.reviewDetermination.type">
+          <ng-container *ngSwitchCase="'GRANTED'"> Grant </ng-container>
+          <ng-container *ngSwitchCase="'REJECTED'"> Reject </ng-container>
+          <ng-container *ngSwitchCase="'DEEMED_WITHDRAWN'"> Deem withdrawn </ng-container>
+        </ng-container>
+      </dd>
+    </div>
+
+    <ng-container *ngIf="reviewDeterminationGrant$ | async as reviewDeterminationGrant">
+      <ng-container *ngIf="(userRoleType$ | async) !== 'OPERATOR'">
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Reason for decision</dt>
+          <dd govukSummaryListRowValue>{{ reviewDeterminationGrant.reason }}</dd>
+        </div>
+      </ng-container>
+
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Date regulated activities ended</dt>
+        <dd govukSummaryListRowValue>{{ reviewDeterminationGrant.stopDate | govukDate }}</dd>
+      </div>
+
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Effective date of notice</dt>
+        <dd govukSummaryListRowValue>{{ reviewDeterminationGrant.noticeDate | govukDate }}</dd>
+      </div>
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Surrender report</dt>
+        <dd govukSummaryListRowValue>
+          {{ reviewDeterminationGrant.reportRequired ? (reviewDeterminationGrant.reportDate | govukDate) : 'No' }}
+        </dd>
+      </div>
+
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Surrender of allowances</dt>
+        <dd govukSummaryListRowValue>
+          {{
+            reviewDeterminationGrant.allowancesSurrenderRequired
+              ? (reviewDeterminationGrant.allowancesSurrenderDate | govukDate)
+              : 'No'
+          }}
+        </dd>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="reviewDeterminationReject$ | async as reviewDeterminationReject">
+      <ng-container *ngIf="(userRoleType$ | async) !== 'OPERATOR'">
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Reason for decision</dt>
+          <dd govukSummaryListRowValue>{{ reviewDeterminationReject.reason }}</dd>
+        </div>
+      </ng-container>
+
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Refusal letter text</dt>
+        <dd govukSummaryListRowValue>{{ reviewDeterminationReject.officialRefusalLetter }}</dd>
+      </div>
+
+      <div govukSummaryListRow>
+        <dt govukSummaryListRowKey>Operator refund</dt>
+        <dd govukSummaryListRowValue>
+          <ng-container *ngIf="reviewDeterminationReject.shouldFeeBeRefundedToOperator !== undefined">
+            <ng-container *ngIf="reviewDeterminationReject.shouldFeeBeRefundedToOperator; else noRefund">
+              Yes
+            </ng-container>
+            <ng-template #noRefund> No </ng-template>
+          </ng-container>
+        </dd>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="reviewDeterminationDeemWithdrown$ | async as reviewDeterminationDeemWithdrown">
+      <ng-container *ngIf="(userRoleType$ | async) !== 'OPERATOR'">
+        <div govukSummaryListRow>
+          <dt govukSummaryListRowKey>Reason for decision</dt>
+          <dd govukSummaryListRowValue>{{ reviewDeterminationDeemWithdrown.reason }}</dd>
+        </div>
+      </ng-container>
+    </ng-container>
+  </dl>
+
+  <h2 app-summary-header class="govuk-heading-m">Official notice recipients</h2>
+
+  <dl govuk-summary-list [hasBorders]="false" class="summary-list--edge-border govuk-!-margin-bottom-9">
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Users</dt>
+      <dd govukSummaryListRowValue>
+        <div *ngFor="let user of operators$ | async">
+          {{ user | userInfoResolver: (usersInfo$ | async) }}
+        </div>
+      </dd>
+    </div>
+
+    <div govukSummaryListRow>
+      <dt govukSummaryListRowKey>Name and signature on the official notice</dt>
+      <dd govukSummaryListRowValue>
+        {{ signatory$ | async | userInfoResolver: (usersInfo$ | async) }}
+      </dd>
+    </div>
+
+    <div govukSummaryListRow *ngIf="store.officialNotice as officialNotice">
+      <dt govukSummaryListRowKey>Official notice</dt>
+      <dd govukSummaryListRowValue>
+        <a
+          [routerLink]="[
+            '/permit-surrender/action',
+            store.requestActionId,
+            'file-download',
+            'document',
+            officialNotice.uuid
+          ]"
+          govukLink
+          target="_blank"
+          >{{ officialNotice.name }}</a
+        >
+      </dd>
+    </div>
+  </dl>
+</ng-container>

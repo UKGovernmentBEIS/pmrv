@@ -1,0 +1,61 @@
+<ng-container *ngIf="formSubmission$ | async as submission; else mainView">
+  <app-decision-confirmation
+    *ngIf="submission.form === 'decision'"
+    [isAccepted]="submission.isAccepted"
+  ></app-decision-confirmation>
+</ng-container>
+
+<ng-template #mainView>
+  <div class="govuk-grid-row">
+    <ng-container *ngIf="info$ | async as info">
+      <div [class]="(hasRelatedActions$ | async) === true ? 'govuk-grid-column-two-thirds' : 'govuk-grid-column-full'">
+        <app-page-heading size="xl">
+          Installation account details
+          <app-task-header-info
+              [assignee]="info.requestTask.assigneeFullName"
+              [daysRemaining]="info.requestTask.daysRemaining"
+          ></app-task-header-info>
+        </app-page-heading>
+
+        <app-decision
+          *ngIf="info.allowedRequestTaskActions | includes: 'INSTALLATION_ACCOUNT_OPENING_SUBMIT_DECISION'"
+          [taskId]="info.requestTask.id"
+          (submitted)="submittedDecision($event)"
+        ></app-decision>
+
+        <app-archive
+          *ngIf="info.allowedRequestTaskActions | includes: 'INSTALLATION_ACCOUNT_OPENING_ARCHIVE'"
+          [taskId]="info.requestTask.id"
+          type="INSTALLATION_ACCOUNT_OPENING_ARCHIVE"
+          (submitted)="archived()"
+        ></app-archive>
+
+        <app-review-summary
+          *ngIf="info.requestTask?.payload"
+          [item]="info.requestTask.payload"
+          [taskId]="
+            (info.allowedRequestTaskActions | includes: 'INSTALLATION_ACCOUNT_OPENING_SUBMIT_DECISION')
+              ? info.requestTask.id
+              : null
+          "
+        ></app-review-summary>
+
+        <app-timeline>
+          <app-timeline-item
+            *ngFor="let action of actions$ | async"
+            [action]="action"
+            [link]="action | timelineItemLink"
+            [state]="navigationState"
+          ></app-timeline-item>
+        </app-timeline>
+      </div>
+      <div class="govuk-grid-column-one-third" *ngIf="(hasRelatedActions$ | async) === true">
+        <app-related-actions
+            [isAssignable]="info.requestTask.assignable"
+            [taskId]="info.requestTask.id"
+            [allowedActions]="info.allowedRequestTaskActions"
+        ></app-related-actions>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>

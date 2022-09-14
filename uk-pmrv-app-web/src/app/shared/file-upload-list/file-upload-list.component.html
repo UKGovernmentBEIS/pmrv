@@ -1,0 +1,91 @@
+<div [class.moj-hidden]="files.length === 0" class="moj-multi-file__uploaded-files">
+  <h2 class="govuk-heading-m">{{ listTitle }}</h2>
+
+  <div *ngIf="files.length === 1; else multiple_files" class="govuk-summary-list moj-multi-file-upload__list">
+    <div aria-live="polite" class="govuk-summary-list__value moj-multi-file-upload__message">
+      <ng-container
+        *ngTemplateOutlet="
+          files[0].errors ? error : files[0].progress === 1 ? success : progress;
+          context: { $implicit: files[0], message: files[0].errors ? files[0].errors : null }
+        "
+      ></ng-container>
+    </div>
+    <div class="govuk-summary-list__actions moj-multi-file-upload__actions">
+      <ng-container [ngTemplateOutlet]="fileDeleteButton" [ngTemplateOutletContext]="{ fileIndex: 0, file: files[0] }">
+      </ng-container>
+    </div>
+  </div>
+
+  <ng-template #multiple_files>
+    <dl class="govuk-summary-list moj-multi-file-upload__list">
+      <div *ngFor="let file of files; index as i" class="govuk-summary-list__row moj-multi-file-upload__row">
+        <dd aria-live="polite" class="govuk-summary-list__value moj-multi-file-upload__message">
+          <ng-container
+            *ngTemplateOutlet="
+              file.errors ? error : file.progress === 1 ? success : progress;
+              context: { $implicit: file, message: file.errors ? file.errors : null }
+            "
+          ></ng-container>
+        </dd>
+        <dd class="govuk-summary-list__actions moj-multi-file-upload__actions">
+          <ng-container [ngTemplateOutlet]="fileDeleteButton" [ngTemplateOutletContext]="{ fileIndex: i, file: file }">
+          </ng-container>
+        </dd>
+      </div>
+    </dl>
+  </ng-template>
+
+  <ng-template #fileDeleteButton let-fileIndex="fileIndex" let-file="file">
+    <button
+      (click)="fileDelete.emit(fileIndex)"
+      [disabled]="isDisabled"
+      class="moj-multi-file-upload__delete govuk-!-margin-bottom-0"
+      govukSecondaryButton
+      name="delete"
+      type="button"
+    >
+      Delete <span class="govuk-visually-hidden">{{ file.file.name }}</span>
+    </button>
+  </ng-template>
+
+  <ng-template #progress let-file>
+    <span class="moj-multi-file-upload__filename">
+      <a [routerLink]="file.downloadUrl" govukLink target="_blank">{{ file.file.name }}</a>
+    </span>
+    <span class="moj-multi-file-upload__progress"> {{ file.progress | percent }}</span>
+  </ng-template>
+  <ng-template #success let-file>
+    <span class="moj-multi-file-upload__success">
+      <svg
+        class="moj-banner__icon"
+        fill="currentColor"
+        focusable="false"
+        height="25"
+        role="presentation"
+        viewBox="0 0 25 25"
+        width="25"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M25,6.2L8.7,23.2L0,14.1l4-4.2l4.7,4.9L21,2L25,6.2z" />
+      </svg>
+      <a [routerLink]="file.downloadUrl" govukLink target="_blank">{{ file.file.name }}</a> has been uploaded
+    </span>
+  </ng-template>
+  <ng-template #error let-message="message">
+    <span class="moj-multi-file-upload__error">
+      <svg
+        class="moj-banner__icon"
+        fill="currentColor"
+        focusable="false"
+        height="25"
+        role="presentation"
+        viewBox="0 0 25 25"
+        width="25"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M13.6,15.4h-2.3v-4.5h2.3V15.4z M13.6,19.8h-2.3v-2.2h2.3V19.8z M0,23.2h25L12.5,2L0,23.2z" />
+      </svg>
+      <span *ngFor="let error of message | keyvalue">{{ error.value }}<br /></span>
+    </span>
+  </ng-template>
+</div>

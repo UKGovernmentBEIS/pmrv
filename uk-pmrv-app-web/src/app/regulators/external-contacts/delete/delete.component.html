@@ -1,0 +1,22 @@
+<ng-container *ngIf="(isConfirmationDisplayed$ | async) === false; else deleted">
+  <h2 class="govuk-heading-l">Confirm that this external contact {{ (contact$ | async).name }} will be deleted</h2>
+
+  <govuk-warning-text>You will not be able to undo this action.</govuk-warning-text>
+
+  <div class="govuk-button-group">
+    <button (click)="deleteExternalContact()" appPendingButton govukWarnButton type="button">Confirm delete</button>
+    <a govukLink fragment="external-contacts" routerLink="/user/regulators">Cancel</a>
+  </div>
+</ng-container>
+
+<ng-template #deleted>
+  <div class="govuk-grid-row">
+    <div *ngIf="contact$ | async as contact" class="govuk-grid-column-two-thirds">
+      <govuk-panel title="The external contact {{ contact.name }} has been deleted"></govuk-panel>
+
+      <a fragment="external-contacts" govukLink routerLink="/user/regulators">
+        Return to the Regulator users and contacts page
+      </a>
+    </div>
+  </div>
+</ng-template>

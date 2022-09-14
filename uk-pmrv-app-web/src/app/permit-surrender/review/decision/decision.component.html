@@ -1,0 +1,37 @@
+<app-page-heading>Review surrender request</app-page-heading>
+
+<app-permit-surrender-summary></app-permit-surrender-summary>
+
+<ng-container
+  *ngIf="
+    (isEditable$ | async) && ((reviewDecision$ | async) === undefined || (isEditMode$ | async));
+    else summaryReviewDecision
+  "
+>
+  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+    <govuk-error-summary *ngIf="isErrorSummaryDisplayed$ | async" [form]="form"></govuk-error-summary>
+    <h2 class="govuk-heading-m">What is your decision on the information submitted?</h2>
+
+    <div formControlName="decision" govuk-radio>
+      <govuk-radio-option value="ACCEPTED" label="Accepted"> </govuk-radio-option>
+      <govuk-radio-option value="REJECTED" label="Rejected"> </govuk-radio-option>
+    </div>
+
+    <div
+      govuk-textarea
+      [maxLength]="10000"
+      formControlName="notes"
+      label="Notes"
+      hint="The operator cannot view this"
+    ></div>
+    <button appPendingButton govukButton type="submit">Confirm</button>
+  </form>
+</ng-container>
+
+<ng-template #summaryReviewDecision>
+  <app-permit-surrender-decision-summary
+    [reviewDecision$]="reviewDecision$"
+    [isEditable]="isEditable$ | async"
+    (editClicked)="isEditMode$.next(true)"
+  ></app-permit-surrender-decision-summary>
+</ng-template>

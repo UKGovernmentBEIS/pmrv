@@ -1,0 +1,59 @@
+= Keycloak API
+
+Keycloak provides authentication and authorization to other clients by the use of JWT technology under the
+Oath2 specification. Moreover, it also provides HTTP endpoints for performing CRUD operations on the users.
+
+
+
+|===
+|Description |Http method |URI |Query params |Body
+
+|Token endpoint
+|POST
+|http://${host}:${port}/auth/realms/${realm}/protocol/openid-connect/token
+|
+|
+
+|Retrieve user info for list of users
+|GET
+|http://${host}:${port}/auth/realms/${realm}/users/
+|1) userIds: the list of userIds to retrieve. +
+2)includeAttributes: boolean flag to indicate if user attributes are to be retrieved also.
+|
+
+|Retrieve user details (signature info of the user if exists, applicable for Regulators only)
+|GET
+|http://${host}:${port}/auth/realms/${realm}/users/user/details
+|1) userId: the userId to retrieve.
+|
+
+|Save user details (signature of the user, applicable for Regulators only)
+|POST
+|http://${host}:${port}/auth/realms/${realm}/users/user/details
+|1) userId: the userId to retrieve.
+a|{
+"id": <userId>,
+"signature": {
+"content": <signature file in bytes>,
+"name": <signature file name>,
+"size": <size of signature file>,
+"type": <th mime type of the signature file>
+}
+}
+
+|Retrieve user signature (signature file of the user if exists, applicable for Regulators only)
+|GET
+|http://${host}:${port}/auth/realms/${realm}/users/user/signature
+|1) userId: the userId to retrieve.
+|
+
+|Validate user otp
+|POST
+|http://${host}:${port}/auth/realms/${realm}/users/otp/validation
+|
+a|{
+"otp": <otp>,
+"email": <user email>
+}
+|===
+

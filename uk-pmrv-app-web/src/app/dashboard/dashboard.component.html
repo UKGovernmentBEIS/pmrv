@@ -1,0 +1,57 @@
+<app-page-heading size="xl">Tasks</app-page-heading>
+
+<govuk-tabs (selectedTab)="selectedTab($event)">
+  <ng-template govukTab id="assigned-to-me" label="Assigned to me">
+    <h2 class="govuk-heading-m">Assigned to me</h2>
+    <ng-container *ngTemplateOutlet="tabTemplate; context: { unassigned: 'Regulator' }"></ng-container>
+  </ng-template>
+  <ng-template govukTab id="assigned-to-others" label="Assigned to others">
+    <h2 class="govuk-heading-m">Assigned to others</h2>
+    <ng-container *ngTemplateOutlet="tabTemplate"></ng-container>
+  </ng-template>
+  <ng-template
+    *ngIf="['REGULATOR', 'VERIFIER'] | includes: (authService.userStatus | async)?.roleType"
+    govukTab
+    id="unassigned"
+    label="Unassigned"
+  >
+    <h2 class="govuk-heading-m">Unassigned</h2>
+    <ng-container *ngTemplateOutlet="tabTemplate; context: { unassigned: 'Unassigned' }"></ng-container>
+  </ng-template>
+</govuk-tabs>
+
+<ng-template #tabTemplate let-unassigned="unassigned">
+  <div class="overflow-auto overflow-auto-table">
+    <govuk-table [columns]="tableColumns" [data]="(data$ | async)?.items">
+      <ng-template let-column="column" let-row="row">
+        <ng-container [ngSwitch]="column.field">
+          <ng-container *ngSwitchCase="'taskType'">
+            <a [routerLink]="row | itemLink" govukLink>{{ row[column.field] | itemName }}</a>
+            <div>
+              <govuk-tag *ngIf="row.isNew">New</govuk-tag>
+            </div>
+          </ng-container>
+          <ng-container *ngSwitchCase="'requestType'">{{ row[column.field] | itemType }}</ng-container>
+          <ng-container *ngSwitchCase="'taskAssignee'">
+            {{ !row[column.field] ? unassigned : (row[column.field] | userFullName) }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'daysRemaining'">{{ row[column.field] | daysRemaining }}</ng-container>
+          <ng-container *ngSwitchDefault>{{ row[column.field] }}</ng-container>
+        </ng-container>
+      </ng-template>
+    </govuk-table>
+  </div>
+
+  <ng-container *ngIf="showPagination$ | async">
+    <app-pagination
+      (currentPageChange)="currentPage$.next($event)"
+      [count]="(data$ | async)?.totalItems"
+      [pageSize]="pageSize"
+    ></app-pagination>
+  </ng-container>
+</ng-template>
+
+<div *ngIf="isOperator$ | async">
+  <h2 class="govuk-heading-m">Actions</h2>
+  <a govukLink routerLink="../" (click)="addAnotherInstallation()"> Add another installation </a>
+</div>

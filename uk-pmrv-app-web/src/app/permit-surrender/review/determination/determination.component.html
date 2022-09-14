@@ -1,0 +1,59 @@
+<app-page-heading>Surrender determination</app-page-heading>
+
+<h2 class="govuk-heading-m">Available actions</h2>
+
+<div class="govuk-hint">Based on the current status of the determination</div>
+
+<ng-container *ngIf="(store.isEditable$ | async) === true; else nonEditable">
+  <div class="govuk-button-group">
+    <button
+      *ngIf="isGrantActionAllowed$ | async"
+      appPendingButton
+      govukButton
+      type="button"
+      (click)="onDeterminationTypeSelected('GRANTED')"
+    >
+      Grant
+    </button>
+    <button
+      *ngIf="isRejectActionAllowed$ | async"
+      appPendingButton
+      govukButton
+      type="button"
+      (click)="onDeterminationTypeSelected('REJECTED')"
+    >
+      Reject
+    </button>
+    <button govukSecondaryButton type="button" (click)="onDeterminationTypeSelected('DEEMED_WITHDRAWN')">
+      Deem withdrawn
+    </button>
+  </div>
+</ng-container>
+
+<ng-template #nonEditable>
+  <ng-container *ngIf="isGrantActionAllowed$ | async">
+    <div class="govuk-body">
+      <p><strong>Grant</strong></p>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="isRejectActionAllowed$ | async">
+    <div class="govuk-body">
+      <p><strong>Reject</strong></p>
+    </div>
+  </ng-container>
+  <div class="govuk-body">
+    <p><strong>Deem withdrawn</strong></p>
+  </div>
+</ng-template>
+
+<h2 class="govuk-heading-m">Unavailable actions</h2>
+
+<div *ngIf="(isGrantActionAllowed$ | async) === false" class="govuk-body">
+  <p><strong>Grant</strong></p>
+  <div class="govuk-hint">The 'review surrender request' task must have a decision of 'accepted'</div>
+</div>
+<div *ngIf="(isRejectActionAllowed$ | async) === false" class="govuk-body">
+  <p><strong>Reject</strong></p>
+  <div class="govuk-hint">The 'review surrender request' task must have a decision of 'rejected'</div>
+</div>
+<a govukLink routerLink="..">Return to: Permit surrender determination</a>

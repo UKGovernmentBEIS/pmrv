@@ -1,0 +1,31 @@
+<app-permit-task-review [breadcrumb]="true" [notification]="notification" heading="Additional information">
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="../../additional-documents/summary"
+      linkText="Additional documents and information"
+      [status]="'additionalDocuments' | taskStatus | async"
+      [hasContent]="true"
+    >
+      <app-documents-summary-template
+        [files]="files$ | async"
+        [hasBottomBorder]="false"
+        cssClass="govuk-!-margin-bottom-0"
+      ></app-documents-summary-template>
+    </li>
+    <li
+      app-task-item
+      link="../../abbreviations/summary"
+      linkText="Abbreviations, acronyms and terminology"
+      [status]="'abbreviations' | taskStatus | async"
+      [hasContent]="true"
+    >
+      <app-abbreviations-summary-template [hasBottomBorder]="false"></app-abbreviations-summary-template>
+    </li>
+  </ul>
+
+  <app-review-group-decision
+    [groupKey]="groupKey$ | async"
+    (notification)="notification = $event"
+  ></app-review-group-decision>
+</app-permit-task-review>

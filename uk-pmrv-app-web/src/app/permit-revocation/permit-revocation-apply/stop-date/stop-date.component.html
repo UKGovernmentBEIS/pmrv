@@ -1,0 +1,23 @@
+<app-wizard-step
+  (formSubmit)="onContinue()"
+  [formGroup]="form"
+  caption="Permit revocation"
+  heading="{{ (route.data | async)?.pageTitle }}"
+  submitText="Continue"
+  [hideSubmit]="(store.isEditable$ | async) === false"
+>
+  <div formControlName="activitiesStopped" govuk-radio>
+    <govuk-radio-option [value]="true" label="Yes">
+      <ng-container govukConditionalContent>
+        <div
+          formControlName="stoppedDate"
+          [max]="maxDate"
+          govuk-date-input
+          label="On what date did the regulated activities at the installation stop?"
+        ></div>
+      </ng-container>
+    </govuk-radio-option>
+    <govuk-radio-option [value]="false" label="No"> </govuk-radio-option>
+  </div>
+</app-wizard-step>
+<a govukLink routerLink="../../">Return to: Permit revocation task list</a>

@@ -1,0 +1,90 @@
+<app-permit-task [breadcrumb]="true">
+  <app-page-heading caption="Monitoring approaches">Calculation approach</app-page-heading>
+
+  <div class="govuk-body">
+    <p>
+      A calculation-based approach determines emissions from source streams based on activity data gathered by
+      measurement systems and additional parameters from laboratory analyses or default values. The calculation-based
+      methodology may be implemented according to the standard methodology set out in Article 24 of the Monitoring and
+      Reporting Regulation (MRR) or the mass-balance methodology set out in Article 25.
+    </p>
+    <p>Get help with <a [routerLink]="" govukLink>source stream categories</a>.</p>
+  </div>
+
+  <app-site-emissions></app-site-emissions>
+
+  <h2 class="govuk-heading-m">Calculation source stream categories</h2>
+  <ul app-task-item-list>
+    <ng-container *ngIf="(sourceStreamCategoryAppliedTiers$ | async)?.length > 0; else addNew">
+      <govuk-table [columns]="columns" [data]="sourceStreamCategoryAppliedTiers$ | async">
+        <ng-template let-column="column" let-row="row" let-index="index">
+          <ng-container [ngSwitch]="column.field">
+            <ng-container *ngSwitchCase="'category'">
+              <a govukLink [routerLink]="['./category-tier', index]">
+                <ng-container
+                  *ngIf="
+                    row?.sourceStreamCategory?.sourceStream | findSourceStream | async as sourceStream;
+                    else noSourceStream
+                  "
+                >
+                  {{ sourceStream | tierSourceStreamName: row.sourceStreamCategory }}
+                </ng-container>
+                <ng-template #noSourceStream>
+                  UNDEFINED: {{ row?.sourceStreamCategory?.categoryType | categoryTypeName }}
+                </ng-template>
+              </a>
+            </ng-container>
+            <ng-container *ngSwitchCase="'emissions'">
+              {{ row?.sourceStreamCategory?.annualEmittedCO2Tonnes | number }} t ({{
+                (row?.sourceStreamCategory?.annualEmittedCO2Tonnes ?? 0) / (sumOfAnnualEmitted$ | async) | percent
+              }})
+            </ng-container>
+            <ng-container *ngSwitchCase="'status'">
+              <govuk-tag
+                [color]="'CALCULATION_Category_Tier' | taskStatus: index | async | tagColor"
+                class="app-task-list__tag"
+              >
+                {{ 'CALCULATION_Category_Tier' | taskStatus: index | async | i18nSelect: statusMap }}
+              </govuk-tag>
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </govuk-table>
+      <a
+        *ngIf="(store.isEditable$ | async) === true"
+        govukLink
+        [routerLink]="['category-tier', (sourceStreamCategoryAppliedTiers$ | async)?.length]"
+      >
+        Add a source stream category
+      </a>
+    </ng-container>
+
+    <ng-template #addNew>
+      <li
+        *ngIf="(store.isEditable$ | async) === true"
+        app-task-item
+        link="category-tier/0"
+        linkText="Add a source stream category"
+        [status]="sourceStreamCategoriesStatus$ | async"
+      ></li>
+    </ng-template>
+  </ul>
+
+  <h2 class="govuk-heading-m">Calculation approach details</h2>
+  <ul app-task-item-list>
+    <li
+      app-task-item
+      link="./description/summary"
+      linkText="Approach description"
+      [status]="'CALCULATION_Description' | taskStatus | async"
+    ></li>
+    <li
+      app-task-item
+      link="./sampling-plan/summary"
+      linkText="Sampling plan"
+      [status]="'CALCULATION_Plan' | taskStatus | async"
+    ></li>
+  </ul>
+
+  <app-list-return-link></app-list-return-link>
+</app-permit-task>

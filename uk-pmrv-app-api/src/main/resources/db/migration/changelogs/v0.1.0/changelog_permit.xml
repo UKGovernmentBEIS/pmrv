@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+		logicalFilePath="v0.1.0/changelog_permit.xml"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+        
+    <changeSet id="0_1_0_0_1_0_CREATE_PERMIT_SEQUENCE" author="P35066">
+        <createSequence sequenceName="permit_seq" minValue="0" maxValue="999999999999999999"
+                        incrementBy="1" startValue="1" cycle="false"/>
+         <rollback>
+			<sql>
+				DROP SEQUENCE IF EXISTS permit_seq;
+			</sql>
+		</rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_CREATE_PERMIT_TABLE" author="P35066">
+        <comment>Create permit TABLE</comment>
+        <createTable tableName="permit" remarks="Represents a permit">
+            <column name="id" type="bigint" remarks="Primary key">
+                <constraints primaryKey="true" primaryKeyName="permit_pk" nullable="false"/>
+            </column>
+            <column name="data" type="jsonb" remarks="permit representation as json">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <rollback>
+            <sql>
+                DROP TABLE IF EXISTS permit CASCADE;
+            </sql>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="0_1_0_ADD_ACCOUNT_ID_COLUMN_TO_PERMIT_TABLE" author="P35066">
+        <addColumn tableName="permit">
+            <column name="account_id" type="bigint" remarks="The permit's account id">
+                <constraints nullable="false" />
+            </column>
+        </addColumn>
+        <rollback>
+            <sql>
+                ALTER TABLE permit
+                DROP COLUMN IF EXISTS account_id;
+            </sql>
+        </rollback>
+     </changeSet>
+
+    <changeSet id="0_1_0_MODIFY_PERMIT_ID_TYPE_TO_VARCHAR" author="P62629">
+        <modifyDataType tableName="permit" columnName="id" newDataType="varchar(20)"/>
+        <rollback>
+            <modifyDataType tableName="permit" columnName="id" newDataType="BIGINT"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="0_1_0_ADD_UNIQUE_CONSTRAINT_PERMIT_ACCOUNT_ID" author="P70383">
+        <comment>Add unique constraint for account_id of permit TABLE</comment>
+        <addUniqueConstraint tableName="permit" columnNames="account_id" constraintName="account_id_uc"/>
+        <rollback>
+            <sql>
+                ALTER TABLE permit
+                DROP CONSTRAINT IF EXISTS account_id_uc;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,50 @@
+<app-permit-task [breadcrumb]="true" reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels">
+  <app-page-heading caption="Fuels and equipment inventory">Source streams (fuels and materials)</app-page-heading>
+  <p class="govuk-body">Add all the source streams (fuels or raw materials) that relate to a regulated activity</p>
+  <govuk-details summary="What is a source stream"
+    >A source stream is the fuels and materials which are the source of greenhouse gas emissions at the
+    installation.</govuk-details
+  >
+
+  <ng-container *ngIf="'sourceStreams' | task | async as sourceStreams; else startAdding">
+    <ng-container *ngIf="sourceStreams.length > 0; else startAdding">
+      <h2 app-summary-header class="govuk-heading-m">
+        You have added {{ sourceStreams.length }} source {{ sourceStreams.length > 1 ? 'streams' : 'stream' }}
+      </h2>
+
+      <ng-container *ngFor="let sourceStream of sourceStreams">
+        <dl appGroupedSummaryList govuk-summary-list>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Source stream</dt>
+            <dd govukSummaryListRowValue>
+              {{ sourceStream.reference }}
+              {{ sourceStream | sourceStreamDescription }}
+            </dd>
+            <dd govukSummaryListRowActions *ngIf="(store.isEditable$ | async) === true">
+              <a [routerLink]="sourceStream.id" govukLink>Change</a> |
+              <a [routerLink]="['delete', sourceStream.id]" govukLink>Delete</a>
+            </dd>
+          </div>
+          <div govukSummaryListRow>
+            <dt govukSummaryListRowKey>Type</dt>
+            <dd govukSummaryListRowValue>{{ sourceStream.type | sourceStreamType }}</dd>
+          </div>
+        </dl>
+      </ng-container>
+
+      <ng-container *ngIf="(store.isEditable$ | async) === true">
+        <button govukSecondaryButton routerLink="add" type="button">Add another source stream</button>
+
+        <div class="govuk-button-group">
+          <button (click)="onSubmit()" appPendingButton govukButton type="button">Confirm and complete</button>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+  <ng-template #startAdding>
+    <div class="govuk-button-group" *ngIf="(store.isEditable$ | async) === true">
+      <button govukButton routerLink="add" type="button">Add a source stream</button>
+    </div>
+  </ng-template>
+  <app-list-return-link reviewGroupTitle="Fuels and equipment inventory" reviewGroupUrl="fuels"></app-list-return-link>
+</app-permit-task>

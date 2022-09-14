@@ -1,0 +1,77 @@
+<app-permit-task>
+  <app-wizard-step
+    (formSubmit)="onSubmit()"
+    [formGroup]="form"
+    caption="Installation details"
+    heading="Other environmental permits or licences"
+    submitText="Confirm and complete"
+    [hideSubmit]="(store.isEditable$ | async) === false"
+  >
+    <app-boolean-radio-group
+      controlName="exist"
+      hint="Examples include the ‘Environmental Protection Regulations’ and ‘Discharges to surface water and groundwater environmental’ permits."
+      legend="Does the installation have any other environmental permits or licences?"
+    >
+      <div govukConditionalContent>
+        <div formArrayName="envPermitOrLicences">
+          <fieldset
+            *ngFor="let permit of permits.controls; index as i"
+            [formGroupName]="i"
+            [disabled]="(store.isEditable$ | async) === false"
+            govukFieldset
+            id="other-permit-{{ i }}"
+          >
+            <legend govukLegend>Environmental permit or licence {{ i + 1 }}</legend>
+            <button
+              (click)="permits.removeAt(i)"
+              *ngIf="permits.length > 1"
+              [disabled]="(store.isEditable$ | async) === false"
+              [heading]="heading"
+              appAddAnother
+              govukSecondaryButton
+              type="button"
+              #removeButton
+            >
+              Remove
+            </button>
+            <div
+              formControlName="type"
+              govuk-text-input
+              hint="For example, ‘Environmental Protection Regulations’."
+              label="Type"
+            ></div>
+            <div
+              formControlName="num"
+              govuk-text-input
+              hint="The number is on the permit or licence."
+              label="Number"
+            ></div>
+            <div
+              formControlName="issuingAuthority"
+              govuk-text-input
+              hint="For example, ‘Environment Agency’."
+              label="Issuing authority"
+            ></div>
+            <div
+              formControlName="permitHolder"
+              govuk-text-input
+              hint="For example, the name of the individuals, company or organisation that has legal rights and obligations under the permit or licence."
+              label="Permit holder"
+            ></div>
+          </fieldset>
+
+          <button
+            (click)="addOtherPermit()"
+            [disabled]="(store.isEditable$ | async) === false"
+            govukSecondaryButton
+            type="button"
+          >
+            Add another permit
+          </button>
+        </div>
+      </div>
+    </app-boolean-radio-group>
+  </app-wizard-step>
+
+  <app-list-return-link reviewGroupTitle="Installation details" reviewGroupUrl="details"></app-list-return-link>
+</app-permit-task>

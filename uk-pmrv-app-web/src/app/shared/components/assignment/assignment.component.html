@@ -1,0 +1,16 @@
+<app-page-heading size="l">Reassign task</app-page-heading>
+
+<form (ngSubmit)="submit(info.requestTask.id, assignForm.get('assignee').value)" [formGroup]="assignForm">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+      <div
+          [options]="options$ | async"
+          formControlName="assignee"
+          label="Select a person"
+          govuk-select
+          widthClass="govuk-!-width-full"
+      ></div>
+    </div>
+  </div>
+  <button appPendingButton govukButton type="submit">Confirm and complete</button>
+</form>
